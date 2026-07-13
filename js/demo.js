@@ -426,7 +426,3 @@ document.querySelectorAll('.btn--ghost, .btn--glow').forEach(btn => {
     }
   });
 });
-
-if (typeof ScrollToPlugin !== 'undefined') {
-  gsap.registerPlugin(ScrollToPlugin);
-}
