@@ -229,6 +229,15 @@ img {
   background: var(--color-primary-dark);
 }
 
+.nav__link--demo {
+  color: var(--color-accent) !important;
+  font-weight: 700;
+}
+
+.nav__link--demo:hover {
+  background: rgba(201, 162, 39, 0.12) !important;
+}
+
 .nav__toggle {
   display: none;
   flex-direction: column;
