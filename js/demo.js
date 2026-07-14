@@ -111,6 +111,239 @@
     });
   }
 
+  /* ============================================================
+   * LiquidField — subconscious image seam with watery refraction
+   * Pipeline: cover-draw → dual-buffer crossfade modes →
+   * animated multi-octave displacement → radial depth blur under text
+   * ============================================================ */
+  const liquidCanvas = document.getElementById('dive-liquid');
+  const liquidCtx = liquidCanvas.getContext('2d', { alpha: false, desynchronized: true });
+  const waterTurb = document.getElementById('waterTurb');
+  const waterMap = document.getElementById('waterMap');
+  const diveLens = document.getElementById('dive-lens');
+
+  const LiquidField = (() => {
+    const off = document.createElement('canvas');
+    const offCtx = off.getContext('2d', { willReadFrequently: false });
+    const blur = document.createElement('canvas');
+    const blurCtx = blur.getContext('2d');
+
+    let W = 0, H = 0, dpr = 1;
+    let running = false;
+    let raf = 0;
+    let t0 = 0;
+    let images = [];
+    let a = 0, b = 1;
+    let mix = 0;
+    let mode = 'dissolve';
+    let modeSeed = 0;
+    let zoomA = 1.08, zoomB = 1.14;
+    let panA = 0, panB = 0;
+
+    const MODES = [
+      'dissolve',      // soft subconscious fade
+      'iris',          // radial iris open
+      'shear',         // diagonal shear wipe
+      'bloom',         // brightness bloom through white-green
+      'ripple',        // circular ripple reveal
+      'split',         // vertical split dissolve
+      'depth',         // rack-focus swap (blur trade)
+      'kaleid'         // slight rotate + scale blossom
+    ];
+
+    function resize() {
+      dpr = Math.min(window.devicePixelRatio || 1, 1.75);
+      W = window.innerWidth;
+      H = window.innerHeight;
+      liquidCanvas.width = Math.floor(W * dpr);
+      liquidCanvas.height = Math.floor(H * dpr);
+      liquidCanvas.style.width = W + 'px';
+      liquidCanvas.style.height = H + 'px';
+      liquidCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      off.width = Math.floor(W * dpr);
+      off.height = Math.floor(H * dpr);
+      offCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      blur.width = Math.max(2, Math.floor(W * 0.28));
+      blur.height = Math.max(2, Math.floor(H * 0.28));
+    }
+
+    function coverDraw(ctx, img, zoom, pan, alpha) {
+      if (!img || !img.naturalWidth) return;
+      const iw = img.naturalWidth, ih = img.naturalHeight;
+      const s = Math.max(W / iw, H / ih) * zoom;
+      const dw = iw * s, dh = ih * s;
+      const dx = (W - dw) / 2 + pan * W * 0.04;
+      const dy = (H - dh) / 2;
+      ctx.globalAlpha = alpha;
+      ctx.drawImage(img, dx, dy, dw, dh);
+      ctx.globalAlpha = 1;
+    }
+
+    function easeInOut(t) {
+      return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+    }
+
+    function composite(now) {
+      const t = (now - t0) / 1000;
+      const imgA = images[a], imgB = images[b];
+      const m = easeInOut(Math.min(1, Math.max(0, mix)));
+
+      offCtx.fillStyle = '#020806';
+      offCtx.fillRect(0, 0, W, H);
+
+      // Base plate always has BOTH images interleaved (subconscious residue)
+      const linger = 0.18; // previous never fully dies — ghost trail
+      const alphaA = Math.max(linger * (1 - m), 1 - m);
+      const alphaB = Math.max(linger * m, m);
+
+      offCtx.save();
+      if (mode === 'kaleid') {
+        offCtx.translate(W / 2, H / 2);
+        offCtx.rotate((1 - m) * 0.04 * (modeSeed % 2 ? 1 : -1));
+        offCtx.scale(1 + (1 - m) * 0.06, 1 + (1 - m) * 0.06);
+        offCtx.translate(-W / 2, -H / 2);
+      }
+
+      if (mode === 'depth') {
+        offCtx.filter = `blur(${(6 + m * 14).toFixed(2)}px) brightness(${0.55 - m * 0.1}) saturate(1.25)`;
+        coverDraw(offCtx, imgA, zoomA + t * 0.004, panA, alphaA);
+        offCtx.filter = `blur(${(20 - m * 14).toFixed(2)}px) brightness(${0.45 + m * 0.12}) saturate(1.35)`;
+        coverDraw(offCtx, imgB, zoomB + t * 0.005, panB, alphaB);
+        offCtx.filter = 'none';
+      } else if (mode === 'bloom') {
+        coverDraw(offCtx, imgA, zoomA, panA, alphaA);
+        offCtx.globalCompositeOperation = 'screen';
+        offCtx.fillStyle = `rgba(0,200,83,${0.18 * Math.sin(m * Math.PI)})`;
+        offCtx.fillRect(0, 0, W, H);
+        offCtx.globalCompositeOperation = 'source-over';
+        coverDraw(offCtx, imgB, zoomB, panB, alphaB);
+      } else if (mode === 'shear') {
+        coverDraw(offCtx, imgA, zoomA, panA, 1);
+        offCtx.save();
+        offCtx.beginPath();
+        const sx = -W * 0.2 + m * W * 1.4;
+        offCtx.moveTo(sx, 0); offCtx.lineTo(sx + W * 0.55, 0);
+        offCtx.lineTo(sx + W * 0.35, H); offCtx.lineTo(sx - W * 0.2, H);
+        offCtx.closePath(); offCtx.clip();
+        coverDraw(offCtx, imgB, zoomB, panB, 1);
+        offCtx.restore();
+        // Soft residue of A on top at low opacity
+        coverDraw(offCtx, imgA, zoomA, panA, linger * (1 - m));
+      } else if (mode === 'iris' || mode === 'ripple') {
+        coverDraw(offCtx, imgA, zoomA, panA, 1);
+        offCtx.save();
+        const r = Math.hypot(W, H) * 0.55 * m;
+        offCtx.beginPath();
+        offCtx.arc(W * 0.5, H * 0.48, Math.max(1, r), 0, Math.PI * 2);
+        offCtx.clip();
+        coverDraw(offCtx, imgB, zoomB, panB, 1);
+        offCtx.restore();
+        if (mode === 'ripple') {
+          offCtx.strokeStyle = `rgba(180,255,220,${0.25 * (1 - m)})`;
+          offCtx.lineWidth = 18;
+          offCtx.beginPath();
+          offCtx.arc(W * 0.5, H * 0.48, Math.max(1, r), 0, Math.PI * 2);
+          offCtx.stroke();
+        }
+      } else if (mode === 'split') {
+        coverDraw(offCtx, imgA, zoomA, panA, 1);
+        offCtx.save();
+        offCtx.beginPath();
+        offCtx.rect(0, 0, W * m, H);
+        offCtx.clip();
+        coverDraw(offCtx, imgB, zoomB, panB, 1);
+        offCtx.restore();
+        coverDraw(offCtx, imgA, zoomA, panA, linger * 0.5 * (1 - m));
+      } else {
+        // dissolve — dual exposure
+        coverDraw(offCtx, imgA, zoomA + t * 0.003, panA, alphaA);
+        coverDraw(offCtx, imgB, zoomB + t * 0.004, panB, alphaB);
+      }
+      offCtx.restore();
+
+      // Dim + soft overall watery feel
+      offCtx.fillStyle = 'rgba(2,10,8,0.28)';
+      offCtx.fillRect(0, 0, W, H);
+
+      // Present to main canvas
+      liquidCtx.clearRect(0, 0, W, H);
+      liquidCtx.drawImage(off, 0, 0, W, H);
+
+      // Extra soft downsample blur pass under center (text zone) — higher blur behind words
+      blurCtx.clearRect(0, 0, blur.width, blur.height);
+      blurCtx.drawImage(liquidCanvas, 0, 0, blur.width, blur.height);
+      liquidCtx.save();
+      liquidCtx.globalAlpha = 0.55;
+      liquidCtx.filter = 'blur(18px) brightness(0.85)';
+      const lw = W * 0.78, lh = H * 0.42;
+      liquidCtx.beginPath();
+      // rounded rect approx via ellipse
+      liquidCtx.ellipse(W / 2, H / 2, lw / 2, lh / 2, 0, 0, Math.PI * 2);
+      liquidCtx.clip();
+      liquidCtx.drawImage(blur, 0, 0, W, H);
+      liquidCtx.filter = 'none';
+      liquidCtx.restore();
+    }
+
+    function tickWaterSVG(now) {
+      if (!waterTurb || !waterMap) return;
+      const t = (now - t0) / 1000;
+      // Animate fractal noise frequency — living water
+      const fx = 0.009 + Math.sin(t * 0.35) * 0.004;
+      const fy = 0.014 + Math.cos(t * 0.28) * 0.005;
+      waterTurb.setAttribute('baseFrequency', fx.toFixed(4) + ' ' + fy.toFixed(4));
+      const scale = 22 + Math.sin(t * 0.7) * 10 + Math.cos(t * 1.1) * 6;
+      waterMap.setAttribute('scale', scale.toFixed(2));
+    }
+
+    function frame(now) {
+      if (!running) return;
+      composite(now);
+      tickWaterSVG(now);
+      raf = requestAnimationFrame(frame);
+    }
+
+    function start(imgs) {
+      images = imgs.filter(i => i && (i.complete ? i.naturalWidth : true));
+      resize();
+      a = 0; b = Math.min(1, images.length - 1);
+      mix = 0;
+      mode = MODES[0];
+      t0 = performance.now();
+      running = true;
+      dive.classList.add('is-liquid');
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(frame);
+    }
+
+    function stop() {
+      running = false;
+      cancelAnimationFrame(raf);
+      dive.classList.remove('is-liquid');
+    }
+
+    function crossTo(nextIndex, nextMode) {
+      a = b;
+      b = nextIndex % images.length;
+      mix = 0;
+      mode = nextMode || MODES[Math.floor(Math.random() * MODES.length)];
+      modeSeed = (modeSeed + 1 + Math.floor(Math.random() * 7)) % 97;
+      zoomA = zoomB;
+      panA = panB;
+      zoomB = 1.06 + Math.random() * 0.14;
+      panB = (Math.random() * 2 - 1);
+      return mode;
+    }
+
+    function setMix(v) { mix = v; }
+
+    addEventListener('resize', () => { if (running) resize(); });
+
+    return { start, stop, crossTo, setMix, MODES };
+  })();
+
+  const gravityIn = (t) => t * t;
+
   function splitWords(el, text) {
     el.innerHTML = '';
     const words = text.split(/\s+/).filter(Boolean);
@@ -121,6 +354,39 @@
       el.appendChild(span);
     });
     return [...el.querySelectorAll('.dive__word')];
+  }
+
+  function dropWordsSlow(words) {
+    const tl = gsap.timeline();
+    const dropPx = Math.min(160, Math.max(90, window.innerHeight * 0.16));
+    words.forEach((word, i) => {
+      const start = i * 0.38; // slow — readable
+      const rot = (Math.random() * 10 - 5);
+      gsap.set(word, {
+        y: -dropPx - Math.random() * 30,
+        x: (Math.random() * 16 - 8),
+        rotation: rot,
+        opacity: 0,
+        scaleY: 1, scaleX: 1,
+        filter: 'blur(4px)',
+        transformOrigin: '50% 100%'
+      });
+      tl.to(word, {
+        y: 0, x: 0, opacity: 1, rotation: 'blur(0px)',
+        rotation: rot * 0.1,
+        duration: 0.7,
+        ease: gravityIn
+      }, start);
+      tl.to(word, {
+        scaleY: 0.78, scaleX: 1.12, rotation: 0,
+        duration: 0.1, ease: 'power2.out'
+      }, start + 0.7);
+      tl.to(word, {
+        scaleY: 1, scaleX: 1,
+        duration: 0.65, ease: 'bounce.out'
+      }, start + 0.78);
+    });
+    return tl;
   }
 
   function openChamber(id, lobeEl) {
@@ -139,116 +405,80 @@
     const titleWords = splitWords(hookTitle, titleText);
     const subWords = splitWords(hookSub, subText);
 
-    // Shuffle later frames so each dive feels denser / fresh
-    const sequence = imgs.slice();
-    for (let i = sequence.length - 1; i > 1; i--) {
-      const j = 1 + Math.floor(Math.random() * i);
-      [sequence[i], sequence[j]] = [sequence[j], sequence[i]];
+    // Fisher–Yates shuffle for a fresh subconscious path each dive
+    const order = imgs.map((_, i) => i);
+    for (let i = order.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [order[i], order[j]] = [order[j], order[i]];
     }
 
-    const safety = setTimeout(() => enterChamber(id, lobeEl), 9000);
+    const safety = setTimeout(() => {
+      LiquidField.stop();
+      enterChamber(id, lobeEl);
+    }, 16000);
 
     gsap.set(dive, { opacity: 0, visibility: 'hidden' });
-    gsap.set(sequence, {
-      opacity: 0,
-      scale: 1.28,
-      xPercent: 0,
-      yPercent: 0,
-      filter: 'blur(26px) brightness(0.4) saturate(1.25)'
-    });
-    gsap.set([eyebrow, panel], { opacity: 0, y: 18 });
-    gsap.set([...titleWords, ...subWords], {
-      opacity: 0, y: 12, filter: 'blur(8px)'
-    });
+    gsap.set([eyebrow, diveLens], { opacity: 0 });
+    gsap.set(panel, { opacity: 1 });
 
     const tl = gsap.timeline({
       onComplete: () => {
         clearTimeout(safety);
+        LiquidField.stop();
         enterChamber(id, lobeEl);
       }
     });
 
-    tl.to({}, { duration: 0.08 })
+    tl.to({}, { duration: 0.05 })
       .add(() => {
         dive.classList.add('active');
         dive.setAttribute('aria-hidden', 'false');
         gsap.set(dive, { visibility: 'visible' });
+        LiquidField.start(order.map(i => imgs[i]));
       })
-      .to(dive, { opacity: 1, duration: 0.25 })
-      .to(mind, { opacity: 0, duration: 0.22 }, '<');
+      .to(dive, { opacity: 1, duration: 0.35, ease: 'power2.out' })
+      .to(mind, { opacity: 0, duration: 0.28 }, '<')
+      // Strong watery lens behind words — higher blur zone
+      .to(diveLens, { opacity: 1, duration: 0.55, ease: 'power2.out' }, 0.2)
+      .to(eyebrow, { opacity: 1, duration: 0.4 }, 0.28);
 
-    // Frame 1 as blurred full-bleed background IMMEDIATELY
-    tl.fromTo(sequence[0],
-      {
-        opacity: 0,
-        scale: 1.3,
-        filter: 'blur(28px) brightness(0.35) saturate(1.3)'
-      },
-      {
-        opacity: 1,
-        scale: 1.12,
-        filter: 'blur(20px) brightness(0.48) saturate(1.15)',
-        duration: 0.4,
-        ease: 'power2.out'
-      },
-      0.1
-    );
-    tl.to(sequence[0], {
-      scale: 1.18,
-      xPercent: 2,
-      duration: 4.5,
-      ease: 'none'
-    }, 0.1);
+    // Slow physical word fall — title then sub
+    tl.add(dropWordsSlow(titleWords), 0.45);
+    const subStart = 0.45 + titleWords.length * 0.38 + 0.35;
+    tl.add(dropWordsSlow(subWords), subStart);
 
-    // Clear frosted text panel + word-by-word typing from first frame
-    tl.to(panel, { opacity: 1, y: 0, duration: 0.35, ease: 'power2.out' }, 0.18)
-      .to(eyebrow, { opacity: 1, y: 0, duration: 0.3 }, 0.22)
-      .to(titleWords, {
-        opacity: 1, y: 0, filter: 'blur(0px)',
-        stagger: 0.09, duration: 0.28, ease: 'power2.out'
-      }, 0.3)
-      .to(subWords, {
-        opacity: 1, y: 0, filter: 'blur(0px)',
-        stagger: 0.065, duration: 0.26, ease: 'power2.out'
-      }, 0.55);
+    // Interleaved image transitions under the liquid field
+    // Each transition uses a DIFFERENT mode; previous image lingers (ghost)
+    const modes = [...LiquidField.MODES];
+    for (let i = modes.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [modes[i], modes[j]] = [modes[j], modes[i]];
+    }
 
-    // Rapid magical cycling of remaining BG images UNDER the text
-    const step = 0.16;
-    sequence.forEach((img, i) => {
-      if (i === 0) return;
-      const start = 0.45 + (i - 1) * step;
-      const drift = (i % 2 === 0) ? 2.5 : -2.5;
-      tl.fromTo(img,
-        {
-          opacity: 0,
-          scale: 1.32,
-          xPercent: -drift,
-          filter: 'blur(28px) brightness(0.35) saturate(1.35)'
-        },
-        {
-          opacity: 1,
-          scale: 1.1,
-          xPercent: drift,
-          filter: 'blur(18px) brightness(0.5) saturate(1.2)',
-          duration: 0.22,
-          ease: 'power2.out'
-        },
-        start
-      );
-      tl.to(sequence[i - 1], {
-        opacity: 0,
-        scale: 1.16,
-        duration: 0.18,
-        ease: 'power1.in'
-      }, start + 0.08);
-    });
+    const frameCount = Math.min(order.length, 12);
+    let cursorT = 0.7;
+    for (let i = 1; i < frameCount; i++) {
+      const mode = modes[(i - 1) % modes.length];
+      const hold = 0.55 + (i % 3) * 0.12;
+      const dur = 0.85 + (i % 4) * 0.12; // overlapping feel
+      tl.add(() => {
+        LiquidField.crossTo(i, mode);
+      }, cursorT);
+      tl.to({ v: 0 }, {
+        v: 1, duration: dur, ease: 'none',
+        onUpdate: function () { LiquidField.setMix(this.targets()[0].v); }
+      }, cursorT);
+      // Start next before previous mix completes → interleaved
+      cursorT += hold;
+    }
 
-    const endAt = 0.45 + (sequence.length - 1) * step + 0.45;
-    tl.to({}, { duration: 0.75 }, endAt)
-      .to(dive, { opacity: 0, duration: 0.35, ease: 'power2.in' });
+    const settle = Math.max(cursorT + 1.1, subStart + subWords.length * 0.38 + 1.2);
+    tl.to({}, { duration: 0.4 }, settle)
+      .to([diveLens, dive], { opacity: 0, duration: 0.45, ease: 'power2.in' }, settle + 0.15);
   }
 
   function enterChamber(id, lobeEl) {
+    LiquidField.stop();
     const chamber = document.getElementById('chamber-' + id);
     if (!chamber) {
       busy = false;

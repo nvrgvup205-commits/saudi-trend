@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Tajawal:wght@400;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/demo.css?v=dive3">
+  <link rel="stylesheet" href="css/demo.css?v=liquid4">
 </head>
 <body>
   <!-- Signature cursor: golden arrow + orbit — same as Demo 2 -->
@@ -35,31 +35,45 @@
   <canvas id="particles-canvas"></canvas>
   <div class="noise"></div>
 
-  <!-- Dive: rapid blurred BG montage + clear word-by-word hook from frame 1 -->
+  <!-- Dive: liquid watery blur + interleaved subconscious montage + slow falling words -->
   <div class="dive" id="dive" aria-hidden="true">
-    <div class="dive__reel" id="dive-reel">
-      <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200&q=70" alt="" class="dive__img">
-      <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=1200&q=70" alt="" class="dive__img">
-      <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=1200&q=70" alt="" class="dive__img">
-      <img src="https://images.unsplash.com/photo-1557804506-669a67965ba0?w=1200&q=70" alt="" class="dive__img">
-      <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&q=70" alt="" class="dive__img">
-      <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&q=70" alt="" class="dive__img">
-      <img src="https://images.unsplash.com/photo-1561070791-2526d30994b5?w=1200&q=70" alt="" class="dive__img">
-      <img src="https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=1200&q=70" alt="" class="dive__img">
-      <img src="https://images.unsplash.com/photo-1518186285589-2f7649de83e0?w=1200&q=70" alt="" class="dive__img">
-      <img src="https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=1200&q=70" alt="" class="dive__img">
-      <img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=1200&q=70" alt="" class="dive__img">
-      <img src="https://images.unsplash.com/photo-1556761175-b413da4baf72?w=1200&q=70" alt="" class="dive__img">
-      <img src="https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=1200&q=70" alt="" class="dive__img">
-      <img src="https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=1200&q=70" alt="" class="dive__img">
-      <img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=1200&q=70" alt="" class="dive__img">
-      <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1200&q=70" alt="" class="dive__img">
-      <img src="https://images.unsplash.com/photo-1553877522-43269d4ea984?w=1200&q=70" alt="" class="dive__img">
-      <img src="https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=1200&q=70" alt="" class="dive__img">
-      <img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=1200&q=70" alt="" class="dive__img">
-      <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=1200&q=70" alt="" class="dive__img">
+    <canvas class="dive__liquid" id="dive-liquid" aria-hidden="true"></canvas>
+    <div class="dive__reel" id="dive-reel" aria-hidden="true">
+      <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=1600&q=85" alt="" crossorigin="anonymous" class="dive__img" data-mood="riyadh">
+      <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1600&q=85" alt="" crossorigin="anonymous" class="dive__img" data-mood="glass">
+      <img src="https://images.unsplash.com/photo-1546412414-e1885259563a?w=1600&q=85" alt="" crossorigin="anonymous" class="dive__img" data-mood="desert">
+      <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1600&q=85" alt="" crossorigin="anonymous" class="dive__img" data-mood="earth">
+      <img src="https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=1600&q=85" alt="" crossorigin="anonymous" class="dive__img" data-mood="stars">
+      <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1600&q=85" alt="" crossorigin="anonymous" class="dive__img" data-mood="alpine">
+      <img src="https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=1600&q=85" alt="" crossorigin="anonymous" class="dive__img" data-mood="fog">
+      <img src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=1600&q=85" alt="" crossorigin="anonymous" class="dive__img" data-mood="nature">
+      <img src="https://images.unsplash.com/photo-1519681393784-d120267933ba?w=1600&q=85" alt="" crossorigin="anonymous" class="dive__img" data-mood="peak">
+      <img src="https://images.unsplash.com/photo-1507666668055-46ddcfae1afb?w=1600&q=85" alt="" crossorigin="anonymous" class="dive__img" data-mood="light">
+      <img src="https://images.unsplash.com/photo-1514565131-fce0801e5785?w=1600&q=85" alt="" crossorigin="anonymous" class="dive__img" data-mood="citynight">
+      <img src="https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=1600&q=85" alt="" crossorigin="anonymous" class="dive__img" data-mood="urban">
+      <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=1600&q=85" alt="" crossorigin="anonymous" class="dive__img" data-mood="neon">
+      <img src="https://images.unsplash.com/photo-1557683316-973673baf926?w=1600&q=85" alt="" crossorigin="anonymous" class="dive__img" data-mood="gradient">
+      <img src="https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=1600&q=85" alt="" crossorigin="anonymous" class="dive__img" data-mood="prism">
+      <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1600&q=85" alt="" crossorigin="anonymous" class="dive__img" data-mood="abstract">
+      <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=1600&q=85" alt="" crossorigin="anonymous" class="dive__img" data-mood="office">
+      <img src="https://images.unsplash.com/photo-1557804506-669a67965ba0?w=1600&q=85" alt="" crossorigin="anonymous" class="dive__img" data-mood="team">
+      <img src="https://images.unsplash.com/photo-1561070791-2526d30994b5?w=1600&q=85" alt="" crossorigin="anonymous" class="dive__img" data-mood="design">
+      <img src="https://images.unsplash.com/photo-1518186285589-2f7649de83e0?w=1600&q=85" alt="" crossorigin="anonymous" class="dive__img" data-mood="data">
+      <img src="https://images.unsplash.com/photo-1534531173926-7fa8047602c7?w=1600&q=85" alt="" crossorigin="anonymous" class="dive__img" data-mood="water">
+      <img src="https://images.unsplash.com/photo-1507413245164-6160d8298b31?w=1600&q=85" alt="" crossorigin="anonymous" class="dive__img" data-mood="aurora">
     </div>
-    <div class="dive__glass"></div>
+
+    <svg class="dive__svg-filters" width="0" height="0" aria-hidden="true">
+      <filter id="waterDisplace" x="-25%" y="-25%" width="150%" height="150%" color-interpolation-filters="sRGB">
+        <feTurbulence id="waterTurb" type="fractalNoise" baseFrequency="0.011 0.017" numOctaves="3" seed="11" result="noise"/>
+        <feDisplacementMap id="waterMap" in="SourceGraphic" in2="noise" scale="34" xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
+    </svg>
+
+    <div class="dive__veil"></div>
+    <div class="dive__caustics" id="dive-caustics" aria-hidden="true"></div>
+    <div class="dive__lens" id="dive-lens" aria-hidden="true"></div>
+
     <div class="dive__caption">
       <div class="dive__panel">
         <span class="dive__eyebrow">سعودي تريند</span>
@@ -215,6 +229,6 @@
   </section>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  <script src="js/demo.js?v=dive3"></script>
+  <script src="js/demo.js?v=liquid4"></script>
 </body>
 </html>
