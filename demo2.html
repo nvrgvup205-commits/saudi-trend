@@ -1,428 +1,515 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" data-lang="ar">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>سعودي تريند | البوابة التفاعلية — Demo 2</title>
-  <meta name="description" content="سعودي تريند — بوابة تفاعلية للتسويق والتصميم والفيديو والأتمتة">
+  <title>سعودي تريند | Saudi Trend — Demo 2</title>
+  <meta name="description" content="سعودي تريند — بوابة فاخرة للتسويق والتصميم والأتمتة | Saudi Trend luxury portal">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/demo2.css">
 </head>
 <body>
-  <!-- Custom Cursor -->
-  <div class="cursor" id="cursor"></div>
-  <div class="cursor-ring" id="cursor-ring"></div>
+  <!-- Luxury custom cursor -->
+  <div class="cursor" id="cursor" aria-hidden="true">
+    <div class="cursor__diamond"></div>
+    <div class="cursor__core"></div>
+    <svg class="cursor__ornament" viewBox="0 0 40 40" fill="none">
+      <path d="M20 2L24 16L38 20L24 24L20 38L16 24L2 20L16 16Z" stroke="currentColor" stroke-width="1.2"/>
+    </svg>
+  </div>
+  <div class="cursor-trail" id="cursor-trail" aria-hidden="true"></div>
 
   <!-- Preloader -->
   <div class="preloader" id="preloader">
-    <div class="preloader__mark">
-      <span class="preloader__st">ST</span>
-      <div class="preloader__orbit"></div>
+    <div class="logo logo--xl preloader__logo">
+      <span class="logo__ar">سعودي <em>تريند</em></span>
+      <span class="logo__divider"></span>
+      <span class="logo__en">Saudi <em>Trend</em></span>
     </div>
-    <h1 class="preloader__brand">سعودي <em>تريند</em></h1>
     <div class="preloader__bar"><div class="preloader__fill" id="preloader-fill"></div></div>
-    <p class="preloader__hint">جاري فتح البوابة...</p>
+    <p class="preloader__hint" data-ar="نُحضّر تجربة فاخرة..." data-en="Preparing a luxury experience...">نُحضّر تجربة فاخرة...</p>
   </div>
 
   <canvas id="bg-canvas"></canvas>
+  <div class="pattern-overlay"></div>
   <div class="noise"></div>
 
-  <!-- ========== GATE / ENTRANCE ========== -->
+  <!-- ========== GATE ========== -->
   <section class="gate" id="gate">
     <header class="gate__top">
-      <a href="index.html" class="gate__logo magnetic" data-s="0.25">
-        <span class="logo-mark">ST</span>
-        <span>سعودي <em>تريند</em></span>
+      <a href="demo2.html" class="logo logo--nav magnetic" data-s="0.2">
+        <span class="logo__mark" aria-hidden="true">
+          <svg viewBox="0 0 48 48" fill="none"><path d="M24 4L28 20L44 24L28 28L24 44L20 28L4 24L20 20Z" fill="url(#lg)"/><defs><linearGradient id="lg" x1="4" y1="4" x2="44" y2="44"><stop stop-color="#d4af37"/><stop offset="1" stop-color="#0d7a4f"/></linearGradient></defs></svg>
+        </span>
+        <span class="logo__text">
+          <span class="logo__ar">سعودي <em>تريند</em></span>
+          <span class="logo__en">Saudi <em>Trend</em></span>
+        </span>
       </a>
-      <div class="gate__links">
-        <a href="demo.html">Demo 1</a>
-        <a href="index.html">الكلاسيكية</a>
+
+      <div class="gate__actions">
+        <button class="lang-switch" id="lang-switch" type="button" aria-label="Switch language">
+          <span class="lang-switch__ar">عربي</span>
+          <span class="lang-switch__sep">|</span>
+          <span class="lang-switch__en">EN</span>
+        </button>
+        <a href="demo.html" class="gate__link">Demo 1</a>
+        <a href="index.html" class="gate__link" data-ar="الكلاسيكية" data-en="Classic">الكلاسيكية</a>
       </div>
     </header>
 
+    <div class="gate__ornament gate__ornament--l" aria-hidden="true"></div>
+    <div class="gate__ornament gate__ornament--r" aria-hidden="true"></div>
+
     <div class="gate__hero">
-      <p class="gate__eyebrow">
+      <p class="gate__eyebrow reveal-text">
         <span class="pulse-dot"></span>
-        اختر بوابتك · ثلاث عوالم · تجربة تفاعلية
+        <span data-ar="بوابة الأعمال الخليجية · ثلاث عوالم" data-en="Gulf business gateway · Three realms">بوابة الأعمال الخليجية · ثلاث عوالم</span>
       </p>
       <h1 class="gate__title">
-        <span class="line"><span>مرحباً بك في</span></span>
-        <span class="line"><span class="brand-glow">سعودي تريند</span></span>
+        <span class="line reveal-text"><span data-ar="أهلاً بك في عالم" data-en="Welcome to the world of">أهلاً بك في عالم</span></span>
+        <span class="line reveal-text"><span class="brand-glow">سعودي تريند</span></span>
+        <span class="line reveal-text line--en"><span class="brand-en">Saudi Trend</span></span>
       </h1>
-      <p class="gate__sub">اضغط على أي بوابة لفتح عالمنا — تسويق · تصميم وفيديو · أتمتة</p>
+      <p class="gate__sub reveal-text" data-ar="اضغط على البوابة لتدخل — تسويق · تصميم وفيديو · أتمتة" data-en="Tap a portal to enter — Marketing · Design & Video · Automation">اضغط على البوابة لتدخل — تسويق · تصميم وفيديو · أتمتة</p>
     </div>
 
     <div class="portals" id="portals">
-      <!-- Marketing Portal -->
-      <button class="portal" data-section="marketing" aria-label="بوابة التسويق">
+      <button class="portal" data-section="marketing" type="button">
+        <div class="portal__media">
+          <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80" alt="" loading="lazy">
+          <div class="portal__veil"></div>
+        </div>
         <div class="portal__frame">
           <div class="portal__door portal__door--left"></div>
           <div class="portal__door portal__door--right"></div>
           <div class="portal__glow"></div>
           <div class="portal__inner">
-            <div class="portal__icon">
-              <svg viewBox="0 0 64 64" fill="none">
-                <path d="M8 40c8-16 24-24 40-16" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-                <circle cx="48" cy="22" r="6" fill="currentColor" opacity=".9"/>
-                <path d="M12 48h28M12 52h18" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity=".5"/>
-                <path d="M20 28l4-10 4 6 6-14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </div>
-            <h2 class="portal__name">التسويق</h2>
-            <p class="portal__en">Marketing</p>
-            <span class="portal__cta">افتح البوابة</span>
+            <div class="portal__badge">01</div>
+            <h2 class="portal__name" data-ar="التسويق" data-en="Marketing">التسويق</h2>
+            <p class="portal__tag" data-ar="حملات · SEO · نمو" data-en="Campaigns · SEO · Growth">حملات · SEO · نمو</p>
+            <span class="portal__cta" data-ar="افتح البوابة" data-en="Open portal">افتح البوابة</span>
           </div>
-          <div class="portal__particles"></div>
         </div>
         <div class="portal__shadow"></div>
       </button>
 
-      <!-- Design Portal -->
-      <button class="portal portal--center" data-section="design" aria-label="بوابة التصميم والفيديوهات">
+      <button class="portal portal--center" data-section="design" type="button">
+        <div class="portal__media">
+          <img src="https://images.unsplash.com/photo-1561070791-2526d30994b5?w=800&q=80" alt="" loading="lazy">
+          <div class="portal__veil"></div>
+        </div>
         <div class="portal__frame">
           <div class="portal__door portal__door--left"></div>
           <div class="portal__door portal__door--right"></div>
           <div class="portal__glow"></div>
           <div class="portal__inner">
-            <div class="portal__icon">
-              <svg viewBox="0 0 64 64" fill="none">
-                <rect x="10" y="14" width="44" height="30" rx="3" stroke="currentColor" stroke-width="2.5"/>
-                <circle cx="32" cy="29" r="8" stroke="currentColor" stroke-width="2.5"/>
-                <path d="M28 29l3 3 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M22 50h20" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-                <path d="M32 44v6" stroke="currentColor" stroke-width="2.5"/>
-              </svg>
-            </div>
-            <h2 class="portal__name">التصميم والفيديو</h2>
-            <p class="portal__en">Design & Video</p>
-            <span class="portal__cta">افتح البوابة</span>
+            <div class="portal__badge">02</div>
+            <h2 class="portal__name" data-ar="التصميم والفيديو" data-en="Design & Video">التصميم والفيديو</h2>
+            <p class="portal__tag" data-ar="هوية · مواقع · موشن" data-en="Brand · Web · Motion">هوية · مواقع · موشن</p>
+            <span class="portal__cta" data-ar="افتح البوابة" data-en="Open portal">افتح البوابة</span>
           </div>
-          <div class="portal__particles"></div>
         </div>
         <div class="portal__shadow"></div>
       </button>
 
-      <!-- Automation Portal -->
-      <button class="portal" data-section="automation" aria-label="بوابة الأتمتة">
+      <button class="portal" data-section="automation" type="button">
+        <div class="portal__media">
+          <img src="https://images.unsplash.com/photo-1518186285589-2f7649de83e0?w=800&q=80" alt="" loading="lazy">
+          <div class="portal__veil"></div>
+        </div>
         <div class="portal__frame">
           <div class="portal__door portal__door--left"></div>
           <div class="portal__door portal__door--right"></div>
           <div class="portal__glow"></div>
           <div class="portal__inner">
-            <div class="portal__icon">
-              <svg viewBox="0 0 64 64" fill="none">
-                <circle cx="32" cy="32" r="10" stroke="currentColor" stroke-width="2.5"/>
-                <path d="M32 12v6M32 46v6M12 32h6M46 32h6M18 18l4 4M42 42l4 4M18 46l4-4M42 22l4-4" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-                <circle cx="32" cy="32" r="3" fill="currentColor"/>
-              </svg>
-            </div>
-            <h2 class="portal__name">الأتمتة</h2>
-            <p class="portal__en">Automation</p>
-            <span class="portal__cta">افتح البوابة</span>
+            <div class="portal__badge">03</div>
+            <h2 class="portal__name" data-ar="الأتمتة" data-en="Automation">الأتمتة</h2>
+            <p class="portal__tag" data-ar="CRM · أنظمة · ذكاء" data-en="CRM · Systems · AI">CRM · أنظمة · ذكاء</p>
+            <span class="portal__cta" data-ar="افتح البوابة" data-en="Open portal">افتح البوابة</span>
           </div>
-          <div class="portal__particles"></div>
         </div>
         <div class="portal__shadow"></div>
       </button>
     </div>
 
-    <p class="gate__hint">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
-      اضغط على البوابة لتدخل عالم سعودي تريند
-    </p>
+    <p class="gate__hint reveal-text" data-ar="✦ اضغط البوابة ببطء… ودع الفخامة تفتح أمامك" data-en="✦ Press a portal slowly… and let luxury unfold">✦ اضغط البوابة ببطء… ودع الفخامة تفتح أمامك</p>
   </section>
 
-  <!-- ========== SECTION: MARKETING ========== -->
+  <!-- ========== MARKETING ========== -->
   <section class="realm" id="realm-marketing" data-realm="marketing" aria-hidden="true">
-    <div class="realm__bg realm__bg--marketing"></div>
-    <button class="realm__back magnetic" data-s="0.3" aria-label="العودة للبوابة">
+    <div class="realm__bg">
+      <img src="https://images.unsplash.com/photo-1557804506-669a67965ba0?w=1600&q=80" alt="">
+      <div class="realm__bg-veil"></div>
+    </div>
+    <button class="realm__back magnetic" data-s="0.25" type="button">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
-      <span>عودة للبوابة</span>
+      <span data-ar="عودة للبوابة" data-en="Back to gate">عودة للبوابة</span>
     </button>
 
     <div class="realm__scroll">
       <div class="realm__hero container">
-        <span class="realm__label">سعودي تريند · التسويق</span>
-        <h2 class="realm__title">إدارة الحملات الإعلانية</h2>
-        <p class="realm__en">Advertising Campaign Management</p>
-        <p class="realm__desc">نساعدك على تعزيز حضورك الرقمي من خلال خطط تسويقية مبتكرة وحلول ذكية وحملات مستهدفة على منصات التواصل الاجتماعي.</p>
+        <div class="logo logo--sm realm__logo">
+          <span class="logo__ar">سعودي <em>تريند</em></span>
+          <span class="logo__en">Saudi <em>Trend</em></span>
+        </div>
+        <span class="realm__label reveal-text" data-ar="قسم التسويق" data-en="Marketing Division">قسم التسويق</span>
+        <h2 class="realm__title reveal-text" data-ar="إدارة الحملات الإعلانية" data-en="Advertising Campaign Management">إدارة الحملات الإعلانية</h2>
+        <p class="realm__desc reveal-text" data-ar="نعزز حضورك الرقمي بخطط مبتكرة وحملات مستهدفة على منصات التواصل — بروح سعودية ورؤية عالمية." data-en="We elevate your digital presence with innovative plans and targeted social campaigns — Saudi spirit, global vision.">نعزز حضورك الرقمي بخطط مبتكرة وحملات مستهدفة على منصات التواصل — بروح سعودية ورؤية عالمية.</p>
       </div>
 
-      <!-- Campaign features -->
+      <div class="container gallery">
+        <figure class="gallery__item reveal-text"><img src="https://images.unsplash.com/photo-1432888622747-4eb9a8f2c293?w=700&q=80" alt=""><figcaption data-ar="استهداف دقيق" data-en="Precise targeting">استهداف دقيق</figcaption></figure>
+        <figure class="gallery__item gallery__item--tall reveal-text"><img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=700&q=80" alt=""><figcaption data-ar="تحليل البيانات" data-en="Data analytics">تحليل البيانات</figcaption></figure>
+        <figure class="gallery__item reveal-text"><img src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=700&q=80" alt=""><figcaption data-ar="فريق استراتيجي" data-en="Strategy team">فريق استراتيجي</figcaption></figure>
+      </div>
+
       <div class="container">
-        <div class="feature-grid">
-          <div class="feat feat--solid"><span>تحليل شامل للسوق والمنافسين والجمهور المستهدف</span></div>
-          <div class="feat feat--outline"><span>ابتكار أفكار إعلانية تحقق الاستهداف المطلوب</span></div>
-          <div class="feat feat--outline"><span>إعداد خطة إعلانية تتوافق مع رؤيتك</span></div>
-          <div class="feat feat--solid"><span>استخدام أحدث الأدوات لإعداد الإعلانات</span></div>
-          <div class="feat feat--solid"><span>مراقبة وتحسين أداء الحملات حسب التقارير</span></div>
-          <div class="feat feat--outline"><span>تقديم دعم فني مستمر ومتخصص يلبي احتياجاتك</span></div>
+        <p class="section-hint reveal-text" data-ar="✦ اضغط على أي بطاقة لتقلبها وتكشف التفاصيل" data-en="✦ Tap any card to flip and reveal details">✦ اضغط على أي بطاقة لتقلبها وتكشف التفاصيل</p>
+        <div class="flip-grid">
+          <div class="flip-card" tabindex="0">
+            <div class="flip-card__inner">
+              <div class="flip-card__face flip-card__face--front">
+                <img src="https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?w=600&q=80" alt="">
+                <div class="flip-card__overlay">
+                  <h3 data-ar="تحليل السوق" data-en="Market analysis">تحليل السوق</h3>
+                  <span data-ar="اقلب البطاقة ←" data-en="Flip card →">اقلب البطاقة ←</span>
+                </div>
+              </div>
+              <div class="flip-card__face flip-card__face--back">
+                <h3 data-ar="تحليل شامل" data-en="Full analysis">تحليل شامل</h3>
+                <p data-ar="دراسة السوق والمنافسين والجمهور المستهدف لبناء قرارات دقيقة." data-en="Study the market, competitors, and audience to drive precise decisions.">دراسة السوق والمنافسين والجمهور المستهدف لبناء قرارات دقيقة.</p>
+              </div>
+            </div>
+          </div>
+          <div class="flip-card" tabindex="0">
+            <div class="flip-card__inner">
+              <div class="flip-card__face flip-card__face--front">
+                <img src="https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=600&q=80" alt="">
+                <div class="flip-card__overlay">
+                  <h3 data-ar="أفكار إعلانية" data-en="Ad concepts">أفكار إعلانية</h3>
+                  <span data-ar="اقلب البطاقة ←" data-en="Flip card →">اقلب البطاقة ←</span>
+                </div>
+              </div>
+              <div class="flip-card__face flip-card__face--back">
+                <h3 data-ar="إبداع مستهدف" data-en="Targeted creativity">إبداع مستهدف</h3>
+                <p data-ar="ابتكار أفكار إعلانية تحقق الاستهداف المطلوب وتترك أثراً." data-en="Creative ad ideas that hit the right audience and leave a mark.">ابتكار أفكار إعلانية تحقق الاستهداف المطلوب وتترك أثراً.</p>
+              </div>
+            </div>
+          </div>
+          <div class="flip-card" tabindex="0">
+            <div class="flip-card__inner">
+              <div class="flip-card__face flip-card__face--front">
+                <img src="https://images.unsplash.com/photo-1553877522-43269d4ea984?w=600&q=80" alt="">
+                <div class="flip-card__overlay">
+                  <h3 data-ar="خطة الإعلان" data-en="Ad planning">خطة الإعلان</h3>
+                  <span data-ar="اقلب البطاقة ←" data-en="Flip card →">اقلب البطاقة ←</span>
+                </div>
+              </div>
+              <div class="flip-card__face flip-card__face--back">
+                <h3 data-ar="رؤية واضحة" data-en="Clear vision">رؤية واضحة</h3>
+                <p data-ar="إعداد خطة إعلانية تتوافق مع رؤيتك وأهداف نموّك." data-en="An advertising plan aligned with your vision and growth goals.">إعداد خطة إعلانية تتوافق مع رؤيتك وأهداف نموّك.</p>
+              </div>
+            </div>
+          </div>
+          <div class="flip-card" tabindex="0">
+            <div class="flip-card__inner">
+              <div class="flip-card__face flip-card__face--front">
+                <img src="https://images.unsplash.com/photo-1533750349088-cd871a92f312?w=600&q=80" alt="">
+                <div class="flip-card__overlay">
+                  <h3 data-ar="أدوات حديثة" data-en="Modern tools">أدوات حديثة</h3>
+                  <span data-ar="اقلب البطاقة ←" data-en="Flip card →">اقلب البطاقة ←</span>
+                </div>
+              </div>
+              <div class="flip-card__face flip-card__face--back">
+                <h3 data-ar="تقنيات متقدمة" data-en="Advanced tech">تقنيات متقدمة</h3>
+                <p data-ar="استخدام أحدث الأدوات لإعداد إعلانات قوية وقابلة للقياس." data-en="Latest tools for powerful, measurable advertising.">استخدام أحدث الأدوات لإعداد إعلانات قوية وقابلة للقياس.</p>
+              </div>
+            </div>
+          </div>
+          <div class="flip-card" tabindex="0">
+            <div class="flip-card__inner">
+              <div class="flip-card__face flip-card__face--front">
+                <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&q=80" alt="">
+                <div class="flip-card__overlay">
+                  <h3 data-ar="تحسين الأداء" data-en="Optimization">تحسين الأداء</h3>
+                  <span data-ar="اقلب البطاقة ←" data-en="Flip card →">اقلب البطاقة ←</span>
+                </div>
+              </div>
+              <div class="flip-card__face flip-card__face--back">
+                <h3 data-ar="مراقبة مستمرة" data-en="Continuous monitoring">مراقبة مستمرة</h3>
+                <p data-ar="مراقبة وتحسين الحملات وفق التقارير والنتائج الفعلية." data-en="Monitor and improve campaigns based on real reports.">مراقبة وتحسين الحملات وفق التقارير والنتائج الفعلية.</p>
+              </div>
+            </div>
+          </div>
+          <div class="flip-card" tabindex="0">
+            <div class="flip-card__inner">
+              <div class="flip-card__face flip-card__face--front">
+                <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=600&q=80" alt="">
+                <div class="flip-card__overlay">
+                  <h3 data-ar="دعم متخصص" data-en="Expert support">دعم متخصص</h3>
+                  <span data-ar="اقلب البطاقة ←" data-en="Flip card →">اقلب البطاقة ←</span>
+                </div>
+              </div>
+              <div class="flip-card__face flip-card__face--back">
+                <h3 data-ar="شراكة دائمة" data-en="Lasting partnership">شراكة دائمة</h3>
+                <p data-ar="دعم فني مستمر ومتخصص يلبي احتياجات عملك في كل مرحلة." data-en="Continuous specialized support at every stage of your business.">دعم فني مستمر ومتخصص يلبي احتياجات عملك في كل مرحلة.</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <!-- SEO Block -->
       <div class="split container">
-        <div class="split__visual">
-          <div class="illus illus--seo">
-            <div class="illus__target">
-              <div class="illus__ring"></div>
-              <div class="illus__ring"></div>
-              <div class="illus__bull"></div>
-              <div class="illus__arrow"></div>
-            </div>
-            <div class="illus__bars">
-              <i style="--h:40%"></i><i style="--h:65%"></i><i style="--h:50%"></i><i style="--h:85%"></i><i style="--h:100%"></i>
-            </div>
-          </div>
+        <div class="split__visual reveal-text">
+          <img src="https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?w=900&q=80" alt="">
         </div>
         <div class="split__text">
-          <h3>تحسين محركات البحث <em>(SEO)</em></h3>
-          <p class="split__en">Search Engine Optimization</p>
-          <p>نرفع ترتيب موقعك في نتائج البحث مثل Google لزيادة الزيارات العضوية والتفاعل عبر استراتيجيات تقنية دقيقة.</p>
-          <ul class="check-list">
-            <li>تحليل شامل للموقع والسوق والمنافسين</li>
-            <li>إنشاء محتوى مبني على كلمات مفتاحية مستهدفة</li>
-            <li>تحسين تجربة المستخدم: سرعة، سهولة، أمان</li>
-            <li>تقارير أداء دورية وتوصيات للتحسين</li>
-          </ul>
+          <h3 class="reveal-text" data-ar="تحسين محركات البحث (SEO)" data-en="Search Engine Optimization (SEO)">تحسين محركات البحث (SEO)</h3>
+          <p class="reveal-text" data-ar="نرفع ترتيب موقعك في Google لزيادة الزيارات العضوية عبر تحليل شامل، محتوى مستهدف، تجربة مستخدم أسرع، وتقارير دورية." data-en="We raise your Google ranking for organic growth through full analysis, targeted content, faster UX, and periodic reports.">نرفع ترتيب موقعك في Google لزيادة الزيارات العضوية عبر تحليل شامل، محتوى مستهدف، تجربة مستخدم أسرع، وتقارير دورية.</p>
         </div>
       </div>
 
-      <!-- Business Development -->
       <div class="split split--reverse container">
-        <div class="split__visual">
-          <div class="illus illus--rocket">
-            <div class="rocket">
-              <div class="rocket__body"></div>
-              <div class="rocket__window"></div>
-              <div class="rocket__fin rocket__fin--l"></div>
-              <div class="rocket__fin rocket__fin--r"></div>
-              <div class="rocket__flame"></div>
-              <div class="rocket__smoke"></div>
-            </div>
-            <div class="rocket__chart">
-              <span></span><span></span><span></span>
-            </div>
-          </div>
+        <div class="split__visual reveal-text">
+          <img src="https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=900&q=80" alt="">
         </div>
         <div class="split__text">
-          <h3>تطوير الأعمال</h3>
-          <p class="split__en">Business Development</p>
-          <p>نُحسّن أداء عملك ونعزز نجاحه عبر استراتيجيات متعددة تغطي النمو والفرق والأنظمة.</p>
-          <ul class="check-list">
-            <li>تحليل السوق والجمهور المستهدف</li>
-            <li>ابتكار خطط التسويق والمبيعات وتطوير المنتجات</li>
-            <li>تطوير الموارد البشرية بالتدريب المستمر</li>
-            <li>إدارة وتحفيز الفريق العامل</li>
-            <li>تطبيق أنظمة إدارية حديثة</li>
-            <li>استشارات أعمال مبنية على البيانات والتحليلات</li>
-          </ul>
+          <h3 class="reveal-text" data-ar="تطوير الأعمال" data-en="Business Development">تطوير الأعمال</h3>
+          <p class="reveal-text" data-ar="استراتيجيات نمو تشمل تحليل السوق، خطط المبيعات، تدريب الفرق، أنظمة إدارية حديثة، واستشارات مبنية على البيانات." data-en="Growth strategies covering market analysis, sales plans, team training, modern systems, and data-driven consulting.">استراتيجيات نمو تشمل تحليل السوق، خطط المبيعات، تدريب الفرق، أنظمة إدارية حديثة، واستشارات مبنية على البيانات.</p>
         </div>
       </div>
 
       <div class="realm__cta container">
-        <a href="#contact-modal" class="btn-glow open-contact">ابدأ حملتك معنا</a>
+        <a href="#contact-modal" class="btn-glow open-contact reveal-text" data-ar="ابدأ حملتك مع سعودي تريند" data-en="Start your campaign with Saudi Trend">ابدأ حملتك مع سعودي تريند</a>
       </div>
     </div>
   </section>
 
-  <!-- ========== SECTION: DESIGN ========== -->
+  <!-- ========== DESIGN ========== -->
   <section class="realm" id="realm-design" data-realm="design" aria-hidden="true">
-    <div class="realm__bg realm__bg--design"></div>
-    <button class="realm__back magnetic" data-s="0.3" aria-label="العودة للبوابة">
+    <div class="realm__bg">
+      <img src="https://images.unsplash.com/photo-1626785774573-4b7993143457?w=1600&q=80" alt="">
+      <div class="realm__bg-veil"></div>
+    </div>
+    <button class="realm__back magnetic" data-s="0.25" type="button">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
-      <span>عودة للبوابة</span>
+      <span data-ar="عودة للبوابة" data-en="Back to gate">عودة للبوابة</span>
     </button>
 
     <div class="realm__scroll">
       <div class="realm__hero container">
-        <span class="realm__label">سعودي تريند · التصميم</span>
-        <h2 class="realm__title">التصميم والفيديوهات</h2>
-        <p class="realm__en">Design, Branding & Motion</p>
-        <p class="realm__desc">من الهوية البصرية إلى المواقع والمتاجر والفيديو والموشن — نصنع تجربة بصرية تُميّز علامتك.</p>
+        <div class="logo logo--sm realm__logo">
+          <span class="logo__ar">سعودي <em>تريند</em></span>
+          <span class="logo__en">Saudi <em>Trend</em></span>
+        </div>
+        <span class="realm__label reveal-text" data-ar="قسم التصميم والفيديو" data-en="Design & Video Division">قسم التصميم والفيديو</span>
+        <h2 class="realm__title reveal-text" data-ar="هوية بصرية تليق بالطموح" data-en="Visual identity worthy of ambition">هوية بصرية تليق بالطموح</h2>
+        <p class="realm__desc reveal-text" data-ar="من المواقع والمتاجر إلى الهوية والموشن — نصنع حضوراً فاخراً يعكس قيم علامتك." data-en="From websites and stores to brand identity and motion — we craft a luxury presence that reflects your brand.">من المواقع والمتاجر إلى الهوية والموشن — نصنع حضوراً فاخراً يعكس قيم علامتك.</p>
       </div>
 
-      <!-- Web Design -->
-      <div class="split container">
-        <div class="split__text">
-          <h3>تصميم وبرمجة المواقع والمتاجر</h3>
-          <p class="split__en">Websites & E-commerce</p>
-          <p>مواقع ومتاجر إلكترونية أنيقة، سريعة، ومتوافقة مع محركات البحث وأحدث التقنيات.</p>
-        </div>
-        <div class="split__visual">
-          <div class="illus illus--web">
-            <div class="browser">
-              <div class="browser__dots"><i></i><i></i><i></i></div>
-              <div class="browser__screen">
-                <div class="browser__block"></div>
-                <div class="browser__block browser__block--sm"></div>
-                <div class="browser__block browser__block--mid"></div>
-              </div>
-            </div>
-            <div class="tablet-guy"></div>
-          </div>
-        </div>
+      <div class="container gallery gallery--wide">
+        <figure class="gallery__item reveal-text"><img src="https://images.unsplash.com/photo-1586717791821-3f44a563fa4c?w=700&q=80" alt=""><figcaption data-ar="تصميم واجهات" data-en="UI design">تصميم واجهات</figcaption></figure>
+        <figure class="gallery__item reveal-text"><img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=700&q=80" alt=""><figcaption data-ar="فن بصري" data-en="Visual art">فن بصري</figcaption></figure>
+        <figure class="gallery__item reveal-text"><img src="https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=700&q=80" alt=""><figcaption data-ar="إنتاج فيديو" data-en="Video production">إنتاج فيديو</figcaption></figure>
+        <figure class="gallery__item reveal-text"><img src="https://images.unsplash.com/photo-1634942537034-253176668a8d?w=700&q=80" alt=""><figcaption data-ar="هوية تجارية" data-en="Brand identity">هوية تجارية</figcaption></figure>
       </div>
 
       <div class="container">
-        <div class="folder-grid">
-          <div class="folder folder--fill"><span>سهل الاستخدام</span></div>
-          <div class="folder folder--empty"><span>متوافق مع محركات البحث</span></div>
-          <div class="folder folder--fill"><span>دعم فني مستمر</span></div>
-          <div class="folder folder--empty"><span>تصميم جذاب</span></div>
-          <div class="folder folder--fill"><span>متجاوب مع جميع الأجهزة</span></div>
-          <div class="folder folder--empty"><span>ملائم لأحدث التقنيات</span></div>
-        </div>
-      </div>
-
-      <!-- Brand Identity -->
-      <div class="split split--reverse container">
-        <div class="split__visual">
-          <div class="illus illus--brand">
-            <div class="brand-cube">
-              <div class="brand-cube__face">
-                <svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="10" stroke="currentColor" stroke-width="2"/><circle cx="20" cy="20" r="4" fill="currentColor"/></svg>
+        <p class="section-hint reveal-text" data-ar="✦ اضغط البطاقة لتقلب سحرياً" data-en="✦ Tap a card for a magical flip">✦ اضغط البطاقة لتقلب سحرياً</p>
+        <div class="flip-grid">
+          <div class="flip-card" tabindex="0">
+            <div class="flip-card__inner">
+              <div class="flip-card__face flip-card__face--front">
+                <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=600&q=80" alt="">
+                <div class="flip-card__overlay">
+                  <h3 data-ar="مواقع ومتاجر" data-en="Web & Stores">مواقع ومتاجر</h3>
+                  <span data-ar="اقلب البطاقة ←" data-en="Flip card →">اقلب البطاقة ←</span>
+                </div>
+              </div>
+              <div class="flip-card__face flip-card__face--back">
+                <h3 data-ar="سهولة · سرعة · SEO" data-en="Ease · Speed · SEO">سهولة · سرعة · SEO</h3>
+                <p data-ar="مواقع ومتاجر أنيقة، متجاوبة، ومتوافقة مع محركات البحث وأحدث التقنيات." data-en="Elegant, responsive sites and stores — SEO-ready and modern.">مواقع ومتاجر أنيقة، متجاوبة، ومتوافقة مع محركات البحث وأحدث التقنيات.</p>
               </div>
             </div>
-            <div class="brand-pencil"></div>
-            <div class="brand-shapes">
-              <i></i><i></i><i></i>
-            </div>
           </div>
-        </div>
-        <div class="split__text">
-          <h3>تصميم الهوية التجارية</h3>
-          <p class="split__en">Business Identity Design</p>
-          <p>نصوغ هوية تعكس قيم علامتك ورؤيتها لتعزيز حضورك في السوق.</p>
-          <div class="pill-stack">
-            <span>ابتكار تصميمات جذابة</span>
-            <span>استخدام أحدث التقنيات والأساليب</span>
-            <span>تحديد العناصر البصرية بإبداع (الألوان · الخطوط · الرموز)</span>
-            <span>دعم فني مستمر</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Video / Motion -->
-      <div class="split container">
-        <div class="split__text">
-          <h3>تصميم الفيديو والموشن جرافيك</h3>
-          <p class="split__en">Video Design & Motion Graphic</p>
-          <p>محتوى مرئي ملهم يلائم كل منصة ويستخدم أحدث تقنيات الرسم والتحريك.</p>
-        </div>
-        <div class="split__visual">
-          <div class="illus illus--video">
-            <div class="edit-screen">
-              <div class="edit-screen__preview">
-                <div class="play-btn"></div>
+          <div class="flip-card" tabindex="0">
+            <div class="flip-card__inner">
+              <div class="flip-card__face flip-card__face--front">
+                <img src="https://images.unsplash.com/photo-1626785774625-0b1c2c4eab67?w=600&q=80" alt="">
+                <div class="flip-card__overlay">
+                  <h3 data-ar="هوية تجارية" data-en="Brand identity">هوية تجارية</h3>
+                  <span data-ar="اقلب البطاقة ←" data-en="Flip card →">اقلب البطاقة ←</span>
+                </div>
               </div>
-              <div class="edit-screen__tracks">
-                <i></i><i></i><i></i>
+              <div class="flip-card__face flip-card__face--back">
+                <h3 data-ar="ألوان · خطوط · رموز" data-en="Colors · Fonts · Symbols">ألوان · خطوط · رموز</h3>
+                <p data-ar="تصميمات جذابة تعكس قيم علامتك بأساليب حديثة ودعم فني مستمر." data-en="Attractive designs that mirror your values with modern craft and ongoing support.">تصميمات جذابة تعكس قيم علامتك بأساليب حديثة ودعم فني مستمر.</p>
               </div>
             </div>
-            <div class="clapper"></div>
-            <div class="reel"></div>
           </div>
-        </div>
-      </div>
-
-      <div class="container">
-        <div class="feature-grid feature-grid--teal">
-          <div class="feat feat--solid"><span>أحدث تقنيات الرسم والتحريك</span></div>
-          <div class="feat feat--solid"><span>اختيار رسومات وعناصر مبدعة</span></div>
-          <div class="feat feat--solid"><span>تصميم جذاب فريد</span></div>
-          <div class="feat feat--solid"><span>إنشاء محتوى ملائم وملهم</span></div>
-          <div class="feat feat--solid"><span>مراعاة متطلبات كل منصة</span></div>
-          <div class="feat feat--solid"><span>أحدث التقنيات لإنتاج الفيديوهات</span></div>
+          <div class="flip-card" tabindex="0">
+            <div class="flip-card__inner">
+              <div class="flip-card__face flip-card__face--front">
+                <img src="https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=600&q=80" alt="">
+                <div class="flip-card__overlay">
+                  <h3 data-ar="فيديو وموشن" data-en="Video & Motion">فيديو وموشن</h3>
+                  <span data-ar="اقلب البطاقة ←" data-en="Flip card →">اقلب البطاقة ←</span>
+                </div>
+              </div>
+              <div class="flip-card__face flip-card__face--back">
+                <h3 data-ar="محتوى ملهم" data-en="Inspiring content">محتوى ملهم</h3>
+                <p data-ar="رسم وتحريك بأحدث التقنيات، ملائم لكل منصة، بتصميم فريد وجذاب." data-en="Latest animation techniques, platform-ready, uniquely attractive design.">رسم وتحريك بأحدث التقنيات، ملائم لكل منصة، بتصميم فريد وجذاب.</p>
+              </div>
+            </div>
+          </div>
+          <div class="flip-card" tabindex="0">
+            <div class="flip-card__inner">
+              <div class="flip-card__face flip-card__face--front">
+                <img src="https://images.unsplash.com/photo-1559028012-481c04fa702d?w=600&q=80" alt="">
+                <div class="flip-card__overlay">
+                  <h3 data-ar="تجربة مستخدم" data-en="User experience">تجربة مستخدم</h3>
+                  <span data-ar="اقلب البطاقة ←" data-en="Flip card →">اقلب البطاقة ←</span>
+                </div>
+              </div>
+              <div class="flip-card__face flip-card__face--back">
+                <h3 data-ar="سهولة الاستخدام" data-en="Us-friendly">سهولة الاستخدام</h3>
+                <p data-ar="واجهات أنيقة تجعل رحلة العميل ممتعة وسلسة على كل الأجهزة." data-en="Elegant interfaces that make the customer journey smooth on every device.">واجهات أنيقة تجعل رحلة العميل ممتعة وسلسة على كل الأجهزة.</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
       <div class="realm__cta container">
-        <a href="#contact-modal" class="btn-glow open-contact">صمم هويتك معنا</a>
+        <a href="#contact-modal" class="btn-glow open-contact reveal-text" data-ar="صمم هويتك مع سعودي تريند" data-en="Craft your identity with Saudi Trend">صمم هويتك مع سعودي تريند</a>
       </div>
     </div>
   </section>
 
-  <!-- ========== SECTION: AUTOMATION ========== -->
+  <!-- ========== AUTOMATION ========== -->
   <section class="realm" id="realm-automation" data-realm="automation" aria-hidden="true">
-    <div class="realm__bg realm__bg--automation"></div>
-    <button class="realm__back magnetic" data-s="0.3" aria-label="العودة للبوابة">
+    <div class="realm__bg">
+      <img src="https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=1600&q=80" alt="">
+      <div class="realm__bg-veil"></div>
+    </div>
+    <button class="realm__back magnetic" data-s="0.25" type="button">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
-      <span>عودة للبوابة</span>
+      <span data-ar="عودة للبوابة" data-en="Back to gate">عودة للبوابة</span>
     </button>
 
     <div class="realm__scroll">
       <div class="realm__hero container">
-        <span class="realm__label">سعودي تريند · الأتمتة</span>
-        <h2 class="realm__title">أتمتة الأعمال والتسويق</h2>
-        <p class="realm__en">Business & Marketing Automation</p>
-        <p class="realm__desc">أنظمة ذكية تربط التسويق والمبيعات وخدمة العملاء — أقل جهد يدوي، أكثر كفاءة ونمو.</p>
+        <div class="logo logo--sm realm__logo">
+          <span class="logo__ar">سعودي <em>تريند</em></span>
+          <span class="logo__en">Saudi <em>Trend</em></span>
+        </div>
+        <span class="realm__label reveal-text" data-ar="قسم الأتمتة" data-en="Automation Division">قسم الأتمتة</span>
+        <h2 class="realm__title reveal-text" data-ar="أتمتة الأعمال بذكاء" data-en="Smart business automation">أتمتة الأعمال بذكاء</h2>
+        <p class="realm__desc reveal-text" data-ar="أنظمة تربط التسويق والمبيعات وخدمة العملاء — كفاءة خليجية بمعايير عالمية." data-en="Systems that connect marketing, sales, and support — Gulf excellence to global standards.">أنظمة تربط التسويق والمبيعات وخدمة العملاء — كفاءة خليجية بمعايير عالمية.</p>
+      </div>
+
+      <div class="container gallery">
+        <figure class="gallery__item reveal-text"><img src="https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=700&q=80" alt=""><figcaption data-ar="ذكاء اصطناعي" data-en="Artificial intelligence">ذكاء اصطناعي</figcaption></figure>
+        <figure class="gallery__item reveal-text"><img src="https://images.unsplash.com/photo-1518186285589-2f7649de83e0?w=700&q=80" alt=""><figcaption data-ar="لوحات بيانات" data-en="Dashboards">لوحات بيانات</figcaption></figure>
+        <figure class="gallery__item reveal-text"><img src="https://images.unsplash.com/photo-1504639725590-34d0984388bd?w=700&q=80" alt=""><figcaption data-ar="تكامل الأنظمة" data-en="System integration">تكامل الأنظمة</figcaption></figure>
       </div>
 
       <div class="container">
-        <div class="auto-cards">
-          <article class="auto-card">
-            <div class="auto-card__icon">
-              <svg viewBox="0 0 48 48" fill="none"><rect x="6" y="10" width="36" height="28" rx="3" stroke="currentColor" stroke-width="2"/><path d="M6 18h36M16 28h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <p class="section-hint reveal-text" data-ar="✦ اضغط البطاقة لتكتشف الخدمة" data-en="✦ Tap a card to discover the service">✦ اضغط البطاقة لتكتشف الخدمة</p>
+        <div class="flip-grid">
+          <div class="flip-card" tabindex="0">
+            <div class="flip-card__inner">
+              <div class="flip-card__face flip-card__face--front">
+                <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=600&q=80" alt="">
+                <div class="flip-card__overlay"><h3>CRM</h3><span data-ar="اقلب البطاقة ←" data-en="Flip card →">اقلب البطاقة ←</span></div>
+              </div>
+              <div class="flip-card__face flip-card__face--back">
+                <h3 data-ar="إدارة العملاء" data-en="Customer management">إدارة العملاء</h3>
+                <p data-ar="تتبع الفرص والصفقات والعلاقات في منظومة واحدة." data-en="Track opportunities, deals, and relationships in one system.">تتبع الفرص والصفقات والعلاقات في منظومة واحدة.</p>
+              </div>
             </div>
-            <h3>أنظمة CRM</h3>
-            <p>إدارة علاقات العملاء وتتبع الفرص والصفقات في مكان واحد.</p>
-          </article>
-          <article class="auto-card auto-card--accent">
-            <div class="auto-card__icon">
-              <svg viewBox="0 0 48 48" fill="none"><path d="M8 28c8-14 24-14 32 0" stroke="currentColor" stroke-width="2"/><circle cx="24" cy="18" r="6" stroke="currentColor" stroke-width="2"/><path d="M12 36h24" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          </div>
+          <div class="flip-card" tabindex="0">
+            <div class="flip-card__inner">
+              <div class="flip-card__face flip-card__face--front">
+                <img src="https://images.unsplash.com/photo-1563986768609-322da13575f3?w=600&q=80" alt="">
+                <div class="flip-card__overlay"><h3 data-ar="أتمتة التسويق" data-en="Marketing automation">أتمتة التسويق</h3><span data-ar="اقلب البطاقة ←" data-en="Flip card →">اقلب البطاقة ←</span></div>
+              </div>
+              <div class="flip-card__face flip-card__face--back">
+                <h3 data-ar="رحلات ذكية" data-en="Smart journeys">رحلات ذكية</h3>
+                <p data-ar="إيميلات وحملات تتفاعل تلقائياً مع سلوك الزائر." data-en="Emails and campaigns that react automatically to visitor behavior.">إيميلات وحملات تتفاعل تلقائياً مع سلوك الزائر.</p>
+              </div>
             </div>
-            <h3>أتمتة التسويق</h3>
-            <p>رحلات عملاء، إيميلات تلقائية، وإعلانات تتفاعل مع سلوك الزائر.</p>
-          </article>
-          <article class="auto-card">
-            <div class="auto-card__icon">
-              <svg viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="14" stroke="currentColor" stroke-width="2"/><path d="M24 14v10l6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          </div>
+          <div class="flip-card" tabindex="0">
+            <div class="flip-card__inner">
+              <div class="flip-card__face flip-card__face--front">
+                <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&q=80" alt="">
+                <div class="flip-card__overlay"><h3 data-ar="تقارير لحظية" data-en="Live reports">تقارير لحظية</h3><span data-ar="اقلب البطاقة ←" data-en="Flip card →">اقلب البطاقة ←</span></div>
+              </div>
+              <div class="flip-card__face flip-card__face--back">
+                <h3 data-ar="قرارات بالبيانات" data-en="Data-driven decisions">قرارات بالبيانات</h3>
+                <p data-ar="لوحات مؤشرات تربط قراراتك بأرقام حقيقية." data-en="KPI dashboards that tie your decisions to real numbers.">لوحات مؤشرات تربط قراراتك بأرقام حقيقية.</p>
+              </div>
             </div>
-            <h3>تقارير لحظية</h3>
-            <p>لوحات مؤشرات أداء تربط القرارات ببيانات حقيقية.</p>
-          </article>
-          <article class="auto-card">
-            <div class="auto-card__icon">
-              <svg viewBox="0 0 48 48" fill="none"><path d="M10 34V14l14-6 14 6v20l-14 6-14-6z" stroke="currentColor" stroke-width="2"/><path d="M24 18v16M17 22h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          </div>
+          <div class="flip-card" tabindex="0">
+            <div class="flip-card__inner">
+              <div class="flip-card__face flip-card__face--front">
+                <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=600&q=80" alt="">
+                <div class="flip-card__overlay"><h3 data-ar="تكامل المنصات" data-en="Platform integration">تكامل المنصات</h3><span data-ar="اقلب البطاقة ←" data-en="Flip card →">اقلب البطاقة ←</span></div>
+              </div>
+              <div class="flip-card__face flip-card__face--back">
+                <h3 data-ar="ربط سلس" data-en="Seamless linking">ربط سلس</h3>
+                <p data-ar="ربط المتاجر وواتساب والسوشيال وأدوات الدفع بسلاسة." data-en="Connect stores, WhatsApp, social, and payments seamlessly.">ربط المتاجر وواتساب والسوشيال وأدوات الدفع بسلاسة.</p>
+              </div>
             </div>
-            <h3>تكامل المنصات</h3>
-            <p>ربط المتاجر، واتساب، السوشيال، وأدوات الدفع بسلاسة.</p>
-          </article>
-          <article class="auto-card auto-card--accent">
-            <div class="auto-card__icon">
-              <svg viewBox="0 0 48 48" fill="none"><path d="M24 8l4 8h8l-6 6 2 8-8-4-8 4 2-8-6-6h8l4-8z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="flip-card" tabindex="0">
+            <div class="flip-card__inner">
+              <div class="flip-card__face flip-card__face--front">
+                <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=600&q=80" alt="">
+                <div class="flip-card__overlay"><h3 data-ar="أتمتة المبيعات" data-en="Sales automation">أتمتة المبيعات</h3><span data-ar="اقلب البطاقة ←" data-en="Flip card →">اقلب البطاقة ←</span></div>
+              </div>
+              <div class="flip-card__face flip-card__face--back">
+                <h3 data-ar="قمع ذكي" data-en="Smart funnel">قمع ذكي</h3>
+                <p data-ar="تنبيهات ومسارات تساعدك تغلق الصفقات أسرع." data-en="Alerts and paths that help you close deals faster.">تنبيهات ومسارات تساعدك تغلق الصفقات أسرع.</p>
+              </div>
             </div>
-            <h3>أتمتة المبيعات</h3>
-            <p>قمع مبيعات ذكي وتنبيهات تساعدك تغلق الصفقات أسرع.</p>
-          </article>
-          <article class="auto-card">
-            <div class="auto-card__icon">
-              <svg viewBox="0 0 48 48" fill="none"><rect x="8" y="12" width="32" height="24" rx="3" stroke="currentColor" stroke-width="2"/><path d="M16 20h16M16 26h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="34" cy="32" r="6" fill="var(--green)" stroke="currentColor" stroke-width="2"/><path d="M32 32l1.5 1.5 3-3" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </div>
+          <div class="flip-card" tabindex="0">
+            <div class="flip-card__inner">
+              <div class="flip-card__face flip-card__face--front">
+                <img src="https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=600&q=80" alt="">
+                <div class="flip-card__overlay"><h3 data-ar="أنظمة إدارية" data-en="Admin systems">أنظمة إدارية</h3><span data-ar="اقلب البطاقة ←" data-en="Flip card →">اقلب البطاقة ←</span></div>
+              </div>
+              <div class="flip-card__face flip-card__face--back">
+                <h3 data-ar="عمليات أوتوماتيكية" data-en="Automated ops">عمليات أوتوماتيكية</h3>
+                <p data-ar="عمليات داخلية تقلل الأخطاء وتوفر الوقت والجهد." data-en="Internal processes that cut errors and save time.">عمليات داخلية تقلل الأخطاء وتوفر الوقت والجهد.</p>
+              </div>
             </div>
-            <h3>أنظمة إدارية حديثة</h3>
-            <p>عمليات داخلية أوتوماتيكية تقلل الأخطاء وتوفر الوقت.</p>
-          </article>
+          </div>
         </div>
       </div>
 
       <div class="container flow-section">
-        <h3 class="flow-title">كيف تعمل الأتمتة معنا؟</h3>
+        <h3 class="flow-title reveal-text" data-ar="كيف تعمل الأتمتة معنا؟" data-en="How automation works with us">كيف تعمل الأتمتة معنا؟</h3>
         <div class="flow">
-          <div class="flow__step"><span>01</span><strong>تحليل</strong><p>نفهم عملياتك ونقاط الهدر</p></div>
+          <div class="flow__step reveal-text"><span>01</span><strong data-ar="تحليل" data-en="Analyze">تحليل</strong><p data-ar="نفهم عملياتك ونقاط الهدر" data-en="We map processes and waste">نفهم عملياتك ونقاط الهدر</p></div>
           <div class="flow__line"></div>
-          <div class="flow__step"><span>02</span><strong>تصميم</strong><p>نبني مسار الأتمتة المناسب</p></div>
+          <div class="flow__step reveal-text"><span>02</span><strong data-ar="تصميم" data-en="Design">تصميم</strong><p data-ar="نبني مسار الأتمتة المناسب" data-en="We design the right flow">نبني مسار الأتمتة المناسب</p></div>
           <div class="flow__line"></div>
-          <div class="flow__step"><span>03</span><strong>ربط</strong><p>نوصل أدواتك ببعضها</p></div>
+          <div class="flow__step reveal-text"><span>03</span><strong data-ar="ربط" data-en="Connect">ربط</strong><p data-ar="نوصل أدواتك ببعضها" data-en="We connect your tools">نوصل أدواتك ببعضها</p></div>
           <div class="flow__line"></div>
-          <div class="flow__step"><span>04</span><strong>تشغيل</strong><p>نراقب ونحسّن باستمرار</p></div>
+          <div class="flow__step reveal-text"><span>04</span><strong data-ar="تشغيل" data-en="Run">تشغيل</strong><p data-ar="نراقب ونحسّن باستمرار" data-en="We monitor and improve">نراقب ونحسّن باستمرار</p></div>
         </div>
       </div>
 
       <div class="realm__cta container">
-        <a href="#contact-modal" class="btn-glow open-contact">أتمت عملياتك الآن</a>
+        <a href="#contact-modal" class="btn-glow open-contact reveal-text" data-ar="أتمت عملياتك مع سعودي تريند" data-en="Automate with Saudi Trend">أتمت عملياتك مع سعودي تريند</a>
       </div>
     </div>
   </section>
@@ -431,25 +518,28 @@
   <div class="modal" id="contact-modal" aria-hidden="true">
     <div class="modal__backdrop"></div>
     <div class="modal__box">
-      <button class="modal__close" aria-label="إغلاق">&times;</button>
-      <h3>تواصل مع سعودي تريند</h3>
-      <p>أخبرنا عن مشروعك وسنعود إليك سريعاً</p>
+      <button class="modal__close" type="button" aria-label="Close">&times;</button>
+      <div class="logo logo--sm">
+        <span class="logo__ar">سعودي <em>تريند</em></span>
+        <span class="logo__en">Saudi <em>Trend</em></span>
+      </div>
+      <h3 data-ar="تواصل معنا" data-en="Contact us">تواصل معنا</h3>
+      <p data-ar="أخبرنا عن مشروعك وسنعود إليك بهدوء وفخامة." data-en="Tell us about your project — we will return with care.">أخبرنا عن مشروعك وسنعود إليك بهدوء وفخامة.</p>
       <form id="demo2-form">
-        <input type="text" placeholder="الاسم" required>
-        <input type="email" placeholder="البريد الإلكتروني" dir="ltr" required>
+        <input type="text" data-ar-placeholder="الاسم" data-en-placeholder="Name" placeholder="الاسم" required>
+        <input type="email" data-ar-placeholder="البريد الإلكتروني" data-en-placeholder="Email" placeholder="البريد الإلكتروني" dir="ltr" required>
         <select required>
-          <option value="">اختر القسم</option>
-          <option>التسويق</option>
-          <option>التصميم والفيديو</option>
-          <option>الأتمتة</option>
+          <option value="" data-ar="اختر القسم" data-en="Choose a division">اختر القسم</option>
+          <option data-ar="التسويق" data-en="Marketing">التسويق</option>
+          <option data-ar="التصميم والفيديو" data-en="Design & Video">التصميم والفيديو</option>
+          <option data-ar="الأتمتة" data-en="Automation">الأتمتة</option>
         </select>
-        <textarea rows="3" placeholder="رسالتك" required></textarea>
-        <button type="submit" class="btn-glow">إرسال</button>
+        <textarea rows="3" data-ar-placeholder="رسالتك" data-en-placeholder="Your message" placeholder="رسالتك" required></textarea>
+        <button type="submit" class="btn-glow" data-ar="إرسال" data-en="Send">إرسال</button>
       </form>
     </div>
   </div>
 
-  <!-- Transition overlay when opening portal -->
   <div class="portal-flash" id="portal-flash"></div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>

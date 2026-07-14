@@ -1,35 +1,66 @@
-/* سعودي تريند · Demo 2 — Portal Engine */
+/* سعودي تريند · Demo 2 — Luxury Portal Engine (slow + bilingual + flips) */
 (() => {
   const preloader = document.getElementById('preloader');
   const fill = document.getElementById('preloader-fill');
   const gate = document.getElementById('gate');
   const flash = document.getElementById('portal-flash');
-  const portals = document.querySelectorAll('.portal');
-  const realms = document.querySelectorAll('.realm');
+  const portals = [...document.querySelectorAll('.portal')];
   const cursor = document.getElementById('cursor');
-  const ring = document.getElementById('cursor-ring');
+  const trail = document.getElementById('cursor-trail');
   const modal = document.getElementById('contact-modal');
+  const langBtn = document.getElementById('lang-switch');
   const canvas = document.getElementById('bg-canvas');
   const ctx = canvas.getContext('2d');
 
   let activeRealm = null;
-  let mx = 0, my = 0, rx = 0, ry = 0;
+  let lang = localStorage.getItem('st-lang') || 'ar';
+  let mx = 0, my = 0, tx = 0, ty = 0, rx = 0, ry = 0;
 
-  // ===== Preloader =====
+  // ===== Bilingual =====
+  function applyLang(next) {
+    lang = next;
+    localStorage.setItem('st-lang', lang);
+    document.documentElement.lang = lang;
+    document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+    document.documentElement.dataset.lang = lang;
+
+    document.querySelectorAll('[data-ar][data-en]').forEach(el => {
+      const val = el.getAttribute('data-' + lang);
+      if (val != null) el.textContent = val;
+    });
+
+    document.querySelectorAll('[data-ar-placeholder]').forEach(el => {
+      el.placeholder = el.getAttribute(lang === 'ar' ? 'data-ar-placeholder' : 'data-en-placeholder') || '';
+    });
+
+    // Select options
+    document.querySelectorAll('select option[data-ar]').forEach(opt => {
+      opt.textContent = opt.getAttribute('data-' + lang);
+    });
+  }
+
+  applyLang(lang);
+
+  langBtn.addEventListener('click', () => {
+    applyLang(lang === 'ar' ? 'en' : 'ar');
+    gsap.fromTo(langBtn, { scale: 0.92 }, { scale: 1, duration: 0.6, ease: 'power3.out' });
+  });
+
+  // ===== Preloader (slower) =====
   let p = 0;
   const loadTimer = setInterval(() => {
-    p = Math.min(100, p + Math.random() * 18 + 6);
+    p = Math.min(100, p + Math.random() * 8 + 2);
     fill.style.width = p + '%';
     if (p >= 100) {
       clearInterval(loadTimer);
       setTimeout(() => {
         preloader.classList.add('done');
         introGate();
-      }, 350);
+      }, 700);
     }
-  }, 80);
+  }, 120);
 
-  // ===== Cursor =====
+  // ===== Luxury cursor =====
   const isDesktop = window.matchMedia('(min-width: 769px)').matches;
   if (isDesktop) {
     document.addEventListener('mousemove', (e) => {
@@ -37,38 +68,46 @@
       cursor.style.left = mx + 'px';
       cursor.style.top = my + 'px';
     });
+
+    document.addEventListener('mousedown', () => cursor.classList.add('is-click'));
+    document.addEventListener('mouseup', () => cursor.classList.remove('is-click'));
+
     (function follow() {
-      rx += (mx - rx) * 0.14;
-      ry += (my - ry) * 0.14;
-      ring.style.left = rx + 'px';
-      ring.style.top = ry + 'px';
+      // slow trail
+      tx += (mx - tx) * 0.08;
+      ty += (my - ty) * 0.08;
+      trail.style.left = tx + 'px';
+      trail.style.top = ty + 'px';
+
+      rx += (mx - rx) * 0.18;
+      ry += (my - ry) * 0.18;
       requestAnimationFrame(follow);
     })();
 
-    const hoverSel = 'a, button, .portal, .feat, .folder, .auto-card, .btn-glow, input, select, textarea';
+    const hoverSel = 'a, button, .portal, .flip-card, .btn-glow, .gallery__item, input, select, textarea, .lang-switch';
     document.querySelectorAll(hoverSel).forEach(el => {
-      el.addEventListener('mouseenter', () => ring.classList.add('hover'));
-      el.addEventListener('mouseleave', () => ring.classList.remove('hover'));
+      el.addEventListener('mouseenter', () => cursor.classList.add('is-hover'));
+      el.addEventListener('mouseleave', () => cursor.classList.remove('is-hover'));
     });
   }
 
-  // ===== Magnetic =====
+  // Magnetic (gentler)
   document.querySelectorAll('.magnetic').forEach(el => {
-    const s = parseFloat(el.dataset.s) || 0.3;
+    const s = parseFloat(el.dataset.s) || 0.2;
     el.addEventListener('mousemove', (e) => {
       const r = el.getBoundingClientRect();
       gsap.to(el, {
         x: (e.clientX - r.left - r.width / 2) * s,
         y: (e.clientY - r.top - r.height / 2) * s,
-        duration: 0.35, ease: 'power2.out'
+        duration: 0.7, ease: 'power3.out'
       });
     });
     el.addEventListener('mouseleave', () => {
-      gsap.to(el, { x: 0, y: 0, duration: 0.7, ease: 'elastic.out(1, 0.4)' });
+      gsap.to(el, { x: 0, y: 0, duration: 1.1, ease: 'elastic.out(1, 0.45)' });
     });
   });
 
-  // ===== Canvas particles (Saudi green) =====
+  // ===== Soft gold/green particles =====
   let particles = [];
   function resize() {
     canvas.width = innerWidth;
@@ -76,15 +115,16 @@
   }
   function spawn() {
     particles = [];
-    const n = Math.min(60, Math.floor(innerWidth / 22));
+    const n = Math.min(45, Math.floor(innerWidth / 28));
     for (let i = 0; i < n; i++) {
       particles.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        r: Math.random() * 2.2 + 0.4,
-        vx: (Math.random() - 0.5) * 0.35,
-        vy: (Math.random() - 0.5) * 0.35,
-        a: Math.random() * 0.4 + 0.1
+        r: Math.random() * 1.8 + 0.3,
+        vx: (Math.random() - 0.5) * 0.18,
+        vy: (Math.random() - 0.5) * 0.18,
+        a: Math.random() * 0.35 + 0.08,
+        gold: Math.random() > 0.65
       });
     }
   }
@@ -98,18 +138,19 @@
       if (p.y > canvas.height) p.y = 0;
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(13,122,79,${p.a})`;
+      ctx.fillStyle = p.gold
+        ? `rgba(212,175,55,${p.a})`
+        : `rgba(13,122,84,${p.a})`;
       ctx.fill();
       for (let j = i + 1; j < particles.length; j++) {
         const q = particles[j];
-        const dx = p.x - q.x, dy = p.y - q.y;
-        const d = Math.hypot(dx, dy);
-        if (d < 110) {
+        const d = Math.hypot(p.x - q.x, p.y - q.y);
+        if (d < 100) {
           ctx.beginPath();
           ctx.moveTo(p.x, p.y);
           ctx.lineTo(q.x, q.y);
-          ctx.strokeStyle = `rgba(13,122,79,${0.1 * (1 - d / 110)})`;
-          ctx.lineWidth = 0.6;
+          ctx.strokeStyle = `rgba(212,175,55,${0.07 * (1 - d / 100)})`;
+          ctx.lineWidth = 0.5;
           ctx.stroke();
         }
       }
@@ -119,76 +160,74 @@
   resize(); spawn(); draw();
   addEventListener('resize', () => { resize(); spawn(); });
 
-  // ===== Intro =====
+  // ===== Slow intro =====
   function introGate() {
-    const tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
-    tl.from('.gate__logo', { y: -30, opacity: 0, duration: 0.8 })
-      .from('.gate__links a', { y: -20, opacity: 0, stagger: 0.08, duration: 0.6 }, '-=0.5')
-      .from('.gate__eyebrow', { y: 30, opacity: 0, duration: 0.7 }, '-=0.4')
-      .from('.gate__title .line > span', { y: 100, opacity: 0, stagger: 0.12, duration: 1 }, '-=0.4')
-      .from('.gate__sub', { y: 20, opacity: 0, duration: 0.6 }, '-=0.5')
-      .from('.portal', {
-        y: 80, opacity: 0, scale: 0.85, rotateX: 15,
-        stagger: 0.15, duration: 1, transformPerspective: 800
-      }, '-=0.4')
-      .from('.gate__hint', { opacity: 0, duration: 0.6 }, '-=0.3');
+    // Clear CSS reveal state so fromTo can land on visible
+    gsap.set('.gate .reveal-text', { clearProps: 'all' });
 
-    // Continuous subtle sway on portals
+    const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+    tl.fromTo('.logo--nav', { y: -24, opacity: 0 }, { y: 0, opacity: 1, duration: 1.2 })
+      .fromTo('.gate__actions > *', { y: -16, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.12, duration: 1 }, '-=0.8')
+      .fromTo('.gate__eyebrow', { y: 28, opacity: 0 }, { y: 0, opacity: 1, duration: 1.1 }, '-=0.6')
+      .fromTo('.gate__title .line > span', { y: 90, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.22, duration: 1.5 }, '-=0.7')
+      .fromTo('.gate__sub', { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 1.1 }, '-=0.9')
+      .fromTo('.portal', {
+        y: 70, opacity: 0, scale: 0.88
+      }, {
+        y: 0, opacity: 1, scale: 1,
+        stagger: 0.22, duration: 1.5, transformPerspective: 900
+      }, '-=0.7')
+      .fromTo('.gate__hint', { opacity: 0 }, { opacity: 1, duration: 1 }, '-=0.6');
+
     portals.forEach((portal, i) => {
       gsap.to(portal.querySelector('.portal__frame'), {
-        y: i % 2 === 0 ? -8 : 8,
-        duration: 2.5 + i * 0.3,
+        y: i % 2 === 0 ? -6 : 6,
+        duration: 4 + i * 0.4,
         yoyo: true,
         repeat: -1,
         ease: 'sine.inOut',
-        delay: i * 0.2
+        delay: i * 0.4
       });
     });
   }
 
-  // ===== Open Portal =====
+  // ===== Portal open / close (slower) =====
   portals.forEach(portal => {
     portal.addEventListener('click', () => {
       if (activeRealm) return;
-      const id = portal.dataset.section;
-      openRealm(id, portal);
+      openRealm(portal.dataset.section, portal);
     });
   });
 
   function openRealm(id, portalEl) {
     const realm = document.getElementById('realm-' + id);
     if (!realm) return;
-
     activeRealm = id;
     portalEl.classList.add('opening');
     document.body.classList.add('locked', 'in-realm');
 
-    // Other portals fade away
     portals.forEach(p => {
-      if (p !== portalEl) gsap.to(p, { opacity: 0, scale: 0.9, duration: 0.4 });
+      if (p !== portalEl) gsap.to(p, { opacity: 0.15, scale: 0.94, duration: 0.9, ease: 'power2.out' });
     });
 
-    const tl = gsap.timeline({
+    gsap.timeline({
       onComplete: () => {
         gate.classList.add('hidden');
         realm.classList.add('active');
         realm.setAttribute('aria-hidden', 'false');
         gsap.set(realm, { opacity: 1, scale: 1 });
         realm.querySelector('.realm__scroll').scrollTop = 0;
+        // reset flips
+        realm.querySelectorAll('.flip-card.is-flipped').forEach(c => c.classList.remove('is-flipped'));
         animateRealmContent(realm);
         gsap.set(flash, { opacity: 0 });
         portalEl.classList.remove('opening');
         gsap.set(portals, { opacity: 1, scale: 1, clearProps: 'transform' });
       }
-    });
-
-    tl.to(portalEl.querySelector('.portal__frame'), {
-      scale: 1.2,
-      duration: 0.55,
-      ease: 'power2.in'
     })
-    .to(flash, { opacity: 1, duration: 0.4, ease: 'power2.in' }, '-=0.2')
-    .to(gate, { opacity: 0.2, duration: 0.3 }, '-=0.35');
+    .to(portalEl.querySelector('.portal__frame'), { scale: 1.18, duration: 0.9, ease: 'power2.inOut' })
+    .to(flash, { opacity: 1, duration: 0.7, ease: 'power2.inOut' }, '-=0.35')
+    .to(gate, { opacity: 0.2, duration: 0.55 }, '-=0.55');
   }
 
   function closeRealm() {
@@ -206,23 +245,22 @@
         activeRealm = null;
       }
     })
-    .to(flash, { opacity: 1, duration: 0.25 })
-    .to(realm, { opacity: 0, scale: 0.96, duration: 0.3 }, '-=0.05')
+    .to(flash, { opacity: 1, duration: 0.45 })
+    .to(realm, { opacity: 0, scale: 0.97, duration: 0.55 }, '-=0.1')
     .add(() => {
       realm.classList.remove('active');
       gate.classList.remove('hidden');
       gsap.set(gate, { opacity: 0 });
     })
-    .to(flash, { opacity: 0, duration: 0.45 })
-    .to(gate, { opacity: 1, duration: 0.5, ease: 'power3.out' }, '-=0.3')
-    .from('.portal', { y: 30, opacity: 0, stagger: 0.08, duration: 0.6, ease: 'power3.out' }, '-=0.35');
+    .to(flash, { opacity: 0, duration: 0.75 })
+    .to(gate, { opacity: 1, duration: 0.9, ease: 'power3.out' }, '-=0.45')
+    .from('.portal', { y: 28, opacity: 0, stagger: 0.14, duration: 1, ease: 'power3.out' }, '-=0.55');
   }
 
   document.querySelectorAll('.realm__back').forEach(btn => {
     btn.addEventListener('click', closeRealm);
   });
 
-  // Esc to close
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       if (modal.classList.contains('open')) closeModal();
@@ -230,56 +268,103 @@
     }
   });
 
-  // ===== Realm content animations =====
-  function animateRealmContent(realm) {
-    const scrollRoot = realm.querySelector('.realm__scroll');
+  // ===== Flip cards (magical click) =====
+  function bindFlips(scope) {
+    scope.querySelectorAll('.flip-card').forEach(card => {
+      if (card.dataset.bound) return;
+      card.dataset.bound = '1';
 
-    gsap.from(realm.querySelectorAll('.realm__label, .realm__title, .realm__en, .realm__desc'), {
-      y: 40, opacity: 0, stagger: 0.08, duration: 0.8, ease: 'power3.out', delay: 0.15
-    });
-
-    gsap.from(realm.querySelectorAll('.feat, .folder, .auto-card, .pill-stack span'), {
-      y: 50, opacity: 0, scale: 0.92, stagger: 0.06, duration: 0.7, ease: 'power3.out', delay: 0.35
-    });
-
-    gsap.from(realm.querySelectorAll('.split'), {
-      y: 60, opacity: 0, stagger: 0.15, duration: 0.9, ease: 'power3.out', delay: 0.45
-    });
-
-    gsap.from(realm.querySelectorAll('.flow__step'), {
-      y: 30, opacity: 0, stagger: 0.1, duration: 0.7, ease: 'power3.out', delay: 0.5
-    });
-
-    // Card tilt
-    realm.querySelectorAll('.auto-card, .feat, .folder').forEach(card => {
-      card.addEventListener('mousemove', (e) => {
-        const r = card.getBoundingClientRect();
-        const x = (e.clientX - r.left) / r.width - 0.5;
-        const y = (e.clientY - r.top) / r.height - 0.5;
-        gsap.to(card, {
-          rotateY: x * 6, rotateX: -y * 6,
-          duration: 0.3, ease: 'power2.out', transformPerspective: 600
+      const flip = () => {
+        const was = card.classList.contains('is-flipped');
+        // close others in same grid
+        card.closest('.flip-grid')?.querySelectorAll('.flip-card.is-flipped').forEach(c => {
+          if (c !== card) c.classList.remove('is-flipped');
         });
+        card.classList.toggle('is-flipped', !was);
+
+        // sparkle punch
+        gsap.fromTo(card, { scale: 0.96 }, {
+          scale: 1, duration: 0.9, ease: 'elastic.out(1, 0.55)'
+        });
+      };
+
+      card.addEventListener('click', (e) => {
+        e.stopPropagation();
+        flip();
       });
-      card.addEventListener('mouseleave', () => {
-        gsap.to(card, { rotateY: 0, rotateX: 0, duration: 0.5, ease: 'elastic.out(1, 0.5)' });
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          flip();
+        }
       });
     });
+  }
+  bindFlips(document);
 
-    // Parallax illustrations while scrolling realm
-    const illus = realm.querySelectorAll('.illus');
-    scrollRoot.addEventListener('scroll', () => {
-      const st = scrollRoot.scrollTop;
-      illus.forEach((el, i) => {
-        el.style.transform = `translateY(${st * (0.04 + i * 0.01)}px)`;
+  // ===== Realm text & image entrances (IntersectionObserver + GSAP) =====
+  function animateRealmContent(realm) {
+    applyLang(lang); // refresh texts inside realm
+
+    const scrollRoot = realm.querySelector('.realm__scroll');
+    const reveals = [...realm.querySelectorAll('.reveal-text')];
+
+    // reset
+    gsap.set(reveals, { opacity: 0, y: 40 });
+
+    // hero cascade
+    gsap.to(realm.querySelectorAll('.realm__logo, .realm__label, .realm__title, .realm__desc'), {
+      opacity: 1, y: 0, stagger: 0.18, duration: 1.3, ease: 'power3.out', delay: 0.25
+    });
+
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        const el = entry.target;
+        gsap.to(el, {
+          opacity: 1, y: 0,
+          duration: 1.25,
+          ease: 'power3.out',
+          delay: Number(el.dataset.delay || 0)
+        });
+        io.unobserve(el);
       });
-    }, { passive: true });
+    }, { root: scrollRoot, threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+    reveals.forEach((el, i) => {
+      // skip those already animated in hero if needed
+      el.dataset.delay = (i % 4) * 0.08;
+      io.observe(el);
+    });
+
+    // gallery image drift
+    realm.querySelectorAll('.gallery__item img, .split__visual img').forEach((img, i) => {
+      gsap.fromTo(img,
+        { scale: 1.12, opacity: 0.6 },
+        {
+          scale: 1, opacity: 1, duration: 2, ease: 'power2.out', delay: 0.3 + i * 0.1,
+          scrollTrigger: undefined
+        }
+      );
+    });
+
+    bindFlips(realm);
+
+    // mild parallax
+    const onScroll = () => {
+      const st = scrollRoot.scrollTop;
+      realm.querySelectorAll('.gallery__item, .split__visual').forEach((el, i) => {
+        el.style.transform = `translateY(${st * (0.02 + i * 0.005)}px)`;
+      });
+    };
+    scrollRoot.addEventListener('scroll', onScroll, { passive: true });
   }
 
   // ===== Modal =====
   function openModal() {
     modal.classList.add('open');
     modal.setAttribute('aria-hidden', 'false');
+    applyLang(lang);
   }
   function closeModal() {
     modal.classList.remove('open');
@@ -298,27 +383,29 @@
   document.getElementById('demo2-form').addEventListener('submit', (e) => {
     e.preventDefault();
     const btn = e.target.querySelector('button');
-    const orig = btn.textContent;
-    btn.textContent = 'جاري الإرسال...';
+    const done = lang === 'ar' ? 'تم الإرسال ✓' : 'Sent ✓';
+    const sending = lang === 'ar' ? 'جاري الإرسال...' : 'Sending...';
+    const orig = btn.getAttribute('data-' + lang) || btn.textContent;
+    btn.textContent = sending;
     setTimeout(() => {
-      btn.textContent = 'تم الإرسال ✓';
-      gsap.fromTo(btn, { scale: 0.95 }, { scale: 1, duration: 0.4, ease: 'elastic.out(1, 0.4)' });
+      btn.textContent = done;
+      gsap.fromTo(btn, { scale: 0.96 }, { scale: 1, duration: 0.8, ease: 'elastic.out(1, 0.5)' });
       setTimeout(() => {
         e.target.reset();
         btn.textContent = orig;
         closeModal();
-      }, 1600);
-    }, 1000);
+      }, 1800);
+    }, 1200);
   });
 
-  // Portal hover sound-like visual (scale glow)
+  // Portal glow slow hover
   portals.forEach(portal => {
     const glow = portal.querySelector('.portal__glow');
     portal.addEventListener('mouseenter', () => {
-      gsap.to(glow, { opacity: 1, scale: 1.2, duration: 0.5 });
+      gsap.to(glow, { opacity: 1, scale: 1.15, duration: 1.1, ease: 'power2.out' });
     });
     portal.addEventListener('mouseleave', () => {
-      gsap.to(glow, { opacity: 0.5, scale: 1, duration: 0.5 });
+      gsap.to(glow, { opacity: 0.4, scale: 1, duration: 1.2, ease: 'power2.out' });
     });
   });
 })();
