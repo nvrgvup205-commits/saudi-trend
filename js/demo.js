@@ -24,6 +24,7 @@
       clearInterval(timer);
       setTimeout(() => {
         preloader.classList.add('done');
+        if (window.SaudiSound) SaudiSound.boot();
         intro();
       }, 400);
     }
@@ -383,11 +384,13 @@
         rotation: rot * 0.08,
         duration: 0.72,
         ease: gravityIn,
-        force3D: true
+        force3D: true,
+        onStart: () => { if (window.SaudiSound) SaudiSound.wordDrop(); }
       }, start);
       tl.to(word, {
         scaleY: 0.74, scaleX: 1.16, rotation: 0,
-        duration: 0.09, ease: 'power2.out'
+        duration: 0.09, ease: 'power2.out',
+        onStart: () => { if (window.SaudiSound) SaudiSound.wordImpact(); }
       }, start + 0.72);
       tl.to(word, {
         scaleY: 1, scaleX: 1,
@@ -444,6 +447,7 @@
         dive.setAttribute('aria-hidden', 'false');
         gsap.set(dive, { visibility: 'visible' });
         LiquidField.start(order.map(i => imgs[i]));
+        if (window.SaudiSound) SaudiSound.liquidStart();
       })
       .to(dive, { opacity: 1, duration: 0.35, ease: 'power2.out' })
       .to(mind, { opacity: 0, duration: 0.28 }, '<')
@@ -472,6 +476,7 @@
       const dur = 0.85 + (i % 4) * 0.12; // overlapping feel
       tl.add(() => {
         LiquidField.crossTo(i, mode);
+        if (window.SaudiSound) SaudiSound.imageShift(mode);
       }, cursorT);
       tl.to({ v: 0 }, {
         v: 1, duration: dur, ease: 'none',
@@ -483,6 +488,7 @@
 
     const settle = Math.max(cursorT + 1.1, subStart + subWords.length * 0.42 + 1.35);
     tl.to({}, { duration: 0.4 }, settle)
+      .add(() => { if (window.SaudiSound) SaudiSound.diveEnd(); }, settle)
       .to([diveLens, dive], { opacity: 0, duration: 0.45, ease: 'power2.in' }, settle + 0.15);
   }
 

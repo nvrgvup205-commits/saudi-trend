@@ -61,6 +61,7 @@
 
   langBtn.addEventListener('click', () => {
     applyLang(lang === 'ar' ? 'en' : 'ar');
+    if (window.SaudiSound) SaudiSound.lang();
     gsap.fromTo(langBtn, { scale: 0.92 }, { scale: 1, duration: 0.5, ease: 'power3.out' });
   });
 
@@ -73,6 +74,7 @@
       clearInterval(loadTimer);
       setTimeout(() => {
         preloader.classList.add('done');
+        if (window.SaudiSound) SaudiSound.boot();
         introGate();
       }, 500);
     }
@@ -222,7 +224,8 @@
         opacity: 1,
         rotation: startRot * 0.15,
         duration: 0.55,
-        ease: gravityIn
+        ease: gravityIn,
+        onStart: () => { if (window.SaudiSound) SaudiSound.wordDrop(); }
       }, start);
 
       // Impact squash then settle (bounce + slight overshoot)
@@ -231,7 +234,8 @@
         scaleX: 1.18,
         rotation: 0,
         duration: 0.08,
-        ease: 'power2.out'
+        ease: 'power2.out',
+        onStart: () => { if (window.SaudiSound) SaudiSound.wordImpact(); }
       }, start + 0.55);
 
       tl.to(word, {
@@ -250,6 +254,7 @@
     const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
     if (portalsWrap) portalsWrap.classList.remove('portals--await');
     if (portalsWrap) portalsWrap.classList.add('is-revealed');
+    if (window.SaudiSound) SaudiSound.portalsAppear();
 
     tl.to(gateArch, { opacity: 1, duration: 0.55 }, 0)
       .fromTo('.portal',
@@ -317,7 +322,8 @@
     if (scroller) scroller.scrollTop = 0;
     realm.querySelectorAll('.flip-card.is-flipped').forEach(c => c.classList.remove('is-flipped'));
 
-    try { animateRealmContent(realm); } catch (err) { console.warn(err); }
+    try { animateRealmContent(realm);
+    if (window.SaudiSound) SaudiSound.success(); } catch (err) { console.warn(err); }
 
     if (portalEl) portalEl.classList.remove('opening');
     portals.forEach(p => gsap.set(p, { opacity: 1, scale: 1, clearProps: 'transform' }));
@@ -337,7 +343,10 @@
 
     portalEl.classList.add('opening');
     document.body.classList.add('locked', 'in-realm');
-    if (window.SaudiSound) SaudiSound.enter();
+    if (window.SaudiSound) {
+      SaudiSound.enter();
+      setTimeout(() => SaudiSound.skyflight(), 280);
+    }
 
     portals.forEach(p => {
       if (p !== portalEl) gsap.to(p, { opacity: 0.3, scale: 0.96, duration: 0.5 });
