@@ -440,32 +440,30 @@
 
   function revealGates() {
     if (!brainEl || brainEl.classList.contains('is-open')) return;
+    // Hide trigger immediately so gates never appear behind it
+    if (brainTrigger) {
+      brainTrigger.setAttribute('aria-expanded', 'true');
+      brainTrigger.style.display = 'none';
+    }
     brainEl.classList.add('is-open');
-    if (brainTrigger) brainTrigger.setAttribute('aria-expanded', 'true');
     if (window.SaudiSound) SaudiSound.confirm();
 
     if (window.gsap) {
       gsap.fromTo('.brain__svg',
-        { scale: 0.55, autoAlpha: 0 },
-        { scale: 1, autoAlpha: 1, duration: 0.85, ease: 'power3.out' }
+        { scale: 0.4, autoAlpha: 0 },
+        { scale: 1, autoAlpha: 1, duration: 0.9, ease: 'power3.out' }
       );
       gsap.fromTo('.lobe',
-        { scale: 0.15, autoAlpha: 0, transformOrigin: '50% 50%' },
+        { scale: 0.12, autoAlpha: 0, transformOrigin: '50% 55%' },
         {
           scale: 1,
           autoAlpha: 1,
-          stagger: 0.12,
-          duration: 0.95,
+          stagger: 0.1,
+          duration: 1,
           ease: 'expo.out',
           clearProps: 'transform',
         }
       );
-      gsap.to('.brain__trigger', {
-        scale: 1.4,
-        autoAlpha: 0,
-        duration: 0.5,
-        ease: 'power2.in',
-      });
     }
   }
 
