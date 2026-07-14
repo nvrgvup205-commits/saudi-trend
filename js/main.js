@@ -1,4 +1,4 @@
-/* سعودي تريند — الكلاسيكية المبهرة · محرك الحركة */
+/* سعودي تريند — واجهة النمو التقنية · محرك الحركة */
 (() => {
   const header = document.getElementById('header');
   const navToggle = document.getElementById('nav-toggle');
@@ -212,18 +212,18 @@
   // ── Elegant hero lexicon — curated constellation + entrance ──
   const lexiconRoot = document.getElementById('hero-lexicon');
   const LEXICON = [
-    { text: 'استراتيجية', tone: 'gold', x: 7,  y: 22, size: 1.45, from: 'left' },
-    { text: 'تميّز',       tone: 'mist', x: 46, y: 13, size: 1.2,  from: 'top' },
-    { text: 'هوية',        tone: 'gold', x: 78, y: 17, size: 1.35, from: 'top' },
-    { text: 'حضور',        tone: 'jade', x: 18, y: 38, size: 1.0,  from: 'left' },
-    { text: 'إبداع',       tone: 'mist', x: 88, y: 34, size: 1.1,  from: 'right' },
-    { text: 'نمو',         tone: 'gold', x: 10, y: 58, size: 1.3,  from: 'left' },
-    { text: 'موشن',        tone: 'mist', x: 82, y: 54, size: 0.95, from: 'right' },
-    { text: 'أتمتة',       tone: 'jade', x: 14, y: 76, size: 1.2,  from: 'bottom' },
-    { text: 'فيديو',       tone: 'mist', x: 90, y: 72, size: 1.05, from: 'right' },
-    { text: 'تكامل',       tone: 'jade', x: 36, y: 82, size: 0.95, from: 'bottom' },
-    { text: 'رؤية',        tone: 'gold', x: 28, y: 18, size: 1.05, from: 'top' },
-    { text: 'كفاءة',       tone: 'jade', x: 62, y: 78, size: 0.9,  from: 'bottom' },
+    { text: 'strategy()', tone: 'gold', x: 8,  y: 20, size: 1.15, from: 'left' },
+    { text: 'نمو',         tone: 'mist', x: 44, y: 12, size: 1.25, from: 'top' },
+    { text: 'هوية',        tone: 'gold', x: 76, y: 16, size: 1.2,  from: 'top' },
+    { text: 'pipeline',    tone: 'jade', x: 16, y: 36, size: 0.95, from: 'left' },
+    { text: 'موشن',        tone: 'mist', x: 88, y: 32, size: 1.05, from: 'right' },
+    { text: 'API',         tone: 'jade', x: 10, y: 56, size: 1.2,  from: 'left' },
+    { text: 'أتمتة',       tone: 'gold', x: 82, y: 52, size: 1.15, from: 'right' },
+    { text: 'deploy',      tone: 'mist', x: 14, y: 74, size: 0.95, from: 'bottom' },
+    { text: 'فيديو',       tone: 'gold', x: 90, y: 70, size: 1.0,  from: 'right' },
+    { text: 'تكامل',       tone: 'jade', x: 36, y: 80, size: 1.0,  from: 'bottom' },
+    { text: 'KPI',         tone: 'mist', x: 28, y: 16, size: 0.9,  from: 'top' },
+    { text: 'كفاءة',       tone: 'jade', x: 62, y: 78, size: 0.95, from: 'bottom' },
   ];
 
   function mountLexicon() {
@@ -235,6 +235,7 @@
       const el = document.createElement('span');
       el.className = `hero__word hero__word--${item.tone}`;
       el.textContent = item.text;
+      el.dir = /[A-Za-z()]/.test(item.text) ? 'ltr' : 'rtl';
       el.style.left = item.x + '%';
       el.style.top = item.y + '%';
       el.style.fontSize = `clamp(${0.85 * item.size}rem, ${2.1 * item.size}vw, ${1.55 * item.size}rem)`;
