@@ -8,11 +8,12 @@
   const cursor = document.getElementById('cursor');
   const canvas = document.getElementById('particles-canvas');
   const ctx = canvas.getContext('2d');
+  const hookTitle = document.getElementById('dive-hook-title');
+  const hookSub = document.getElementById('dive-hook-sub');
 
   let active = null;
   let busy = false;
 
-  // Preloader
   let p = 0;
   const timer = setInterval(() => {
     p = Math.min(100, p + Math.random() * 12 + 4);
@@ -26,7 +27,6 @@
     }
   }, 90);
 
-  // Cursor
   if (window.matchMedia('(min-width: 769px)').matches && cursor) {
     document.addEventListener('mousemove', (e) => {
       cursor.style.left = e.clientX + 'px';
@@ -38,7 +38,6 @@
     });
   }
 
-  // Particles
   let particles = [];
   function resize() {
     canvas.width = innerWidth;
@@ -89,9 +88,11 @@
 
   function intro() {
     gsap.from('.mind__logo, .mind__links a', { y: -16, opacity: 0, stagger: 0.08, duration: 0.8 });
-    gsap.from('.mind__eyebrow, .mind__title, .mind__sub', { y: 28, opacity: 0, stagger: 0.12, duration: 1, delay: 0.15 });
-    gsap.from('.lobe', { scale: 0.7, opacity: 0, transformOrigin: '320px 210px', stagger: 0.15, duration: 1.1, delay: 0.35, ease: 'power3.out' });
-    gsap.from('.brain__caption', { opacity: 0, duration: 0.8, delay: 1.1 });
+    gsap.from('.mind__title, .mind__sub', { y: 24, opacity: 0, stagger: 0.12, duration: 0.95, delay: 0.1 });
+    gsap.from('.lobe', {
+      scale: 0.75, opacity: 0, transformOrigin: '320px 200px',
+      stagger: 0.12, duration: 1, delay: 0.25, ease: 'power3.out'
+    });
   }
 
   function openChamber(id, lobeEl) {
@@ -101,17 +102,19 @@
     mind.classList.add('is-diving');
     document.body.classList.add('locked');
 
-    const chamber = document.getElementById('chamber-' + id);
     const imgs = [...dive.querySelectorAll('.dive__img')];
     const caption = dive.querySelector('.dive__caption');
-    const tunnel = dive.querySelector('.dive__tunnel');
+    const blur = dive.querySelector('.dive__blur');
 
-    const safety = setTimeout(() => enterChamber(id, lobeEl), 7000);
+    if (hookTitle) hookTitle.textContent = lobeEl.dataset.hookTitle || 'نغوص في عقل أصحاب الأعمال';
+    if (hookSub) hookSub.textContent = lobeEl.dataset.hookSub || 'وأعماق السوق… نستخرج الأفكار ونصل لأعلى النتائج';
+
+    const safety = setTimeout(() => enterChamber(id, lobeEl), 6500);
 
     gsap.set(dive, { opacity: 0, visibility: 'hidden' });
-    gsap.set(imgs, { opacity: 0, scale: 1.4 });
-    gsap.set(caption, { opacity: 0, y: 40 });
-    gsap.set(tunnel, { scale: 1.5, opacity: 1 });
+    gsap.set(imgs, { opacity: 0, scale: 1.35, rotate: 0, filter: 'brightness(0.7) blur(8px)' });
+    gsap.set(caption, { opacity: 0, y: 36, scale: 0.92 });
+    gsap.set(blur, { scale: 1.2 });
 
     const tl = gsap.timeline({
       onComplete: () => {
@@ -120,23 +123,55 @@
       }
     });
 
-    tl.to({}, { duration: 0.35 })
+    tl.to({}, { duration: 0.2 })
       .add(() => {
         dive.classList.add('active');
         dive.setAttribute('aria-hidden', 'false');
         gsap.set(dive, { visibility: 'visible' });
       })
-      .to(dive, { opacity: 1, duration: 0.5 })
-      .to(mind, { opacity: 0, duration: 0.45 }, '<')
-      .to(tunnel, { scale: 0.35, duration: 1.6, ease: 'power2.in' }, '-=0.1')
-      .to(imgs[0], { opacity: 1, scale: 1, duration: 1.1, ease: 'power2.out' }, '-=1.1')
-      .to(imgs[0], { opacity: 0, scale: 1.15, duration: 0.6 }, '+=0.15')
-      .to(imgs[1], { opacity: 1, scale: 1, duration: 0.9, ease: 'power2.out' }, '-=0.35')
-      .to(imgs[1], { opacity: 0, scale: 1.12, duration: 0.55 }, '+=0.1')
-      .to(imgs[2], { opacity: 1, scale: 1, duration: 0.9, ease: 'power2.out' }, '-=0.3')
-      .to(caption, { opacity: 1, y: 0, duration: 0.9, ease: 'power3.out' }, '-=0.7')
-      .to({}, { duration: 0.9 })
-      .to([caption, imgs[2], dive], { opacity: 0, duration: 0.55 });
+      .to(dive, { opacity: 1, duration: 0.35 })
+      .to(mind, { opacity: 0, duration: 0.3 }, '<')
+      .to(blur, { scale: 1, duration: 0.6, ease: 'power2.out' }, '<');
+
+    // Rapid overlapping 10-frame montage
+    imgs.forEach((img, i) => {
+      const start = 0.35 + i * 0.18;
+      const rot = (i % 2 === 0 ? -3 : 3) + (i * 0.4);
+      tl.fromTo(img,
+        { opacity: 0, scale: 1.4, rotate: rot, filter: 'brightness(0.55) blur(12px) saturate(1.3)' },
+        {
+          opacity: 0.95,
+          scale: 1.05,
+          rotate: 0,
+          filter: 'brightness(0.8) blur(0px) saturate(1.2)',
+          duration: 0.28,
+          ease: 'power2.out'
+        },
+        start
+      );
+      if (i < imgs.length - 1) {
+        tl.to(img, {
+          opacity: 0,
+          scale: 1.12,
+          filter: 'brightness(1.1) blur(6px)',
+          duration: 0.22,
+          ease: 'power1.in'
+        }, start + 0.22);
+      }
+    });
+
+    // Hook overlays the montage peak
+    tl.to(caption, {
+      opacity: 1, y: 0, scale: 1,
+      duration: 0.55,
+      ease: 'power3.out'
+    }, 0.35 + imgs.length * 0.12)
+      .to({}, { duration: 0.85 })
+      .to([caption, imgs[imgs.length - 1], dive], {
+        opacity: 0,
+        duration: 0.4,
+        ease: 'power2.in'
+      });
   }
 
   function enterChamber(id, lobeEl) {
@@ -163,7 +198,7 @@
     if (scroller) scroller.scrollTop = 0;
 
     gsap.from(chamber.querySelectorAll('.chamber__hero-text > *, .chamber__grid article'), {
-      y: 30, opacity: 0, stagger: 0.1, duration: 0.9, ease: 'power3.out', delay: 0.15
+      y: 28, opacity: 0, stagger: 0.08, duration: 0.8, ease: 'power3.out', delay: 0.1
     });
 
     if (lobeEl) lobeEl.classList.remove('is-opening');
@@ -176,15 +211,15 @@
     if (!chamber) return;
 
     gsap.to(chamber, {
-      opacity: 0, duration: 0.45,
+      opacity: 0, duration: 0.4,
       onComplete: () => {
         chamber.classList.remove('active');
         chamber.setAttribute('aria-hidden', 'true');
         mind.classList.remove('hidden');
         document.body.classList.remove('locked');
         gsap.set(mind, { opacity: 1, clearProps: 'transform' });
-        gsap.fromTo('.lobe', { opacity: 0.4, scale: 0.95 }, {
-          opacity: 1, scale: 1, stagger: 0.08, duration: 0.7, ease: 'power3.out'
+        gsap.fromTo('.lobe', { opacity: 0.4, scale: 0.96 }, {
+          opacity: 1, scale: 1, stagger: 0.07, duration: 0.65, ease: 'power3.out'
         });
         active = null;
       }

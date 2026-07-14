@@ -962,8 +962,9 @@ html[dir="ltr"] .modal__close { left: auto; right: 14px; }
   .portals { grid-template-columns: 1fr; max-width: 400px; gap: 16px; flex: none; }
   .portal--center { transform: none; }
   .portal--center:hover { transform: translateY(-10px); }
-  .portal__frame { min-height: 240px; height: 260px; }
-  .gate { min-height: auto; padding-bottom: 40px; }
+  .portal__frame { min-height: 220px; height: 240px; }
+  .gate { min-height: auto; padding-bottom: 40px; max-height: none; }
+  .gate__hero--compact { padding: 10px 20px 6px; }
   .flip-grid { grid-template-columns: 1fr 1fr; }
   .gallery, .gallery--wide { grid-template-columns: 1fr 1fr; }
   .split { grid-template-columns: 1fr; }
@@ -972,9 +973,14 @@ html[dir="ltr"] .modal__close { left: auto; right: 14px; }
   .flow { flex-wrap: wrap; gap: 24px; }
   .flow__line { display: none; }
 }
+@media (max-height: 780px) and (min-width: 961px) {
+  .portal__frame { min-height: clamp(240px, 48vh, 380px); }
+  .gate__title--compact { font-size: clamp(1.4rem, 3vw, 2rem); }
+}
 @media (max-width: 560px) {
   .flip-grid, .gallery, .gallery--wide { grid-template-columns: 1fr; }
   .realm__back span { display: none; }
   .realm__back { padding: 12px; border-radius: 50%; }
   .gate__actions .gate__link { display: none; }
+  .portal__frame { height: 220px; min-height: 200px; }
 }

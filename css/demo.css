@@ -77,65 +77,58 @@ img { display: block; max-width: 100%; object-fit: cover; }
 .mind {
   position: relative; z-index: 2;
   min-height: 100vh; min-height: 100dvh;
+  max-height: 100dvh;
   display: flex; flex-direction: column;
-  padding: 16px 0 28px;
+  padding: 8px 0 12px;
+  overflow: hidden;
   transition: opacity .6s, transform .7s var(--ease);
 }
 .mind.hidden {
   opacity: 0; pointer-events: none; transform: scale(1.04);
   position: fixed; inset: 0;
+  max-height: none;
 }
 
 .mind__top {
   display: flex; align-items: center; justify-content: space-between;
-  max-width: 1200px; width: 100%; margin: 0 auto; padding: 8px 28px;
+  max-width: 1200px; width: 100%; margin: 0 auto; padding: 4px 20px;
+  flex-shrink: 0;
 }
-.mind__logo { font-size: 1.2rem; font-weight: 800; }
+.mind__logo { font-size: clamp(1rem, 2.5vw, 1.2rem); font-weight: 800; }
 .mind__logo em { font-style: normal; color: var(--green); }
-.mind__links { display: flex; gap: 18px; }
-.mind__links a { font-size: 13px; color: var(--muted); font-weight: 600; }
+.mind__links { display: flex; gap: 14px; }
+.mind__links a { font-size: 12px; color: var(--muted); font-weight: 600; }
 .mind__links a:hover { color: var(--green); }
 
 .mind__intro {
-  text-align: center; padding: 18px 24px 8px; position: relative; z-index: 3;
-}
-.mind__eyebrow {
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 6px 14px; border-radius: 50px;
-  border: 1px solid rgba(0,200,83,.35);
-  color: var(--green); font-size: 12px; font-weight: 700; margin-bottom: 12px;
-}
-.pulse {
-  width: 8px; height: 8px; border-radius: 50%; background: var(--green);
-  box-shadow: 0 0 0 0 var(--green-glow);
-  animation: pulse 2.4s ease-in-out infinite;
-}
-@keyframes pulse {
-  0%, 100% { box-shadow: 0 0 0 0 var(--green-glow); }
-  50% { box-shadow: 0 0 0 10px transparent; }
+  text-align: center; padding: 6px 20px 4px; position: relative; z-index: 3;
+  flex-shrink: 0;
 }
 .mind__title {
-  font-size: clamp(1.5rem, 4vw, 2.6rem);
-  font-weight: 900; line-height: 1.3; max-width: 720px; margin: 0 auto 10px;
+  font-size: clamp(1.25rem, 3.6vw, 2.35rem);
+  font-weight: 900; line-height: 1.25; max-width: 720px; margin: 0 auto 8px;
 }
 .mind__title span {
   color: var(--green);
   text-shadow: 0 0 30px var(--green-glow);
 }
 .mind__sub {
-  color: var(--muted); font-size: .95rem; max-width: 520px; margin: 0 auto;
+  color: var(--muted); font-size: clamp(.82rem, 2vw, 1rem);
+  max-width: 560px; margin: 0 auto; line-height: 1.6;
 }
 
-/* Brain */
+/* Brain — stays fully visible */
 .brain {
   flex: 1;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   position: relative; z-index: 3;
-  padding: 8px 16px 0;
+  padding: 0 12px;
+  min-height: 0;
 }
 .brain__svg {
-  width: min(920px, 96vw);
+  width: min(820px, 94vw);
   height: auto;
+  max-height: min(58vh, 420px);
   filter: drop-shadow(0 0 40px rgba(0,200,83,.25));
 }
 .lobe {
@@ -168,26 +161,8 @@ img { display: block; max-width: 100%; object-fit: cover; }
   filter: drop-shadow(0 0 16px var(--green));
   pointer-events: none;
 }
-.brain__caption {
-  margin-top: 8px; font-size: 13px; color: var(--muted);
-  animation: floatHint 2.8s ease-in-out infinite;
-}
-@keyframes floatHint {
-  0%, 100% { opacity: .55; transform: translateY(0); }
-  50% { opacity: 1; transform: translateY(5px); }
-}
 
-/* Brain split doors overlay effect via JS class on mind */
-.mind.is-diving .brain__svg {
-  animation: brainPulse .8s ease-in-out;
-}
-@keyframes brainPulse {
-  0% { transform: scale(1); filter: brightness(1); }
-  50% { transform: scale(1.08); filter: brightness(1.4); }
-  100% { transform: scale(1.4); filter: brightness(2); opacity: 0; }
-}
-
-/* Dive sequence */
+/* Dive sequence — blurred bg + rapid 10 frames */
 .dive {
   position: fixed; inset: 0; z-index: 8000;
   opacity: 0; visibility: hidden; pointer-events: none;
@@ -196,43 +171,57 @@ img { display: block; max-width: 100%; object-fit: cover; }
 .dive.active {
   opacity: 1; visibility: visible;
 }
-.dive__tunnel {
-  position: absolute; inset: -20%;
+.dive__blur {
+  position: absolute; inset: -8%;
   background:
-    radial-gradient(circle at center, transparent 0%, rgba(0,20,12,.4) 40%, #000 75%),
-    repeating-radial-gradient(circle at center, transparent 0 18px, rgba(0,200,83,.06) 18px 20px);
-  transform: scale(1.4);
+    radial-gradient(circle at 30% 40%, rgba(0,200,83,.25), transparent 45%),
+    radial-gradient(circle at 70% 60%, rgba(0,108,53,.35), transparent 50%),
+    #020806;
+  filter: blur(28px);
+  transform: scale(1.15);
 }
-.dive__riyal {
+.dive__reel {
   position: absolute; inset: 0;
 }
 .dive__img {
   position: absolute; inset: 0; width: 100%; height: 100%;
-  opacity: 0; transform: scale(1.3);
-  filter: saturate(1.1) contrast(1.05);
+  object-fit: cover;
+  opacity: 0;
+  transform: scale(1.25) rotate(-2deg);
+  filter: brightness(.75) saturate(1.15) contrast(1.05);
+  will-change: opacity, transform, filter;
+}
+.dive__vignette {
+  position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background:
+    radial-gradient(circle at center, transparent 20%, rgba(2,8,6,.55) 70%, rgba(2,8,6,.88) 100%);
 }
 .dive__caption {
   position: absolute; inset: 0;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   text-align: center; z-index: 2; padding: 24px;
-  background: radial-gradient(circle at center, rgba(3,10,8,.15), rgba(3,10,8,.75));
   opacity: 0;
 }
 .dive__eyebrow {
   display: inline-block; margin-bottom: 12px;
   padding: 6px 14px; border-radius: 50px;
-  border: 1px solid rgba(0,200,83,.4);
+  border: 1px solid rgba(0,200,83,.45);
+  background: rgba(0,0,0,.25);
+  backdrop-filter: blur(8px);
   color: var(--green); font-size: 12px; font-weight: 700;
 }
 .dive__caption h2 {
-  font-size: clamp(1.8rem, 5vw, 3.2rem);
+  font-size: clamp(1.5rem, 4.5vw, 2.8rem);
   font-weight: 900; margin-bottom: 10px;
-  text-shadow: 0 8px 40px rgba(0,0,0,.6);
+  text-shadow: 0 8px 40px rgba(0,0,0,.7);
+  max-width: 800px;
 }
 .dive__caption p {
-  font-size: clamp(1rem, 2.5vw, 1.25rem);
-  color: rgba(232,245,239,.85);
-  max-width: 480px;
+  font-size: clamp(.95rem, 2.2vw, 1.2rem);
+  color: rgba(232,245,239,.9);
+  max-width: 520px;
+  text-shadow: 0 4px 20px rgba(0,0,0,.6);
+  line-height: 1.7;
 }
 
 /* Chambers */
@@ -311,5 +300,16 @@ img { display: block; max-width: 100%; object-fit: cover; }
 @media (max-width: 800px) {
   .chamber__grid { grid-template-columns: 1fr; }
   .lobe__label { font-size: 16px; }
-  .lobe__hint { font-size: 10px; }
+  .lobe__hint { font-size: 11px; }
+  .brain__svg { max-height: min(52vh, 340px); }
+  .mind__intro { padding: 4px 16px; }
+}
+@media (max-height: 700px) {
+  .mind__title { font-size: clamp(1.1rem, 3.2vw, 1.7rem); margin-bottom: 4px; }
+  .mind__sub { font-size: .8rem; }
+  .brain__svg { max-height: min(55vh, 300px); }
+}
+@media (max-width: 480px) {
+  .mind__links a:last-child { display: none; }
+  .brain__svg { max-height: 48vh; }
 }
