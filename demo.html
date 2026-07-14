@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Cairo:wght@400;600;700;800;900&family=Tajawal:wght@400;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/demo.css?v=eyes1">
+  <link rel="stylesheet" href="css/demo.css?v=eyes2">
 </head>
 <body>
   <!-- Signature cursor: golden arrow + orbit — same as Demo 2 -->
@@ -91,103 +91,84 @@
       <p class="mind__hook" id="mind-hook" dir="rtl">لا نلحق السوق — نفرض قرار النمو قبل الجميع</p>
     </div>
 
-    <div class="brain" id="brain" data-gates="eyes">
-      <!-- Classic lobe SVG kept at assets/brain-gates-classic.svg for restore -->
-      <svg class="brain__svg brain__svg--eyes" viewBox="0 0 640 380" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-label="ثلاث بوابات كعيون تفتح وتغلق">
+    <div class="brain" id="brain" data-gates="eyes-solid">
+      <!-- Classic filled gates + blinking iris · restore snapshot: assets/brain-gates-classic.svg -->
+      <svg class="brain__svg brain__svg--eyes" viewBox="0 0 640 380" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-label="ثلاث بوابات — التسويق · التصميم · الأتمتة">
         <defs>
-          <radialGradient id="irisGrad" cx="42%" cy="38%" r="62%">
-            <stop offset="0%" stop-color="#b9f6ca"/>
-            <stop offset="45%" stop-color="#00c853"/>
-            <stop offset="100%" stop-color="#003d22"/>
+          <linearGradient id="lobeGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#00e676"/>
+            <stop offset="100%" stop-color="#006c35"/>
+          </linearGradient>
+          <linearGradient id="lobeGrad2" x1="1" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#69f0ae"/>
+            <stop offset="100%" stop-color="#004d26"/>
+          </linearGradient>
+          <radialGradient id="irisGlow" cx="40%" cy="35%" r="65%">
+            <stop offset="0%" stop-color="#e8fff0"/>
+            <stop offset="45%" stop-color="#00e676"/>
+            <stop offset="100%" stop-color="#013220"/>
           </radialGradient>
-          <radialGradient id="scleraGrad" cx="50%" cy="45%" r="55%">
-            <stop offset="0%" stop-color="rgba(200,255,220,.35)"/>
-            <stop offset="100%" stop-color="rgba(0,60,35,.15)"/>
-          </radialGradient>
-          <filter id="eyeGlow" x="-40%" y="-40%" width="180%" height="180%">
-            <feGaussianBlur stdDeviation="5" result="b"/>
-            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          <filter id="glow"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <filter id="irisSoft" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
           </filter>
-          <!-- Apertures shrink = blink / eye closing -->
-          <clipPath id="apertureMarket">
-            <ellipse cx="168" cy="205" rx="92" ry="58">
-              <animate attributeName="ry" values="58;58;6;58;58;58;58" keyTimes="0;0.62;0.68;0.76;0.82;0.9;1" dur="5.2s" begin="0.4s" repeatCount="indefinite"/>
-            </ellipse>
-          </clipPath>
-          <clipPath id="apertureDesign">
-            <ellipse cx="320" cy="118" rx="88" ry="56">
-              <animate attributeName="ry" values="56;56;5;56;56;56" keyTimes="0;0.48;0.54;0.62;0.78;1" dur="6.1s" begin="1.1s" repeatCount="indefinite"/>
-            </ellipse>
-          </clipPath>
-          <clipPath id="apertureAuto">
-            <ellipse cx="472" cy="205" rx="92" ry="58">
-              <animate attributeName="ry" values="58;58;6;58;58;58" keyTimes="0;0.55;0.61;0.69;0.85;1" dur="5.7s" begin="2s" repeatCount="indefinite"/>
-            </ellipse>
-          </clipPath>
         </defs>
 
-        <!-- MARKET eye (left) -->
+        <!-- MARKET -->
         <g class="lobe lobe--market eye-gate" data-section="market" data-hook-title="نغوص في عقل أصحاب الأعمال" data-hook-sub="وأعماق السوق التسويقي… نستخرج الأفكار ونصل لأعلى نتائج الحملات" role="button" tabindex="0">
-          <ellipse class="eye__ring" cx="168" cy="205" rx="102" ry="68" fill="none" stroke="rgba(0,230,118,.35)" stroke-width="1.5"/>
-          <ellipse class="eye__ring eye__ring--soft" cx="168" cy="205" rx="112" ry="76" fill="none" stroke="rgba(212,175,55,.18)" stroke-width="1" opacity=".8"/>
-          <g clip-path="url(#apertureMarket)" filter="url(#eyeGlow)">
-            <ellipse class="eye__sclera" cx="168" cy="205" rx="94" ry="60" fill="url(#scleraGrad)"/>
-            <circle class="eye__iris" cx="168" cy="205" r="36" fill="url(#irisGrad)"/>
-            <circle class="eye__pupil" cx="168" cy="205" r="14" fill="#02140c">
-              <animate attributeName="cx" values="168;174;162;168" dur="7s" repeatCount="indefinite"/>
-            </circle>
-            <circle class="eye__shine" cx="158" cy="194" r="6" fill="rgba(255,255,255,.55)"/>
+          <path d="M300 200 C290 100, 180 60, 110 110 C40 165, 55 275, 140 315 C200 340, 270 295, 300 235 Z" fill="url(#lobeGrad)" opacity=".92"/>
+          <path d="M290 190 C270 130, 200 100, 140 135 C95 162, 100 235, 155 265 C200 285, 260 255, 290 218" fill="none" stroke="rgba(255,255,255,.28)" stroke-width="2"/>
+          <!-- blinking iris -->
+          <g class="eye-blink" transform="translate(175 200)">
+            <ellipse class="eye-blink__lid" cx="0" cy="0" rx="34" ry="22" fill="rgba(2,20,12,.35)"/>
+            <g>
+              <animateTransform attributeName="transform" type="scale" values="1 1;1 1;1 0.12;1 1;1 1" keyTimes="0;0.62;0.7;0.78;1" dur="5.4s" begin="0.3s" repeatCount="indefinite" additive="sum"/>
+              <circle r="18" fill="url(#irisGlow)" filter="url(#irisSoft)"/>
+              <circle r="7" fill="#02140c"/>
+              <circle cx="-4" cy="-4" r="2.5" fill="rgba(255,255,255,.65)"/>
+            </g>
           </g>
-          <!-- lids suggestion -->
-          <path class="eye__lid" d="M76 205 Q168 145 260 205" fill="none" stroke="rgba(0,200,83,.45)" stroke-width="2.2" stroke-linecap="round"/>
-          <path class="eye__lid" d="M76 205 Q168 265 260 205" fill="none" stroke="rgba(0,200,83,.28)" stroke-width="1.6" stroke-linecap="round"/>
-          <text x="168" y="292" text-anchor="middle" class="lobe__label">التسويق</text>
+          <text x="175" y="248" text-anchor="middle" class="lobe__label">التسويق</text>
         </g>
 
-        <!-- AUTO eye (right) -->
+        <!-- AUTO -->
         <g class="lobe lobe--auto eye-gate" data-section="auto" data-hook-title="نغوص في عقل المنشأة" data-hook-sub="وأعماق العمليات… نستخرج أنظمة أتمتة تقودك لأعلى كفاءة ونتائج" role="button" tabindex="0">
-          <ellipse class="eye__ring" cx="472" cy="205" rx="102" ry="68" fill="none" stroke="rgba(0,230,118,.35)" stroke-width="1.5"/>
-          <ellipse class="eye__ring eye__ring--soft" cx="472" cy="205" rx="112" ry="76" fill="none" stroke="rgba(212,175,55,.18)" stroke-width="1" opacity=".8"/>
-          <g clip-path="url(#apertureAuto)" filter="url(#eyeGlow)">
-            <ellipse class="eye__sclera" cx="472" cy="205" rx="94" ry="60" fill="url(#scleraGrad)"/>
-            <circle class="eye__iris" cx="472" cy="205" r="36" fill="url(#irisGrad)"/>
-            <circle class="eye__pupil" cx="472" cy="205" r="14" fill="#02140c">
-              <animate attributeName="cx" values="472;466;478;472" dur="7.6s" repeatCount="indefinite"/>
-            </circle>
-            <circle class="eye__shine" cx="462" cy="194" r="6" fill="rgba(255,255,255,.55)"/>
+          <path d="M340 200 C350 100, 460 60, 530 110 C600 165, 585 275, 500 315 C440 340, 370 295, 340 235 Z" fill="url(#lobeGrad2)" opacity=".92"/>
+          <path d="M350 190 C370 130, 440 100, 500 135 C545 162, 540 235, 485 265 C440 285, 380 255, 350 218" fill="none" stroke="rgba(255,255,255,.28)" stroke-width="2"/>
+          <g class="eye-blink" transform="translate(465 200)">
+            <ellipse class="eye-blink__lid" cx="0" cy="0" rx="34" ry="22" fill="rgba(2,20,12,.35)"/>
+            <g>
+              <animateTransform attributeName="transform" type="scale" values="1 1;1 1;1 0.12;1 1;1 1" keyTimes="0;0.55;0.63;0.71;1" dur="5.9s" begin="1.4s" repeatCount="indefinite" additive="sum"/>
+              <circle r="18" fill="url(#irisGlow)" filter="url(#irisSoft)"/>
+              <circle r="7" fill="#02140c"/>
+              <circle cx="-4" cy="-4" r="2.5" fill="rgba(255,255,255,.65)"/>
+            </g>
           </g>
-          <path class="eye__lid" d="M380 205 Q472 145 564 205" fill="none" stroke="rgba(0,200,83,.45)" stroke-width="2.2" stroke-linecap="round"/>
-          <path class="eye__lid" d="M380 205 Q472 265 564 205" fill="none" stroke="rgba(0,200,83,.28)" stroke-width="1.6" stroke-linecap="round"/>
-          <text x="472" y="292" text-anchor="middle" class="lobe__label">الأتمتة</text>
+          <text x="465" y="248" text-anchor="middle" class="lobe__label">الأتمتة</text>
         </g>
 
-        <!-- DESIGN eye (top) -->
+        <!-- DESIGN -->
         <g class="lobe lobe--design eye-gate" data-section="design" data-hook-title="نغوص في عقل العلامة" data-hook-sub="وأعماق الذوق والسوق… نستخرج هوية وفيديو يصلان لأعلى تأثير" role="button" tabindex="0">
-          <ellipse class="eye__ring" cx="320" cy="118" rx="98" ry="66" fill="none" stroke="rgba(0,230,118,.4)" stroke-width="1.5"/>
-          <ellipse class="eye__ring eye__ring--soft" cx="320" cy="118" rx="108" ry="74" fill="none" stroke="rgba(212,175,55,.22)" stroke-width="1"/>
-          <g clip-path="url(#apertureDesign)" filter="url(#eyeGlow)">
-            <ellipse class="eye__sclera" cx="320" cy="118" rx="90" ry="58" fill="url(#scleraGrad)"/>
-            <circle class="eye__iris" cx="320" cy="118" r="34" fill="url(#irisGrad)"/>
-            <circle class="eye__pupil" cx="320" cy="118" r="13" fill="#02140c">
-              <animate attributeName="cy" values="118;114;122;118" dur="6.4s" repeatCount="indefinite"/>
-            </circle>
-            <circle class="eye__shine" cx="310" cy="108" r="5.5" fill="rgba(255,255,255,.55)"/>
+          <path d="M320 42 C260 42, 220 88, 220 140 C220 178, 260 208, 320 208 C380 208, 420 178, 420 140 C420 88, 380 42, 320 42 Z" fill="url(#lobeGrad)" filter="url(#glow)" opacity=".95"/>
+          <path d="M320 68 C280 68, 255 100, 255 135 C255 158, 285 178, 320 178 C355 178, 385 158, 385 135 C385 100, 360 68, 320 68" fill="none" stroke="rgba(255,255,255,.32)" stroke-width="2"/>
+          <g class="eye-blink" transform="translate(320 128)">
+            <ellipse class="eye-blink__lid" cx="0" cy="0" rx="30" ry="20" fill="rgba(2,20,12,.3)"/>
+            <g>
+              <animateTransform attributeName="transform" type="scale" values="1 1;1 1;1 0.1;1 1;1 1" keyTimes="0;0.48;0.56;0.64;1" dur="6.2s" begin="0.8s" repeatCount="indefinite" additive="sum"/>
+              <circle r="16" fill="url(#irisGlow)" filter="url(#irisSoft)"/>
+              <circle r="6.5" fill="#02140c"/>
+              <circle cx="-3.5" cy="-3.5" r="2.2" fill="rgba(255,255,255,.65)"/>
+            </g>
           </g>
-          <path class="eye__lid" d="M230 118 Q320 62 410 118" fill="none" stroke="rgba(0,200,83,.5)" stroke-width="2.2" stroke-linecap="round"/>
-          <path class="eye__lid" d="M230 118 Q320 174 410 118" fill="none" stroke="rgba(0,200,83,.28)" stroke-width="1.6" stroke-linecap="round"/>
-          <text x="320" y="28" text-anchor="middle" class="lobe__label">التصميم</text>
-          <text x="320" y="48" text-anchor="middle" class="lobe__hint">والفيديو</text>
+          <text x="320" y="175" text-anchor="middle" class="lobe__label">التصميم</text>
+          <text x="320" y="195" text-anchor="middle" class="lobe__hint">والفيديو</text>
         </g>
 
-        <!-- neural core between eyes -->
-        <circle class="brain__core" cx="320" cy="218" r="12" fill="#00c853"/>
-        <circle cx="320" cy="218" r="20" fill="none" stroke="#d4af37" stroke-width="1.2" opacity=".55">
-          <animate attributeName="r" values="16;26;16" dur="3.4s" repeatCount="indefinite"/>
-          <animate attributeName="opacity" values=".55;.12;.55" dur="3.4s" repeatCount="indefinite"/>
+        <circle class="brain__core" cx="320" cy="218" r="16" fill="#00c853"/>
+        <circle cx="320" cy="218" r="26" fill="none" stroke="#00e676" stroke-width="1.5" opacity=".5">
+          <animate attributeName="r" values="22;32;22" dur="3s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values=".6;.15;.6" dur="3s" repeatCount="indefinite"/>
         </circle>
-        <line x1="210" y1="205" x2="300" y2="218" stroke="rgba(0,230,118,.2)" stroke-width="1"/>
-        <line x1="340" y1="218" x2="430" y2="205" stroke="rgba(0,230,118,.2)" stroke-width="1"/>
-        <line x1="320" y1="155" x2="320" y2="205" stroke="rgba(212,175,55,.25)" stroke-width="1"/>
       </svg>
     </div>
   </section>

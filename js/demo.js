@@ -411,10 +411,19 @@
       );
     }
 
-    gsap.from('.lobe', {
-      scale: 0.75, opacity: 0, transformOrigin: '320px 200px',
-      stagger: 0.12, duration: 1, delay: 0.45, ease: 'power3.out'
-    });
+    gsap.fromTo('.lobe',
+      { scale: 0.82, autoAlpha: 0 },
+      {
+        scale: 1,
+        autoAlpha: 1,
+        transformOrigin: '50% 50%',
+        stagger: 0.14,
+        duration: 1.05,
+        delay: 0.4,
+        ease: 'power3.out',
+        clearProps: 'transform',
+      }
+    );
   }
 
   /* ============================================================
