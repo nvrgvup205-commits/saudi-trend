@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/demo2.css">
+  <link rel="stylesheet" href="css/demo2.css?v=fall1">
 </head>
 <body>
   <!-- Signature cursor: golden arrow + orbit -->
@@ -116,24 +116,26 @@
     <div class="gate__ornament gate__ornament--r" aria-hidden="true"></div>
 
     <div class="gate__hero gate__hero--compact">
-      <p class="gate__eyebrow reveal-text">
-        <span class="pulse-dot"></span>
-        <span data-ar="بوابة الأعمال الخليجية · ثلاث عوالم" data-en="Gulf business gateway · Three realms">بوابة الأعمال الخليجية · ثلاث عوالم</span>
-      </p>
       <h1 class="gate__title gate__title--compact">
-        <span class="line reveal-text"><span class="brand-glow">سعودي تريند</span></span>
-        <span class="line reveal-text line--en"><span class="brand-en">Saudi Trend</span></span>
+        <span class="line"><span class="brand-glow">سعودي تريند</span></span>
+        <span class="line line--en"><span class="brand-en">Saudi Trend</span></span>
       </h1>
-      <p class="gate__sub reveal-text" data-ar="ثلاث بوابات · اضغط لفتح عالمك" data-en="Three portals · tap to enter your world">ثلاث بوابات · اضغط لفتح عالمك</p>
+      <h2
+        class="gate__hook"
+        id="gate-hook"
+        data-ar="استكشف لماذا نحن الخيار الأفضل لك"
+        data-en="Discover why we are the best choice for you"
+        aria-label="استكشف لماذا نحن الخيار الأفضل لك"
+      ></h2>
     </div>
 
-    <div class="gate-arch" aria-hidden="true">
+    <div class="gate-arch" id="gate-arch" aria-hidden="true">
       <span class="gate-arch__line"></span>
       <span class="gate-arch__diamond"></span>
       <span class="gate-arch__line"></span>
     </div>
 
-    <div class="portals" id="portals">
+    <div class="portals portals--await" id="portals">
       <button class="portal" data-section="marketing" type="button">
         <div class="portal__media">
           <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80" alt="" loading="lazy">
@@ -195,7 +197,7 @@
       </button>
     </div>
 
-    <p class="gate__hint reveal-text" data-ar="✦ المس البوابة… وانطلق نحو عالمك" data-en="✦ Touch a portal… and step into your world">✦ المس البوابة… وانطلق نحو عالمك</p>
+    <p class="gate__hint" id="gate-hint" data-ar="✦ المس البوابة… وانطلق نحو عالمك" data-en="✦ Touch a portal… and step into your world">✦ المس البوابة… وانطلق نحو عالمك</p>
   </section>
 
   <!-- ========== MARKETING ========== -->
@@ -869,6 +871,6 @@
   <div class="portal-flash" id="portal-flash"></div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  <script src="js/demo2.js"></script>
+  <script src="js/demo2.js?v=fall1"></script>
 </body>
 </html>

@@ -15,8 +15,17 @@
 
   let activeRealm = null;
   let openTl = null;
+  let introDone = false;
   let lang = localStorage.getItem('st-lang') || 'ar';
   let mx = 0, my = 0, lastDot = 0;
+  const hookEl = document.getElementById('gate-hook');
+  const portalsWrap = document.getElementById('portals');
+  const gateArch = document.getElementById('gate-arch');
+  const gateHint = document.getElementById('gate-hint');
+
+  // Gravity-accurate free-fall ease: y = t² (0..1)
+  const gravityIn = (t) => t * t;
+  const impactSettle = 'bounce.out';
 
   // ===== Bilingual =====
   function applyLang(next) {
@@ -27,6 +36,7 @@
     document.documentElement.dataset.lang = lang;
 
     document.querySelectorAll('[data-ar][data-en]').forEach(el => {
+      if (el === hookEl) return; // words managed separately
       const val = el.getAttribute('data-' + lang);
       if (val != null) el.textContent = val;
     });
@@ -38,6 +48,13 @@
     document.querySelectorAll('select option[data-ar]').forEach(opt => {
       opt.textContent = opt.getAttribute('data-' + lang);
     });
+
+    if (hookEl) {
+      const label = hookEl.getAttribute('data-' + lang) || '';
+      hookEl.setAttribute('aria-label', label);
+      if (introDone) buildFallWords(hookEl, label, true);
+      else buildFallWords(hookEl, label, false);
+    }
   }
 
   applyLang(lang);
@@ -157,19 +174,121 @@
   resize(); spawn(); draw();
   addEventListener('resize', () => { resize(); spawn(); });
 
-  // Intro
-  function introGate() {
-    gsap.set('.gate .reveal-text', { clearProps: 'all' });
+  // ===== Falling hook words =====
+  function buildFallWords(el, text, settled) {
+    el.innerHTML = '';
+    const words = String(text || '').split(/\s+/).filter(Boolean);
+    words.forEach((w) => {
+      const span = document.createElement('span');
+      span.className = 'fall-word' + (settled ? ' is-settled' : '');
+      span.textContent = w;
+      if (settled) {
+        span.style.opacity = '1';
+        span.style.transform = 'none';
+      }
+      el.appendChild(span);
+    });
+    return [...el.querySelectorAll('.fall-word')];
+  }
+
+  function dropWords(words) {
+    const tl = gsap.timeline();
+    // Drop height ~ relative to viewport for "physical" feel
+    const dropPx = Math.min(220, Math.max(120, window.innerHeight * 0.22));
+
+    words.forEach((word, i) => {
+      const startRot = (Math.random() * 18 - 9);
+      const driftX = (Math.random() * 28 - 14);
+      // Each next word begins just before previous impacts — cascade
+      const start = i * 0.22;
+
+      gsap.set(word, {
+        y: -dropPx - Math.random() * 40,
+        x: driftX * 0.35,
+        rotation: startRot,
+        opacity: 0,
+        scaleY: 1,
+        scaleX: 1,
+        transformOrigin: '50% 100%'
+      });
+
+      // Free fall (accelerating) + fade in mid-air
+      tl.to(word, {
+        y: 0,
+        x: 0,
+        opacity: 1,
+        rotation: startRot * 0.15,
+        duration: 0.55,
+        ease: gravityIn
+      }, start);
+
+      // Impact squash then settle (bounce + slight overshoot)
+      tl.to(word, {
+        scaleY: 0.72,
+        scaleX: 1.18,
+        rotation: 0,
+        duration: 0.08,
+        ease: 'power2.out'
+      }, start + 0.55);
+
+      tl.to(word, {
+        scaleY: 1,
+        scaleX: 1,
+        duration: 0.55,
+        ease: impactSettle,
+        onComplete: () => word.classList.add('is-settled')
+      }, start + 0.62);
+    });
+
+    return tl;
+  }
+
+  function revealPortals() {
     const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
-    tl.fromTo('.brand-mark--nav', { y: -20, opacity: 0 }, { y: 0, opacity: 1, duration: 1 })
-      .fromTo('.gate__actions > *', { y: -12, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.1, duration: 0.8 }, '-=0.6')
-      .fromTo('.gate__eyebrow', { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.9 }, '-=0.5')
-      .fromTo('.gate__title .line > span', { y: 50, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.15, duration: 1.1 }, '-=0.6')
-      .fromTo('.gate__sub', { y: 16, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8 }, '-=0.7')
-      .fromTo('.portal', { y: 50, opacity: 0, scale: 0.92 }, {
-        y: 0, opacity: 1, scale: 1, stagger: 0.15, duration: 1.1
-      }, '-=0.6')
-      .fromTo('.gate__hint', { opacity: 0 }, { opacity: 1, duration: 0.7 }, '-=0.4');
+    if (portalsWrap) portalsWrap.classList.remove('portals--await');
+    if (portalsWrap) portalsWrap.classList.add('is-revealed');
+
+    tl.to(gateArch, { opacity: 1, duration: 0.55 }, 0)
+      .fromTo('.portal',
+        { y: 64, opacity: 0, scale: 0.88, filter: 'blur(8px)' },
+        {
+          y: 0, opacity: 1, scale: 1, filter: 'blur(0px)',
+          stagger: { each: 0.16, from: 'center' },
+          duration: 1.05,
+          ease: 'power4.out'
+        },
+        0.12
+      )
+      .fromTo('.portal__shadow',
+        { opacity: 0, scaleX: 0.6 },
+        { opacity: 1, scaleX: 1, stagger: { each: 0.16, from: 'center' }, duration: 0.7 },
+        0.35
+      )
+      .to(gateHint, {
+        opacity: 1, duration: 0.6,
+        onComplete: () => gateHint && gateHint.classList.add('is-live')
+      }, '-=0.35');
+
+    return tl;
+  }
+
+  // Intro — brand → physical falling hook → portals
+  function introGate() {
+    const phrase = hookEl
+      ? (hookEl.getAttribute('data-' + lang) || hookEl.getAttribute('data-ar'))
+      : '';
+    const words = buildFallWords(hookEl, phrase, false);
+
+    gsap.set('.portal', { opacity: 0, y: 64, scale: 0.88 });
+    gsap.set([gateArch, gateHint], { opacity: 0 });
+
+    const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+    tl.fromTo('.brand-mark--nav', { y: -20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.9 })
+      .fromTo('.gate__actions > *', { y: -12, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.1, duration: 0.7 }, '-=0.5')
+      .fromTo('.gate__title .line > span', { y: 40, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.12, duration: 0.95 }, '-=0.45')
+      .add(dropWords(words), '-=0.15')
+      .add(() => { introDone = true; })
+      .add(revealPortals(), '+=0.18');
   }
 
   // ===== Enter realm (always reaches here) =====
