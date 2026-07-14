@@ -295,7 +295,7 @@
       const fx = 0.009 + Math.sin(t * 0.35) * 0.004;
       const fy = 0.014 + Math.cos(t * 0.28) * 0.005;
       waterTurb.setAttribute('baseFrequency', fx.toFixed(4) + ' ' + fy.toFixed(4));
-      const scale = 22 + Math.sin(t * 0.7) * 10 + Math.cos(t * 1.1) * 6;
+      const scale = 38 + Math.sin(t * 0.65) * 14 + Math.cos(t * 1.05) * 8;
       waterMap.setAttribute('scale', scale.toFixed(2));
     }
 
@@ -361,33 +361,38 @@
 
   function dropWordsSlow(words) {
     const tl = gsap.timeline();
-    const dropPx = Math.min(160, Math.max(90, window.innerHeight * 0.16));
+    // Physical free-fall — text stays razor-sharp (never apply blur filter)
+    const dropPx = Math.min(180, Math.max(100, window.innerHeight * 0.18));
     words.forEach((word, i) => {
-      const start = i * 0.38; // slow — readable
-      const rot = (Math.random() * 10 - 5);
+      const start = i * 0.42;
+      const rot = (Math.random() * 12 - 6);
+      const drift = (Math.random() * 20 - 10);
       gsap.set(word, {
-        y: -dropPx - Math.random() * 30,
-        x: (Math.random() * 16 - 8),
+        y: -dropPx - Math.random() * 36,
+        x: drift,
         rotation: rot,
         opacity: 0,
-        scaleY: 1, scaleX: 1,
-        filter: 'blur(4px)',
+        scaleY: 1,
+        scaleX: 1,
+        filter: 'none',
+        force3D: true,
         transformOrigin: '50% 100%'
       });
       tl.to(word, {
-        y: 0, x: 0, opacity: 1, rotation: 'blur(0px)',
-        rotation: rot * 0.1,
-        duration: 0.7,
-        ease: gravityIn
+        y: 0, x: 0, opacity: 1,
+        rotation: rot * 0.08,
+        duration: 0.72,
+        ease: gravityIn,
+        force3D: true
       }, start);
       tl.to(word, {
-        scaleY: 0.78, scaleX: 1.12, rotation: 0,
-        duration: 0.1, ease: 'power2.out'
-      }, start + 0.7);
+        scaleY: 0.74, scaleX: 1.16, rotation: 0,
+        duration: 0.09, ease: 'power2.out'
+      }, start + 0.72);
       tl.to(word, {
         scaleY: 1, scaleX: 1,
-        duration: 0.65, ease: 'bounce.out'
-      }, start + 0.78);
+        duration: 0.7, ease: 'bounce.out'
+      }, start + 0.8);
     });
     return tl;
   }
@@ -446,9 +451,9 @@
       .to(diveLens, { opacity: 1, duration: 0.55, ease: 'power2.out' }, 0.2)
       .to(eyebrow, { opacity: 1, duration: 0.4 }, 0.28);
 
-    // Slow physical word fall — title then sub
-    tl.add(dropWordsSlow(titleWords), 0.45);
-    const subStart = 0.45 + titleWords.length * 0.38 + 0.35;
+    // Slow physical word fall — title then sub (timings match new stagger 0.42)
+    tl.add(dropWordsSlow(titleWords), 0.4);
+    const subStart = 0.4 + titleWords.length * 0.42 + 0.4;
     tl.add(dropWordsSlow(subWords), subStart);
 
     // Interleaved image transitions under the liquid field
@@ -476,7 +481,7 @@
       cursorT += hold;
     }
 
-    const settle = Math.max(cursorT + 1.1, subStart + subWords.length * 0.38 + 1.2);
+    const settle = Math.max(cursorT + 1.1, subStart + subWords.length * 0.42 + 1.35);
     tl.to({}, { duration: 0.4 }, settle)
       .to([diveLens, dive], { opacity: 0, duration: 0.45, ease: 'power2.in' }, settle + 0.15);
   }
