@@ -1,12 +1,12 @@
-/* سعودي تريند — Modern UI Soundscape v3
- * Crisp clicks + contemporary transition sweeps (Web Audio, no files).
+/* سعودي تريند — Luxury Soft Soundscape v4
+ * Refined, adult, prestigious cues. Soft sine/glass + velvet sweeps.
+ * No square-wave toy clicks.
  */
 (() => {
   const ROOT = typeof window !== 'undefined' ? window : globalThis;
-  // Force upgrade over older maqam soundscape
-  if (ROOT.SaudiSound && ROOT.SaudiSound.__v >= 3) return;
+  if (ROOT.SaudiSound && ROOT.SaudiSound.__v >= 4) return;
 
-  const MASTER = 0.58;
+  const MASTER = 0.48;
   let ctx = null;
   let master = null;
   let enabled = localStorage.getItem('st-sound') !== '0';
@@ -19,7 +19,19 @@
       ctx = new AC();
       master = ctx.createGain();
       master.gain.value = enabled ? MASTER : 0;
-      master.connect(ctx.destination);
+      // Soft shelf — tame harsh highs for a premium tone
+      const shelf = ctx.createBiquadFilter();
+      shelf.type = 'lowshelf';
+      shelf.frequency.value = 180;
+      shelf.gain.value = 2.5;
+      const lp = ctx.createBiquadFilter();
+      lp.type = 'lowpass';
+      lp.frequency.value = 4200;
+      lp.Q.value = 0.7;
+      master.connect(shelf);
+      shelf.connect(lp);
+      lp.connect(ctx.destination);
+      master._chain = true;
     }
     if (ctx.state === 'suspended') ctx.resume().catch(() => {});
     return ctx;
@@ -31,7 +43,7 @@
     if (master) {
       const t = ctx.currentTime;
       master.gain.cancelScheduledValues(t);
-      master.gain.linearRampToValueAtTime(enabled ? MASTER : 0, t + 0.08);
+      master.gain.linearRampToValueAtTime(enabled ? MASTER : 0, t + 0.12);
     }
     document.querySelectorAll('.sound-toggle').forEach(btn => {
       btn.setAttribute('aria-pressed', enabled ? 'true' : 'false');
@@ -48,12 +60,12 @@
     return !!ensure();
   }
 
-  function env(dur, peak, attack = 0.004) {
+  function env(dur, peak, attack = 0.02) {
     const g = ctx.createGain();
     const t = ctx.currentTime;
     g.gain.setValueAtTime(0.0001, t);
     g.gain.exponentialRampToValueAtTime(Math.max(0.0002, peak), t + attack);
-    g.gain.exponentialRampToValueAtTime(0.0001, t + Math.max(attack + 0.02, dur));
+    g.gain.exponentialRampToValueAtTime(0.0001, t + Math.max(attack + 0.05, dur));
     g.connect(master);
     return { g, t };
   }
@@ -62,203 +74,202 @@
     const n = Math.max(1, Math.floor(ctx.sampleRate * dur));
     const buf = ctx.createBuffer(1, n, ctx.sampleRate);
     const d = buf.getChannelData(0);
-    for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / n);
+    let last = 0;
+    for (let i = 0; i < n; i++) {
+      // Brown-ish noise — softer, less hissy than white
+      const white = Math.random() * 2 - 1;
+      last = (last + 0.02 * white) / 1.02;
+      d[i] = last * 3.5 * (1 - i / n);
+    }
     return buf;
   }
 
-  /** Sharp modern UI click */
-  function click(peak = 0.42, key = 'click') {
-    if (!gate(key, 28)) return;
-    const { g, t } = env(0.07, peak, 0.0015);
-    const o = ctx.createOscillator();
-    o.type = 'square';
-    o.frequency.setValueAtTime(1850, t);
-    o.frequency.exponentialRampToValueAtTime(420, t + 0.055);
-    const hp = ctx.createBiquadFilter();
-    hp.type = 'highpass';
-    hp.frequency.value = 600;
-    // micro noise transient
-    const src = ctx.createBufferSource();
-    src.buffer = noiseBuf(0.035);
-    const bp = ctx.createBiquadFilter();
-    bp.type = 'bandpass';
-    bp.frequency.value = 2800;
-    bp.Q.value = 1.2;
-    const ng = ctx.createGain();
-    ng.gain.value = 0.55;
-    o.connect(hp); hp.connect(g);
-    src.connect(bp); bp.connect(ng); ng.connect(g);
-    o.start(t); o.stop(t + 0.08);
-    src.start(t);
-  }
-
-  /** Soft secondary click (hover) */
-  function tick() {
-    if (!gate('tick', 55)) return;
-    click(0.22, 'tickC');
-  }
-
-  /** Contemporary air sweep / transition */
-  function sweep(dur = 0.45, peak = 0.38, key = 'sweep') {
-    if (!gate(key, 45)) return;
-    const { g, t } = env(dur, peak, 0.02);
-    const src = ctx.createBufferSource();
-    src.buffer = noiseBuf(dur);
-    const bp = ctx.createBiquadFilter();
-    bp.type = 'bandpass';
-    bp.Q.value = 1.1;
-    bp.frequency.setValueAtTime(380, t);
-    bp.frequency.exponentialRampToValueAtTime(3200, t + dur * 0.45);
-    bp.frequency.exponentialRampToValueAtTime(520, t + dur);
-    // rising digital tone
+  /** Soft glass touch — refined hover/press */
+  function glass(freq = 720, peak = 0.2, dur = 0.28, key = 'glass') {
+    if (!gate(key, 40)) return;
+    const { g, t } = env(dur, peak, 0.008);
     const o = ctx.createOscillator();
     o.type = 'sine';
-    o.frequency.setValueAtTime(220, t);
-    o.frequency.exponentialRampToValueAtTime(880, t + dur * 0.7);
-    const og = ctx.createGain();
-    og.gain.value = 0.18;
-    src.connect(bp); bp.connect(g);
-    o.connect(og); og.connect(g);
-    src.start(t);
-    o.start(t); o.stop(t + dur + 0.02);
-  }
-
-  /** Short reverse sweep (back / close) */
-  function sweepBack(key = 'sweepBack') {
-    if (!gate(key, 50)) return;
-    const dur = 0.32;
-    const { g, t } = env(dur, 0.32, 0.015);
-    const src = ctx.createBufferSource();
-    src.buffer = noiseBuf(dur);
-    const bp = ctx.createBiquadFilter();
-    bp.type = 'bandpass';
-    bp.Q.value = 1;
-    bp.frequency.setValueAtTime(2400, t);
-    bp.frequency.exponentialRampToValueAtTime(360, t + dur);
-    src.connect(bp); bp.connect(g);
-    src.start(t);
-    click(0.2, key + 'c');
-  }
-
-  /** Success blip — modern confirm */
-  function blip(peak = 0.34, key = 'blip') {
-    if (!gate(key, 40)) return;
-    const { g, t } = env(0.22, peak, 0.002);
-    const o1 = ctx.createOscillator();
-    o1.type = 'sine';
-    o1.frequency.setValueAtTime(880, t);
+    o.frequency.setValueAtTime(freq, t);
+    o.frequency.exponentialRampToValueAtTime(freq * 0.92, t + dur);
     const o2 = ctx.createOscillator();
     o2.type = 'sine';
-    o2.frequency.setValueAtTime(1320, t + 0.06);
+    o2.frequency.value = freq * 2.01;
     const g2 = ctx.createGain();
-    g2.gain.setValueAtTime(0.0001, t);
-    g2.gain.exponentialRampToValueAtTime(peak * 0.85, t + 0.07);
-    g2.gain.exponentialRampToValueAtTime(0.0001, t + 0.2);
-    g2.connect(master);
-    o1.connect(g);
-    o2.connect(g2);
-    o1.start(t); o1.stop(t + 0.12);
-    o2.start(t + 0.06); o2.stop(t + 0.22);
+    g2.gain.value = 0.18;
+    const lp = ctx.createBiquadFilter();
+    lp.type = 'lowpass';
+    lp.frequency.setValueAtTime(2400, t);
+    lp.frequency.exponentialRampToValueAtTime(900, t + dur);
+    o.connect(lp);
+    o2.connect(g2); g2.connect(lp);
+    lp.connect(g);
+    o.start(t); o2.start(t);
+    o.stop(t + dur + 0.02); o2.stop(t + dur + 0.02);
   }
 
-  /** Deep modern thud for major enters */
-  function thud(key = 'thud') {
-    if (!gate(key, 70)) return;
-    const { g, t } = env(0.35, 0.4, 0.004);
+  /** Velvet air transition */
+  function velvet(dur = 0.7, peak = 0.26, key = 'velvet') {
+    if (!gate(key, 60)) return;
+    const { g, t } = env(dur, peak, 0.06);
+    const src = ctx.createBufferSource();
+    src.buffer = noiseBuf(dur);
+    const bp = ctx.createBiquadFilter();
+    bp.type = 'bandpass';
+    bp.Q.value = 0.65;
+    bp.frequency.setValueAtTime(240, t);
+    bp.frequency.exponentialRampToValueAtTime(1100, t + dur * 0.5);
+    bp.frequency.exponentialRampToValueAtTime(320, t + dur);
+    // Warm under-pad
+    const pad = ctx.createOscillator();
+    pad.type = 'sine';
+    pad.frequency.value = 110;
+    const pg = ctx.createGain();
+    pg.gain.value = 0.22;
+    src.connect(bp); bp.connect(g);
+    pad.connect(pg); pg.connect(g);
+    src.start(t);
+    pad.start(t); pad.stop(t + dur + 0.03);
+  }
+
+  /** Soft confirm — two gentle harmonic tones */
+  function confirm(key = 'confirm') {
+    if (!gate(key, 55)) return;
+    const { g, t } = env(0.55, 0.22, 0.02);
+    const a = ctx.createOscillator();
+    a.type = 'sine';
+    a.frequency.setValueAtTime(523.25, t); // C5 soft
+    const b = ctx.createOscillator();
+    b.type = 'sine';
+    b.frequency.setValueAtTime(659.25, t + 0.09); // E5
+    const gb = ctx.createGain();
+    gb.gain.setValueAtTime(0.0001, t);
+    gb.gain.exponentialRampToValueAtTime(0.18, t + 0.11);
+    gb.gain.exponentialRampToValueAtTime(0.0001, t + 0.5);
+    gb.connect(master);
+    const lp = ctx.createBiquadFilter();
+    lp.type = 'lowpass';
+    lp.frequency.value = 2800;
+    a.connect(lp); lp.connect(g);
+    b.connect(gb);
+    a.start(t); a.stop(t + 0.4);
+    b.start(t + 0.09); b.stop(t + 0.52);
+  }
+
+  /** Deep soft entrance — discreet luxury */
+  function depth(key = 'depth') {
+    if (!gate(key, 80)) return;
+    const { g, t } = env(0.85, 0.28, 0.04);
     const o = ctx.createOscillator();
     o.type = 'sine';
-    o.frequency.setValueAtTime(160, t);
-    o.frequency.exponentialRampToValueAtTime(55, t + 0.28);
+    o.frequency.setValueAtTime(98, t);
+    o.frequency.exponentialRampToValueAtTime(65, t + 0.7);
+    const o2 = ctx.createOscillator();
+    o2.type = 'triangle';
+    o2.frequency.value = 196;
+    const g2 = ctx.createGain();
+    g2.gain.value = 0.08;
     o.connect(g);
-    o.start(t); o.stop(t + 0.36);
-    click(0.28, key + 'c');
+    o2.connect(g2); g2.connect(g);
+    o.start(t); o2.start(t);
+    o.stop(t + 0.88); o2.stop(t + 0.88);
+    setTimeout(() => glass(620, 0.16, 0.35, key + 'g'), 120);
   }
 
-  /* ===== API mapped to existing call sites ===== */
+  /* ===== Public API (same call sites) ===== */
+
+  function tick() {
+    glass(880, 0.12, 0.16, 'tick');
+  }
 
   function boot() {
     if (!ensure() || !enabled) return;
-    sweep(0.55, 0.4, 'boot');
-    setTimeout(() => blip(0.36, 'bootB'), 180);
+    velvet(0.9, 0.24, 'bootV');
+    setTimeout(() => confirm('bootC'), 220);
   }
 
   function wordDrop() {
-    click(0.3, 'word');
+    glass(540, 0.16, 0.25, 'word');
   }
 
   function wordImpact() {
-    click(0.24, 'impact');
+    glass(480, 0.12, 0.2, 'impact');
   }
 
   function imageShift(mode) {
     if (!ensure() || !enabled) return;
     const m = String(mode || '');
     if (m === 'bloom' || m === 'iris' || m === 'ripple') {
-      sweep(0.5, 0.42, 'img1');
-      setTimeout(() => blip(0.28, 'img1b'), 120);
-    } else if (m === 'shear' || m === 'split' || m === 'kaleid') {
-      click(0.34, 'img2');
-      setTimeout(() => sweep(0.35, 0.3, 'img2s'), 40);
+      velvet(0.75, 0.26, 'imgA');
+      setTimeout(() => glass(700, 0.14, 0.3, 'imgAg'), 140);
+    } else if (m === 'depth' || m === 'dissolve') {
+      velvet(0.7, 0.22, 'imgB');
     } else {
-      sweep(0.4, 0.36, 'img3');
+      velvet(0.55, 0.2, 'imgC');
+      setTimeout(() => glass(640, 0.12, 0.22, 'imgCg'), 90);
     }
   }
 
   function liquidStart() {
     if (!ensure() || !enabled) return;
-    thud('liq');
-    setTimeout(() => sweep(0.7, 0.44, 'liqS'), 60);
+    depth('liq');
+    setTimeout(() => velvet(1.0, 0.28, 'liqV'), 80);
   }
 
   function diveEnd() {
     if (!ensure() || !enabled) return;
-    sweep(0.4, 0.34, 'diveE');
-    setTimeout(() => blip(0.32, 'diveEb'), 100);
+    velvet(0.55, 0.2, 'diveE');
+    setTimeout(() => confirm('diveC'), 140);
   }
 
   function flip() {
     if (!ensure() || !enabled) return;
-    click(0.4, 'flip');
-    setTimeout(() => click(0.22, 'flip2'), 55);
+    glass(760, 0.2, 0.28, 'flip');
+    setTimeout(() => glass(980, 0.12, 0.32, 'flip2'), 90);
   }
 
   function enter() {
     if (!ensure() || !enabled) return;
-    thud('enter');
-    setTimeout(() => sweep(0.65, 0.45, 'enterS'), 50);
+    depth('enter');
+    setTimeout(() => velvet(0.85, 0.26, 'enterV'), 100);
   }
 
   function skyflight() {
     if (!ensure() || !enabled) return;
-    sweep(0.9, 0.48, 'sky');
-    setTimeout(() => blip(0.3, 'skyB'), 220);
+    velvet(1.2, 0.3, 'sky');
+    setTimeout(() => glass(660, 0.14, 0.4, 'skyG'), 280);
+    setTimeout(() => confirm('skyC'), 500);
   }
 
   function portalsAppear() {
     if (!ensure() || !enabled) return;
-    click(0.32, 'p1');
-    setTimeout(() => click(0.3, 'p2'), 90);
-    setTimeout(() => click(0.28, 'p3'), 180);
-    setTimeout(() => blip(0.34, 'pOk'), 260);
+    glass(520, 0.14, 0.28, 'p1');
+    setTimeout(() => glass(620, 0.14, 0.28, 'p2'), 140);
+    setTimeout(() => glass(740, 0.14, 0.32, 'p3'), 280);
+    setTimeout(() => confirm('pOk'), 420);
   }
 
   function success() {
-    if (!ensure() || !enabled) return;
-    blip(0.38, 'ok');
+    confirm('ok');
   }
 
   function back() {
-    sweepBack('back');
+    if (!ensure() || !enabled) return;
+    velvet(0.4, 0.16, 'backV');
+    setTimeout(() => glass(440, 0.12, 0.24, 'backG'), 60);
   }
 
   function lang() {
-    click(0.3, 'lang');
-    setTimeout(() => blip(0.24, 'langB'), 70);
+    glass(700, 0.14, 0.22, 'lang');
+    setTimeout(() => glass(880, 0.1, 0.22, 'lang2'), 100);
   }
 
-  function whoosh(d, p, k) { sweep(d || 0.45, p || 0.36, k || 'whoosh'); }
-  function pluck() { click(0.32, 'pluck'); }
-  function chime() { blip(0.28, 'chime'); }
+  // Compatibility aliases used by older call sites
+  function whoosh(d, p, k) { velvet(d || 0.7, p || 0.24, k || 'whoosh'); }
+  function pluck(f) { glass(f || 620, 0.16, 0.28, 'pluck'); }
+  function chime(f) { glass(f || 880, 0.12, 0.35, 'chime'); }
+  function click() { glass(800, 0.14, 0.18, 'click'); }
+  function sweep(d, p, k) { velvet(d || 0.65, p || 0.22, k || 'sweep'); }
 
   function unlock() { ensure(); }
 
@@ -286,7 +297,7 @@
   }
 
   ROOT.SaudiSound = {
-    __v: 3,
+    __v: 4,
     unlock, setEnabled, isEnabled: () => enabled,
     tick, boot, wordDrop, wordImpact, imageShift, liquidStart, diveEnd,
     flip, enter, skyflight, portalsAppear, success, back, lang,
