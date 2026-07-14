@@ -6,7 +6,7 @@
   --green-glow: rgba(0, 200, 83, .45);
   --text: #e8f5ef;
   --muted: #7a9a8a;
-  --font: 'Cairo', 'Tajawal', sans-serif;
+  --font: 'IBM Plex Sans Arabic', 'Cairo', 'Tajawal', sans-serif;
   --ease: cubic-bezier(.22, 1, .36, 1);
 }
 
@@ -126,48 +126,53 @@ body, body * { cursor: none !important; }
   text-shadow: 0 0 30px var(--green-glow);
 }
 
-/* Strong hook — fluid color flow per WORD (keeps Arabic joining intact) */
+/* Strong hook — joined Arabic words + fluid COLOR (no background-clip) */
 .mind__hook {
-  max-width: 860px; margin: 0 auto;
-  font-size: clamp(0.95rem, 2.4vw, 1.28rem);
-  font-weight: 800; line-height: 1.9;
-  min-height: 2.2em;
+  max-width: 900px; margin: 0 auto;
+  font-family: 'IBM Plex Sans Arabic', 'Cairo', sans-serif;
+  font-size: clamp(0.98rem, 2.4vw, 1.3rem);
+  font-weight: 700;
+  line-height: 2;
+  min-height: 2.4em;
   text-wrap: balance;
   word-break: keep-all;
   overflow-wrap: normal;
+  letter-spacing: 0 !important;
+  direction: rtl;
+  unicode-bidi: plaintext;
+  font-feature-settings: "liga" 1, "calt" 1;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
 }
 .mind__hook .hw {
+  /* inline-block for fall animation — full word string keeps Arabic joining */
   display: inline-block;
-  white-space: nowrap; /* never split Arabic words mid-glyph */
-  margin-inline: .12em;
-  background-image: linear-gradient(
-    105deg,
-    #7CFFB2 0%,
-    #00e676 18%,
-    #d4af37 36%,
-    #7dd3fc 52%,
-    #69f0ae 68%,
-    #f0e0a0 84%,
-    #00c853 100%
-  );
-  background-size: 320% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
-  animation: geniusFlow 5.5s ease-in-out infinite;
-  animation-delay: calc(var(--i, 0) * -0.22s);
-  will-change: background-position, transform;
-  filter: drop-shadow(0 0 10px rgba(0,200,83,.18));
-  letter-spacing: 0;
+  white-space: nowrap;
+  margin-inline: 0.2em;
+  letter-spacing: 0 !important;
+  /* REAL text color — background-clip was breaking Arabic glyph joining */
+  color: #7CFFB2;
+  -webkit-text-fill-color: currentColor;
+  background: none;
+  -webkit-background-clip: initial;
+  background-clip: initial;
+  animation: geniusHue 4.8s ease-in-out infinite;
+  animation-delay: calc(var(--i, 0) * -0.35s);
+  will-change: transform, color;
+  text-shadow: 0 0 18px rgba(0,200,83,.25);
+  filter: none;
 }
 .mind__hook .hw.is-punct {
-  margin-inline: .06em;
+  margin-inline: 0.1em;
+  color: #d4af37;
+  animation: none;
 }
-@keyframes geniusFlow {
-  0%   { background-position: 0% 50%; }
-  50%  { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+@keyframes geniusHue {
+  0%   { color: #7CFFB2; text-shadow: 0 0 16px rgba(0,230,118,.3); }
+  25%  { color: #d4af37; text-shadow: 0 0 16px rgba(212,175,55,.35); }
+  50%  { color: #7dd3fc; text-shadow: 0 0 16px rgba(125,211,252,.35); }
+  75%  { color: #00e676; text-shadow: 0 0 16px rgba(0,230,118,.35); }
+  100% { color: #7CFFB2; text-shadow: 0 0 16px rgba(0,230,118,.3); }
 }
 
 /* Genius field behind brain gate */

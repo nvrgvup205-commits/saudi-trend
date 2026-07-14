@@ -317,20 +317,28 @@
 
   function splitHookWords(el) {
     if (!el) return [];
-    const text = (el.getAttribute('aria-label') || el.textContent || '').trim();
-    el.innerHTML = '';
-    // Keep Arabic letter-joining intact: animate whole words, never per character
-    const parts = text.split(/(\s+|·|—)/).filter(p => p.length);
+    const text = (el.getAttribute('aria-label') || el.textContent || '').trim()
+      .replace(/\u0640/g, ''); // strip tatweel if any
+    el.textContent = ''; // clear without leaving orphan nodes
+    el.setAttribute('dir', 'rtl');
+    const parts = text.split(/(\s+|·|—|-)/).filter(p => p.length);
     let i = 0;
+    const frag = document.createDocumentFragment();
     parts.forEach((part) => {
-      if (/^\s+$/.test(part)) return;
+      if (/^\s+$/.test(part)) {
+        frag.appendChild(document.createTextNode(' '));
+        return;
+      }
       const span = document.createElement('span');
-      const isPunct = part === '·' || part === '—';
+      const isPunct = part === '·' || part === '—' || part === '-';
       span.className = 'hw' + (isPunct ? ' is-punct' : '');
-      span.style.setProperty('--i', i++);
+      span.style.setProperty('--i', String(i++));
+      span.dir = 'rtl';
+      // textContent keeps a single Arabic run → proper joining inside the word
       span.textContent = part;
-      el.appendChild(span);
+      frag.appendChild(span);
     });
+    el.appendChild(frag);
     return [...el.querySelectorAll('.hw')];
   }
 
