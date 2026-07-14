@@ -29,7 +29,7 @@
     }
   }, 90);
 
-  // Cursor like Demo 2
+  // Cursor — same engine as Demo 2
   if (window.matchMedia('(min-width: 769px)').matches && cursor) {
     document.addEventListener('mousemove', (e) => {
       mx = e.clientX; my = e.clientY;
@@ -131,23 +131,35 @@
     document.body.classList.add('locked');
 
     const imgs = [...dive.querySelectorAll('.dive__img')];
-    const caption = dive.querySelector('.dive__caption');
     const eyebrow = dive.querySelector('.dive__eyebrow');
+    const panel = dive.querySelector('.dive__panel');
     const titleText = lobeEl.dataset.hookTitle || 'نغوص في عقل أصحاب الأعمال';
     const subText = lobeEl.dataset.hookSub || 'وأعماق السوق… نستخرج الأفكار ونصل لأعلى النتائج';
 
     const titleWords = splitWords(hookTitle, titleText);
     const subWords = splitWords(hookSub, subText);
 
-    const safety = setTimeout(() => enterChamber(id, lobeEl), 7500);
+    // Shuffle later frames so each dive feels denser / fresh
+    const sequence = imgs.slice();
+    for (let i = sequence.length - 1; i > 1; i--) {
+      const j = 1 + Math.floor(Math.random() * i);
+      [sequence[i], sequence[j]] = [sequence[j], sequence[i]];
+    }
+
+    const safety = setTimeout(() => enterChamber(id, lobeEl), 9000);
 
     gsap.set(dive, { opacity: 0, visibility: 'hidden' });
-    gsap.set(imgs, {
+    gsap.set(sequence, {
       opacity: 0,
-      scale: 1.25,
-      filter: 'blur(18px) brightness(0.45) saturate(1.2)'
+      scale: 1.28,
+      xPercent: 0,
+      yPercent: 0,
+      filter: 'blur(26px) brightness(0.4) saturate(1.25)'
     });
-    gsap.set([eyebrow, ...titleWords, ...subWords], { opacity: 0, y: 16 });
+    gsap.set([eyebrow, panel], { opacity: 0, y: 18 });
+    gsap.set([...titleWords, ...subWords], {
+      opacity: 0, y: 12, filter: 'blur(8px)'
+    });
 
     const tl = gsap.timeline({
       onComplete: () => {
@@ -156,64 +168,84 @@
       }
     });
 
-    tl.to({}, { duration: 0.15 })
+    tl.to({}, { duration: 0.08 })
       .add(() => {
         dive.classList.add('active');
         dive.setAttribute('aria-hidden', 'false');
         gsap.set(dive, { visibility: 'visible' });
       })
-      .to(dive, { opacity: 1, duration: 0.3 })
-      .to(mind, { opacity: 0, duration: 0.28 }, '<');
+      .to(dive, { opacity: 1, duration: 0.25 })
+      .to(mind, { opacity: 0, duration: 0.22 }, '<');
 
-    // First image appears ASAP as blurred backdrop
-    tl.to(imgs[0], {
-      opacity: 1,
-      scale: 1.08,
-      filter: 'blur(16px) brightness(0.5) saturate(1.15)',
-      duration: 0.45,
-      ease: 'power2.out'
-    }, 0.2);
+    // Frame 1 as blurred full-bleed background IMMEDIATELY
+    tl.fromTo(sequence[0],
+      {
+        opacity: 0,
+        scale: 1.3,
+        filter: 'blur(28px) brightness(0.35) saturate(1.3)'
+      },
+      {
+        opacity: 1,
+        scale: 1.12,
+        filter: 'blur(20px) brightness(0.48) saturate(1.15)',
+        duration: 0.4,
+        ease: 'power2.out'
+      },
+      0.1
+    );
+    tl.to(sequence[0], {
+      scale: 1.18,
+      xPercent: 2,
+      duration: 4.5,
+      ease: 'none'
+    }, 0.1);
 
-    // Hook visible from start of montage — word by word
-    tl.to(eyebrow, { opacity: 1, y: 0, duration: 0.35 }, 0.28)
+    // Clear frosted text panel + word-by-word typing from first frame
+    tl.to(panel, { opacity: 1, y: 0, duration: 0.35, ease: 'power2.out' }, 0.18)
+      .to(eyebrow, { opacity: 1, y: 0, duration: 0.3 }, 0.22)
       .to(titleWords, {
-        opacity: 1, y: 0, stagger: 0.07, duration: 0.35, ease: 'power2.out'
-      }, 0.38)
+        opacity: 1, y: 0, filter: 'blur(0px)',
+        stagger: 0.09, duration: 0.28, ease: 'power2.out'
+      }, 0.3)
       .to(subWords, {
-        opacity: 1, y: 0, stagger: 0.05, duration: 0.32, ease: 'power2.out'
+        opacity: 1, y: 0, filter: 'blur(0px)',
+        stagger: 0.065, duration: 0.26, ease: 'power2.out'
       }, 0.55);
 
-    // Rapid cycling of remaining images UNDER the glass text
-    imgs.forEach((img, i) => {
+    // Rapid magical cycling of remaining BG images UNDER the text
+    const step = 0.16;
+    sequence.forEach((img, i) => {
       if (i === 0) return;
-      const start = 0.55 + (i - 1) * 0.22;
+      const start = 0.45 + (i - 1) * step;
+      const drift = (i % 2 === 0) ? 2.5 : -2.5;
       tl.fromTo(img,
         {
           opacity: 0,
-          scale: 1.22,
-          filter: 'blur(22px) brightness(0.4) saturate(1.25)'
+          scale: 1.32,
+          xPercent: -drift,
+          filter: 'blur(28px) brightness(0.35) saturate(1.35)'
         },
         {
           opacity: 1,
-          scale: 1.06,
-          filter: 'blur(14px) brightness(0.52) saturate(1.15)',
-          duration: 0.28,
+          scale: 1.1,
+          xPercent: drift,
+          filter: 'blur(18px) brightness(0.5) saturate(1.2)',
+          duration: 0.22,
           ease: 'power2.out'
         },
         start
       );
-      tl.to(imgs[i - 1], {
+      tl.to(sequence[i - 1], {
         opacity: 0,
-        scale: 1.12,
-        duration: 0.24,
+        scale: 1.16,
+        duration: 0.18,
         ease: 'power1.in'
-      }, start + 0.12);
+      }, start + 0.08);
     });
 
-    // Hold last frame + text, then exit
-    const endAt = 0.55 + (imgs.length - 1) * 0.22 + 0.35;
-    tl.to({}, { duration: 0.9 }, endAt)
-      .to(dive, { opacity: 0, duration: 0.4, ease: 'power2.in' });
+    const endAt = 0.45 + (sequence.length - 1) * step + 0.45;
+    tl.to({}, { duration: 0.75 }, endAt)
+      .to(dive, { opacity: 0, duration: 0.35, ease: 'power2.in' });
   }
 
   function enterChamber(id, lobeEl) {
@@ -240,7 +272,7 @@
     if (scroller) scroller.scrollTop = 0;
 
     gsap.from(chamber.querySelectorAll('.chamber__hero-text > *, .chamber__grid article'), {
-      y: 28, opacity: 0, stagger: 0.07, duration: 0.75, ease: 'power3.out', delay: 0.08
+      y: 28, opacity: 0, stagger: 0.05, duration: 0.7, ease: 'power3.out', delay: 0.06
     });
 
     if (lobeEl) lobeEl.classList.remove('is-opening');

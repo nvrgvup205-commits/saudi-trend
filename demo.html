@@ -8,13 +8,14 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Tajawal:wght@400;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/demo.css">
+  <link rel="stylesheet" href="css/demo.css?v=dive3">
 </head>
 <body>
+  <!-- Signature cursor: golden arrow + orbit — same as Demo 2 -->
   <div class="cursor" id="cursor" aria-hidden="true">
     <svg class="cursor__svg" viewBox="0 0 48 48" fill="none">
       <path class="cursor__blade" d="M8 6L42 22L26 26L22 42L8 6Z" fill="url(#d1CurGrad)" stroke="#0a5c40" stroke-width="1.2" stroke-linejoin="round"/>
-      <circle class="cursor__orbit" cx="22" cy="22" r="7" stroke="#d4af37" stroke-width="1.4" stroke-dasharray="4 3"/>
+      <circle class="cursor__ring" cx="22" cy="22" r="7" stroke="#d4af37" stroke-width="1.4" stroke-dasharray="4 3"/>
       <circle cx="22" cy="22" r="2.2" fill="#d4af37"/>
       <defs>
         <linearGradient id="d1CurGrad" x1="8" y1="6" x2="42" y2="42">
@@ -34,27 +35,37 @@
   <canvas id="particles-canvas"></canvas>
   <div class="noise"></div>
 
-  <!-- Dive: rapid bg montage + word-by-word hook -->
+  <!-- Dive: rapid blurred BG montage + clear word-by-word hook from frame 1 -->
   <div class="dive" id="dive" aria-hidden="true">
     <div class="dive__reel" id="dive-reel">
-      <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1000&q=70" alt="" class="dive__img">
-      <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=1000&q=70" alt="" class="dive__img">
-      <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=1000&q=70" alt="" class="dive__img">
-      <img src="https://images.unsplash.com/photo-1557804506-669a67965ba0?w=1000&q=70" alt="" class="dive__img">
-      <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1000&q=70" alt="" class="dive__img">
-      <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1000&q=70" alt="" class="dive__img">
-      <img src="https://images.unsplash.com/photo-1561070791-2526d30994b5?w=1000&q=70" alt="" class="dive__img">
-      <img src="https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=1000&q=70" alt="" class="dive__img">
-      <img src="https://images.unsplash.com/photo-1518186285589-2f7649de83e0?w=1000&q=70" alt="" class="dive__img">
-      <img src="https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=1000&q=70" alt="" class="dive__img">
-      <img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=1000&q=70" alt="" class="dive__img">
-      <img src="https://images.unsplash.com/photo-1556761175-b413da4baf72?w=1000&q=70" alt="" class="dive__img">
+      <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200&q=70" alt="" class="dive__img">
+      <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=1200&q=70" alt="" class="dive__img">
+      <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=1200&q=70" alt="" class="dive__img">
+      <img src="https://images.unsplash.com/photo-1557804506-669a67965ba0?w=1200&q=70" alt="" class="dive__img">
+      <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&q=70" alt="" class="dive__img">
+      <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&q=70" alt="" class="dive__img">
+      <img src="https://images.unsplash.com/photo-1561070791-2526d30994b5?w=1200&q=70" alt="" class="dive__img">
+      <img src="https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=1200&q=70" alt="" class="dive__img">
+      <img src="https://images.unsplash.com/photo-1518186285589-2f7649de83e0?w=1200&q=70" alt="" class="dive__img">
+      <img src="https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=1200&q=70" alt="" class="dive__img">
+      <img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=1200&q=70" alt="" class="dive__img">
+      <img src="https://images.unsplash.com/photo-1556761175-b413da4baf72?w=1200&q=70" alt="" class="dive__img">
+      <img src="https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=1200&q=70" alt="" class="dive__img">
+      <img src="https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=1200&q=70" alt="" class="dive__img">
+      <img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=1200&q=70" alt="" class="dive__img">
+      <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1200&q=70" alt="" class="dive__img">
+      <img src="https://images.unsplash.com/photo-1553877522-43269d4ea984?w=1200&q=70" alt="" class="dive__img">
+      <img src="https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=1200&q=70" alt="" class="dive__img">
+      <img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=1200&q=70" alt="" class="dive__img">
+      <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=1200&q=70" alt="" class="dive__img">
     </div>
     <div class="dive__glass"></div>
     <div class="dive__caption">
-      <span class="dive__eyebrow">سعودي تريند</span>
-      <h2 id="dive-hook-title" class="dive__type"></h2>
-      <p id="dive-hook-sub" class="dive__type dive__type--sub"></p>
+      <div class="dive__panel">
+        <span class="dive__eyebrow">سعودي تريند</span>
+        <h2 id="dive-hook-title" class="dive__type"></h2>
+        <p id="dive-hook-sub" class="dive__type dive__type--sub"></p>
+      </div>
     </div>
   </div>
 
@@ -129,15 +140,18 @@
         </div>
       </div>
       <div class="container chamber__grid">
-        <article><img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=700&q=80" alt=""><h3>قراءة السوق</h3><p>تحليل الجمهور والمنافسين برؤية محلية.</p></article>
-        <article><img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=700&q=80" alt=""><h3>حملات ذكية</h3><p>استهداف دقيق وعائد قابل للقياس.</p></article>
-        <article><img src="https://images.unsplash.com/photo-1557804506-669a67965ba0?w=700&q=80" alt=""><h3>قرارات بالبيانات</h3><p>من عقل السوق… إلى خطة نجاح.</p></article>
-        <article><img src="https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=700&q=80" alt=""><h3>سوشيال ميديا</h3><p>حضور يومي يصنع ولاء الجمهور السعودي.</p></article>
-        <article><img src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=700&q=80" alt=""><h3>إدارة السمعة</h3><p>نبني ثقة علامتك في السوق بحذر واحتراف.</p></article>
-        <article><img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=700&q=80" alt=""><h3>عروض موسمية</h3><p>حملات رمضان واليوم الوطني وأهم مواسم المملكة.</p></article>
-        <article><img src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=700&q=80" alt=""><h3>شراكات مؤثرة</h3><p>نختار الأصوات المناسبة ونقيس الأثر الحقيقي.</p></article>
-        <article><img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=700&q=80" alt=""><h3>تسويق B2B</h3><p>رسائل تفهم صانع القرار داخل المؤسسات.</p></article>
-        <article><img src="https://images.unsplash.com/photo-1556761175-b413da4baf72?w=700&q=80" alt=""><h3>إطلاق منتجات</h3><p>خطة متكاملة من التشويق إلى أول موجة مبيعات.</p></article>
+        <article><img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=700&q=80" alt=""><h3>قراءة السوق</h3><p>تحليل الجمهور والمنافسين برؤية محلية.</p><span class="offer">عرض استشارة مجانية</span></article>
+        <article><img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=700&q=80" alt=""><h3>حملات ذكية</h3><p>استهداف دقيق وعائد قابل للقياس.</p><span class="offer">خصم 20% لأول حملة</span></article>
+        <article><img src="https://images.unsplash.com/photo-1557804506-669a67965ba0?w=700&q=80" alt=""><h3>قرارات بالبيانات</h3><p>من عقل السوق… إلى خطة نجاح.</p><span class="offer">تقرير شهري مدمج</span></article>
+        <article><img src="https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=700&q=80" alt=""><h3>سوشيال ميديا</h3><p>حضور يومي يصنع ولاء الجمهور السعودي.</p><span class="offer">باقة محتوى شهر كامل</span></article>
+        <article><img src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=700&q=80" alt=""><h3>إدارة السمعة</h3><p>نبني ثقة علامتك في السوق بحذر واحتراف.</p><span class="offer">مراقبة سمعة 24/7</span></article>
+        <article><img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=700&q=80" alt=""><h3>عروض موسمية</h3><p>حملات رمضان واليوم الوطني وأهم مواسم المملكة.</p><span class="offer">باقة المواسم الثلاثة</span></article>
+        <article><img src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=700&q=80" alt=""><h3>شراكات مؤثرة</h3><p>نختار الأصوات المناسبة ونقيس الأثر الحقيقي.</p><span class="offer">قائمة مؤثرين جاهزة</span></article>
+        <article><img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=700&q=80" alt=""><h3>تسويق B2B</h3><p>رسائل تفهم صانع القرار داخل المؤسسات.</p><span class="offer">ورشة استراتيجية مجانية</span></article>
+        <article><img src="https://images.unsplash.com/photo-1556761175-b413da4baf72?w=700&q=80" alt=""><h3>إطلاق منتجات</h3><p>خطة متكاملة من التشويق إلى أول موجة مبيعات.</p><span class="offer">Launch Pack</span></article>
+        <article><img src="https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?w=700&q=80" alt=""><h3>إعلانات بحث</h3><p>كلمات مفتاحية تجلب عملاً جاهز للشراء.</p><span class="offer">إعداد حساب مجاني</span></article>
+        <article><img src="https://images.unsplash.com/photo-1553484771-371a605b060b?w=700&q=80" alt=""><h3>تسويق بالمحتوى</h3><p>مقالات وفيديوهات تبني سلطة علامتك.</p><span class="offer">خطة محتوى 90 يوم</span></article>
+        <article><img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=700&q=80" alt=""><h3>فعاليات وتفعيل</h3><p>تجارب حضورية تربط الجمهور بالمنتج.</p><span class="offer">باقة تفعيل الرياض</span></article>
       </div>
     </div>
   </section>
@@ -155,15 +169,18 @@
         </div>
       </div>
       <div class="container chamber__grid">
-        <article><img src="https://images.unsplash.com/photo-1561070791-2526d30994b5?w=700&q=80" alt=""><h3>هوية بصرية</h3><p>تصميم يعكس عقل علامتك وطموحها.</p></article>
-        <article><img src="https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=700&q=80" alt=""><h3>فيديو وموشن</h3><p>قصص متحركة تلمس قرار المشتري.</p></article>
-        <article><img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=700&q=80" alt=""><h3>مواقع ومتاجر</h3><p>تجربة رقمية بنفس منطق السوق.</p></article>
-        <article><img src="https://images.unsplash.com/photo-1586717791821-3f44a563fa4c?w=700&q=80" alt=""><h3>تصميم واجهات</h3><p>واجهات أنيقة تسهّل رحلة العميل.</p></article>
-        <article><img src="https://images.unsplash.com/photo-1634942537034-253176668a8d?w=700&q=80" alt=""><h3>دليل الهوية</h3><p>نظام بصري ثابت على كل المنصات.</p></article>
-        <article><img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=700&q=80" alt=""><h3>موشن جرافيك</h3><p>حركة تبيع الفكرة في ثوانٍ.</p></article>
-        <article><img src="https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=700&q=80" alt=""><h3>تصوير احترافي</h3><p>صور منتج ومكان بروَى سعودية.</p></article>
-        <article><img src="https://images.unsplash.com/photo-1559028012-481c04fa702d?w=700&q=80" alt=""><h3>مطبوعات فاخرة</h3><p>مواد تترك انطباعاً ملموساً وقوياً.</p></article>
-        <article><img src="https://images.unsplash.com/photo-1626785774573-4b7993143457?w=700&q=80" alt=""><h3>محتوى إبداعي</h3><p>أفكار بصرية تناسب السوق المحلي.</p></article>
+        <article><img src="https://images.unsplash.com/photo-1561070791-2526d30994b5?w=700&q=80" alt=""><h3>هوية بصرية</h3><p>تصميم يعكس عقل علامتك وطموحها.</p><span class="offer">هوية كاملة + دليل</span></article>
+        <article><img src="https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=700&q=80" alt=""><h3>فيديو وموشن</h3><p>قصص متحركة تلمس قرار المشتري.</p><span class="offer">ريل + برومو مجاني</span></article>
+        <article><img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=700&q=80" alt=""><h3>مواقع ومتاجر</h3><p>تجربة رقمية بنفس منطق السوق.</p><span class="offer">موقع خلال 14 يوم</span></article>
+        <article><img src="https://images.unsplash.com/photo-1586717791821-3f44a563fa4c?w=700&q=80" alt=""><h3>تصميم واجهات</h3><p>واجهات أنيقة تسهّل رحلة العميل.</p><span class="offer">UI Kit مجاني</span></article>
+        <article><img src="https://images.unsplash.com/photo-1634942537034-253176668a8d?w=700&q=80" alt=""><h3>دليل الهوية</h3><p>نظام بصري ثابت على كل المنصات.</p><span class="offer">Brand Book PDF</span></article>
+        <article><img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=700&q=80" alt=""><h3>موشن جرافيك</h3><p>حركة تبيع الفكرة في ثوانٍ.</p><span class="offer">باقة 5 موشن</span></article>
+        <article><img src="https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=700&q=80" alt=""><h3>تصوير احترافي</h3><p>صور منتج ومكان بروَى سعودية.</p><span class="offer">جلسة استوديو</span></article>
+        <article><img src="https://images.unsplash.com/photo-1559028012-481c04fa702d?w=700&q=80" alt=""><h3>مطبوعات فاخرة</h3><p>مواد تترك انطباعاً ملموساً وقوياً.</p><span class="offer">كتالوج ترحيبي</span></article>
+        <article><img src="https://images.unsplash.com/photo-1626785774573-4b7993143457?w=700&q=80" alt=""><h3>محتوى إبداعي</h3><p>أفكار بصرية تناسب السوق المحلي.</p><span class="offer">30 تصميم شهري</span></article>
+        <article><img src="https://images.unsplash.com/photo-1611162616475-46b635cb6868?w=700&q=80" alt=""><h3>غلاف سوشيال</h3><p>قوالب متناسقة لكل المنصات.</p><span class="offer">حزمة 12 قالب</span></article>
+        <article><img src="https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=700&q=80" alt=""><h3>إعلان تلفزيوني</h3><p>سْبوت قصير للبث والمنصات.</p><span class="offer">سيناريو مجاني</span></article>
+        <article><img src="https://images.unsplash.com/photo-1558655146-9f40138edfeb?w=700&q=80" alt=""><h3>تصميم تغليف</h3><p>عبوة تبيع المنتج من أول نظرة.</p><span class="offer">3 مفاهيم تصميم</span></article>
       </div>
     </div>
   </section>
@@ -181,15 +198,18 @@
         </div>
       </div>
       <div class="container chamber__grid">
-        <article><img src="https://images.unsplash.com/photo-1518186285589-2f7649de83e0?w=700&q=80" alt=""><h3>CRM ذكي</h3><p>علاقات العملاء في منظومة واحدة.</p></article>
-        <article><img src="https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=700&q=80" alt=""><h3>أتمتة التسويق</h3><p>رحلات تتفاعل مع سلوك العميل.</p></article>
-        <article><img src="https://images.unsplash.com/photo-1504639725590-34d0984388bd?w=700&q=80" alt=""><h3>تكامل الأنظمة</h3><p>ربط الأدوات لاستخلاص النجاح أسرع.</p></article>
-        <article><img src="https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?w=700&q=80" alt=""><h3>واتساب أعمال</h3><p>محادثات آلية تخدم عميلك 24/7.</p></article>
-        <article><img src="https://images.unsplash.com/photo-1563986768494-4dee2763ff3f?w=700&q=80" alt=""><h3>إيميل أوتوماتيك</h3><p>تسلسل رسائل يبني العلاقة ويغلق الصفقة.</p></article>
-        <article><img src="https://images.unsplash.com/photo-1516321497487-e288fb19713f?w=700&q=80" alt=""><h3>ربط المتجر</h3><p>مزامنة الطلبات والمخزون بلا أخطاء.</p></article>
-        <article><img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=700&q=80" alt=""><h3>مؤشرات الأداء</h3><p>لوحة واحدة لكل قرار مهم.</p></article>
-        <article><img src="https://images.unsplash.com/photo-1553877522-43269d4ea984?w=700&q=80" alt=""><h3>أتمتة الدعم</h3><p>ردود جاهزة ترفع الرضا وتوفر الوقت.</p></article>
-        <article><img src="https://images.unsplash.com/photo-1551836022-4c4c79ecde51?w=700&q=80" alt=""><h3>أتمتة المبيعات</h3><p>قمع ذكي يسرّع إغلاق الصفقات.</p></article>
+        <article><img src="https://images.unsplash.com/photo-1518186285589-2f7649de83e0?w=700&q=80" alt=""><h3>CRM ذكي</h3><p>علاقات العملاء في منظومة واحدة.</p><span class="offer">إعداد مجاني + تدريب</span></article>
+        <article><img src="https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=700&q=80" alt=""><h3>أتمتة التسويق</h3><p>رحلات تتفاعل مع سلوك العميل.</p><span class="offer">3 رحلات جاهزة</span></article>
+        <article><img src="https://images.unsplash.com/photo-1504639725590-34d0984388bd?w=700&q=80" alt=""><h3>تكامل الأنظمة</h3><p>ربط الأدوات لاستخلاص النجاح أسرع.</p><span class="offer">ربط أول أداة مجاناً</span></article>
+        <article><img src="https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?w=700&q=80" alt=""><h3>واتساب أعمال</h3><p>محادثات آلية تخدم عميلك 24/7.</p><span class="offer">بوت ردود جاهز</span></article>
+        <article><img src="https://images.unsplash.com/photo-1563986768494-4dee2763ff3f?w=700&q=80" alt=""><h3>إيميل أوتوماتيك</h3><p>تسلسل رسائل يبني العلاقة ويغلق الصفقة.</p><span class="offer">قوالب 10 رسائل</span></article>
+        <article><img src="https://images.unsplash.com/photo-1516321497487-e288fb19713f?w=700&q=80" alt=""><h3>ربط المتجر</h3><p>مزامنة الطلبات والمخزون بلا أخطاء.</p><span class="offer">تكامل سلة/زد</span></article>
+        <article><img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=700&q=80" alt=""><h3>مؤشرات الأداء</h3><p>لوحة واحدة لكل قرار مهم.</p><span class="offer">داشبورد مخصص</span></article>
+        <article><img src="https://images.unsplash.com/photo-1553877522-43269d4ea984?w=700&q=80" alt=""><h3>أتمتة الدعم</h3><p>ردود جاهزة ترفع الرضا وتوفر الوقت.</p><span class="offer">مكتبة ردود جاهزة</span></article>
+        <article><img src="https://images.unsplash.com/photo-1551836022-4c4c79ecde51?w=700&q=80" alt=""><h3>أتمتة المبيعات</h3><p>قمع ذكي يسرّع إغلاق الصفقات.</p><span class="offer">قمع مبيعات جاهز</span></article>
+        <article><img src="https://images.unsplash.com/photo-1518186285589-2f7649de83e0?w=700&q=80" alt=""><h3>Zapier / Make</h3><p>سيناريوهات تربط كل أدواتك بضغطة.</p><span class="offer">5 أتمتات جاهزة</span></article>
+        <article><img src="https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=700&q=80" alt=""><h3>تنبيهات ذكية</h3><p>إشعارات فورية للمبيعات والفرص.</p><span class="offer">تنبيهات واتساب</span></article>
+        <article><img src="https://images.unsplash.com/photo-1504639725590-34d0984388bd?w=700&q=80" alt=""><h3>تتبع العملاء</h3><p>رحلة العميل من أول نقرة حتى الشراء.</p><span class="offer">تتبع كامل مجاني</span></article>
       </div>
     </div>
   </section>
