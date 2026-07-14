@@ -7,15 +7,31 @@
   <title>سعودي تريند | التسويق والحلول الذكية</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Tajawal:wght@400;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css?v=classic2">
 </head>
-<body>
+<body class="classic-page">
+  <!-- Signature cursor — same as Demo 2 -->
+  <div class="cursor" id="cursor" aria-hidden="true">
+    <svg class="cursor__svg" viewBox="0 0 48 48" fill="none">
+      <path class="cursor__blade" d="M8 6L42 22L26 26L22 42L8 6Z" fill="url(#clCurGrad)" stroke="#0a5c40" stroke-width="1.2" stroke-linejoin="round"/>
+      <circle class="cursor__ring" cx="22" cy="22" r="7" stroke="#d4af37" stroke-width="1.4" stroke-dasharray="4 3"/>
+      <circle cx="22" cy="22" r="2.2" fill="#d4af37"/>
+      <defs>
+        <linearGradient id="clCurGrad" x1="8" y1="6" x2="42" y2="42">
+          <stop stop-color="#f0e0a0"/><stop offset=".55" stop-color="#d4af37"/><stop offset="1" stop-color="#0d7a54"/>
+        </linearGradient>
+      </defs>
+    </svg>
+  </div>
+  <div class="cursor-dots" id="cursor-dots" aria-hidden="true"></div>
+  <canvas id="classic-aurora" class="classic-aurora" aria-hidden="true"></canvas>
+
   <!-- Navigation -->
   <header class="header" id="header">
     <nav class="nav container">
       <a href="#" class="nav__logo">
-        <span class="nav__logo-icon">ST</span>
+        <span class="nav__logo-seal" aria-hidden="true"></span>
         <span class="nav__logo-text">سعودي <strong>تريند</strong></span>
       </a>
       <button class="nav__toggle" id="nav-toggle" aria-label="فتح القائمة">
@@ -36,65 +52,66 @@
   </header>
 
   <main>
-    <!-- Hero Section -->
+    <!-- Hero Section — classical full-bleed -->
     <section class="hero" id="home">
-      <div class="hero__bg">
-        <div class="hero__shape hero__shape--1"></div>
-        <div class="hero__shape hero__shape--2"></div>
-        <div class="hero__shape hero__shape--3"></div>
+      <div class="hero__media" aria-hidden="true">
+        <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=2000&q=90" alt="" fetchpriority="high">
+        <div class="hero__veil"></div>
+        <div class="hero__grain"></div>
       </div>
       <div class="container hero__container">
         <div class="hero__content">
-          <span class="hero__badge">شريكك في النجاح</span>
-          <h1 class="hero__title">
-            نصنع <span class="text-gradient">اتجاهات</span> تُحدث فرقاً
-            <br>في عالم الأعمال
-          </h1>
-          <p class="hero__description">
-            سعودي تريند شركة متخصصة في التسويق وتقديم الحلول والخدمات للشركات والمؤسسات
-            بمختلف مجالاتها. نحوّل رؤيتك إلى واقع ملموس باستراتيجيات مبتكرة ونتائج قابلة للقياس.
-          </p>
+          <p class="hero__brand">سعودي <em>تريند</em></p>
+          <h1 class="hero__title">كلاسيكية تُبهر… ونتائج تُقاس</h1>
+          <p class="hero__description">شريك التسويق والأتمتة والبرمجيات للمؤسسات السعودية — بهدوء الواثقين وقوة من يصنع الاتجاه.</p>
           <div class="hero__buttons">
-            <a href="#contact" class="btn btn--primary">ابدأ مشروعك الآن</a>
-            <a href="#services" class="btn btn--outline">استكشف خدماتنا</a>
-          </div>
-          <div class="hero__stats">
-            <div class="hero__stat">
-              <span class="hero__stat-number" data-target="150">0</span><span class="hero__stat-plus">+</span>
-              <span class="hero__stat-label">عميل راضٍ</span>
-            </div>
-            <div class="hero__stat">
-              <span class="hero__stat-number" data-target="300">0</span><span class="hero__stat-plus">+</span>
-              <span class="hero__stat-label">مشروع ناجح</span>
-            </div>
-            <div class="hero__stat">
-              <span class="hero__stat-number" data-target="8">0</span><span class="hero__stat-plus">+</span>
-              <span class="hero__stat-label">سنوات خبرة</span>
-            </div>
-          </div>
-        </div>
-        <div class="hero__visual">
-          <div class="hero__card hero__card--main">
-            <div class="hero__card-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <path d="M3 3v18h18M7 16l4-8 4 4 6-10"/>
-              </svg>
-            </div>
-            <p class="hero__card-title">نمو مستدام</p>
-            <p class="hero__card-value">+127%</p>
-            <p class="hero__card-desc">متوسط نمو العملاء</p>
-          </div>
-          <div class="hero__card hero__card--secondary">
-            <div class="hero__card-icon hero__card-icon--small">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <circle cx="12" cy="12" r="10"/>
-                <path d="M12 6v6l4 2"/>
-              </svg>
-            </div>
-            <p>استجابة خلال 24 ساعة</p>
+            <a href="#contact" class="btn btn--primary magnetic">ابدأ مشروعك</a>
+            <a href="#domains" class="btn btn--outline magnetic">استكشف المجالات</a>
           </div>
         </div>
       </div>
+      <a href="#domains" class="hero__scroll" aria-label="أسفل">↓</a>
+    </section>
+
+    <!-- Domains — genius imagery per field -->
+    <section class="domains" id="domains">
+      <div class="domains__intro container">
+        <span class="section__tag reveal">مجالاتنا</span>
+        <h2 class="section__title reveal">ثلاثة عوالم… بهوية كلاسيكية واحدة</h2>
+      </div>
+      <article class="domain domain--market">
+        <div class="domain__media">
+          <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1800&q=88" alt="التسويق — ناطحات سحاب وقرار السوق">
+          <div class="domain__veil"></div>
+        </div>
+        <div class="domain__copy">
+          <span>01</span>
+          <h3>التسويق</h3>
+          <p>قراءة السوق السعودي وصياغة حملات تبني قرار الشراء قبل المنافس.</p>
+        </div>
+      </article>
+      <article class="domain domain--design">
+        <div class="domain__media">
+          <img src="https://images.unsplash.com/photo-1574717241335-5bea81c8e055?w=1800&q=88" alt="التصميم والفيديو — إخراج بصري سينمائي">
+          <div class="domain__veil"></div>
+        </div>
+        <div class="domain__copy">
+          <span>02</span>
+          <h3>التصميم والفيديو</h3>
+          <p>هوية بصرية وموشن يُظهران جوهر العلامة بأناقة خليجية راقية.</p>
+        </div>
+      </article>
+      <article class="domain domain--auto">
+        <div class="domain__media">
+          <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?w=1800&q=88" alt="الأتمتة — دوائر وذكاء تشغيلي">
+          <div class="domain__veil"></div>
+        </div>
+        <div class="domain__copy">
+          <span>03</span>
+          <h3>الأتمتة والبرمجيات</h3>
+          <p>أنظمة تربط التسويق بالمبيعات والدعم — لتعمل منشأتك بلا انقطاع.</p>
+        </div>
+      </article>
     </section>
 
     <!-- About Section -->
@@ -153,107 +170,53 @@
           </p>
         </div>
         <div class="services__grid">
-          <article class="service-card">
-            <div class="service-card__number">01</div>
-            <div class="service-card__icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <rect x="2" y="3" width="20" height="14" rx="2"/>
-                <path d="M8 21h8M12 17v4"/>
-              </svg>
+          <article class="service-card reveal">
+            <div class="service-card__media"><img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1000&q=82" alt=""></div>
+            <div class="service-card__body">
+              <div class="service-card__number">01</div>
+              <h3 class="service-card__title">التسويق الرقمي</h3>
+              <p class="service-card__desc">حملات ذكية عبر المنصات ومحركات البحث بعائد يُقاس.</p>
             </div>
-            <h3 class="service-card__title">التسويق الرقمي</h3>
-            <p class="service-card__desc">إدارة حملات إعلانية متكاملة عبر منصات التواصل الاجتماعي ومحركات البحث لتحقيق أقصى عائد على الاستثمار.</p>
-            <ul class="service-card__list">
-              <li>إعلانات Google & Meta</li>
-              <li>تحسين محركات البحث SEO</li>
-              <li>إدارة السوشيال ميديا</li>
-            </ul>
           </article>
-          <article class="service-card service-card--featured">
-            <div class="service-card__number">02</div>
-            <div class="service-card__icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
-                <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
-                <line x1="12" y1="22.08" x2="12" y2="12"/>
-              </svg>
+          <article class="service-card service-card--featured reveal">
+            <div class="service-card__media"><img src="https://images.unsplash.com/photo-1561070791-2526d30994b5?w=1000&q=82" alt=""></div>
+            <div class="service-card__body">
+              <div class="service-card__number">02</div>
+              <h3 class="service-card__title">الهوية والتصميم</h3>
+              <p class="service-card__desc">علامات بصرية تُحفر في الذاكرة وتعكس طموح المنشأة.</p>
             </div>
-            <h3 class="service-card__title">استراتيجيات الأعمال</h3>
-            <p class="service-card__desc">تطوير خطط عمل مدروسة تتماشى مع أهداف مؤسستك وتحقق نمواً مستداماً في السوق السعودي والإقليمي.</p>
-            <ul class="service-card__list">
-              <li>دراسات السوق</li>
-              <li>خطط التوسع</li>
-              <li>تحليل المنافسين</li>
-            </ul>
           </article>
-          <article class="service-card">
-            <div class="service-card__number">03</div>
-            <div class="service-card__icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <circle cx="12" cy="12" r="10"/>
-                <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
-                <line x1="9" y1="9" x2="9.01" y2="9"/>
-                <line x1="15" y1="9" x2="15.01" y2="9"/>
-              </svg>
+          <article class="service-card reveal">
+            <div class="service-card__media"><img src="https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=1000&q=82" alt=""></div>
+            <div class="service-card__body">
+              <div class="service-card__number">03</div>
+              <h3 class="service-card__title">الفيديو والموشن</h3>
+              <p class="service-card__desc">قصص متحركة تُقنع في ثوانٍ وتليق بالسوق الخليجي.</p>
             </div>
-            <h3 class="service-card__title">العلامة التجارية</h3>
-            <p class="service-card__desc">بناء هوية بصرية مميزة وصوت علامة تجارية يعكس قيم مؤسستك ويتواصل بفعالية مع جمهورك.</p>
-            <ul class="service-card__list">
-              <li>تصميم الهوية البصرية</li>
-              <li>استراتيجية العلامة</li>
-              <li>إدارة السمعة</li>
-            </ul>
           </article>
-          <article class="service-card">
-            <div class="service-card__number">04</div>
-            <div class="service-card__icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
-                <polyline points="14 2 14 8 20 8"/>
-                <line x1="16" y1="13" x2="8" y2="13"/>
-                <line x1="16" y1="17" x2="8" y2="17"/>
-              </svg>
+          <article class="service-card reveal">
+            <div class="service-card__media"><img src="https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=1000&q=82" alt=""></div>
+            <div class="service-card__body">
+              <div class="service-card__number">04</div>
+              <h3 class="service-card__title">الأتمتة والأنظمة</h3>
+              <p class="service-card__desc">CRM ورحلات مؤتمتة تربط الفرصة بالقرار بلا تأخير.</p>
             </div>
-            <h3 class="service-card__title">التسويق بالمحتوى</h3>
-            <p class="service-card__desc">إنتاج محتوى جذاب وقيّم يبني ثقة جمهورك ويحفّزه على التفاعل والتحويل.</p>
-            <ul class="service-card__list">
-              <li>كتابة المحتوى</li>
-              <li>إنتاج الفيديو</li>
-              <li>التصوير الاحترافي</li>
-            </ul>
           </article>
-          <article class="service-card">
-            <div class="service-card__number">05</div>
-            <div class="service-card__icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <rect x="2" y="2" width="20" height="8" rx="2"/>
-                <rect x="2" y="14" width="20" height="8" rx="2"/>
-                <line x1="6" y1="6" x2="6.01" y2="6"/>
-                <line x1="6" y1="18" x2="6.01" y2="18"/>
-              </svg>
+          <article class="service-card reveal">
+            <div class="service-card__media"><img src="https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?w=1000&q=82" alt=""></div>
+            <div class="service-card__body">
+              <div class="service-card__number">05</div>
+              <h3 class="service-card__title">المواقع والمتاجر</h3>
+              <p class="service-card__desc">تجارب رقمية أنيقة تُسهّل البيع وتُعلي من هيبة العلامة.</p>
             </div>
-            <h3 class="service-card__title">الحلول التقنية</h3>
-            <p class="service-card__desc">تطوير مواقع إلكترونية وأنظمة رقمية متطورة تدعم أهدافك التسويقية وتُحسّن تجربة عملائك.</p>
-            <ul class="service-card__list">
-              <li>تطوير المواقع</li>
-              <li>أنظمة CRM</li>
-              <li>أتمتة التسويق</li>
-            </ul>
           </article>
-          <article class="service-card">
-            <div class="service-card__number">06</div>
-            <div class="service-card__icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
-              </svg>
+          <article class="service-card reveal">
+            <div class="service-card__media"><img src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=1000&q=82" alt=""></div>
+            <div class="service-card__body">
+              <div class="service-card__number">06</div>
+              <h3 class="service-card__title">الاستشارات الاستراتيجية</h3>
+              <p class="service-card__desc">جلسات خبراء لصناعة قرار واضح في سوق لا يتوقف.</p>
             </div>
-            <h3 class="service-card__title">الاستشارات المتخصصة</h3>
-            <p class="service-card__desc">جلسات استشارية مع خبراء متخصصين لمساعدتك في اتخاذ قرارات استراتيجية مدروسة.</p>
-            <ul class="service-card__list">
-              <li>استشارات تسويقية</li>
-              <li>تدريب الفرق</li>
-              <li>ورش عمل متخصصة</li>
-            </ul>
           </article>
         </div>
       </div>
@@ -447,7 +410,7 @@
               <label for="message">رسالتك</label>
               <textarea id="message" name="message" rows="4" placeholder="أخبرنا عن مشروعك..." required></textarea>
             </div>
-            <button type="submit" class="btn btn--primary btn--full">إرسال الطلب</button>
+            <button type="submit" class="btn btn--primary btn--full magnetic">إرسال الطلب</button>
           </form>
         </div>
       </div>
@@ -503,6 +466,9 @@
     </div>
   </footer>
 
-  <script src="js/main.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="js/soundscape.js?v=luxe4"></script>
+  <script src="js/main.js?v=classic2"></script>
 </body>
 </html>
