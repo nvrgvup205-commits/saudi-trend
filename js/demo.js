@@ -315,53 +315,55 @@
   }
   MindField.start();
 
-  function splitHookChars(el) {
+  function splitHookWords(el) {
     if (!el) return [];
-    const text = el.getAttribute('aria-label') || el.textContent || '';
+    const text = (el.getAttribute('aria-label') || el.textContent || '').trim();
     el.innerHTML = '';
-    const chars = [...text];
-    chars.forEach((ch, i) => {
+    // Keep Arabic letter-joining intact: animate whole words, never per character
+    const parts = text.split(/(\s+|·|—)/).filter(p => p.length);
+    let i = 0;
+    parts.forEach((part) => {
+      if (/^\s+$/.test(part)) return;
       const span = document.createElement('span');
-      span.className = 'ch' + (ch === ' ' ? ' is-space' : '');
-      span.style.setProperty('--i', i);
-      span.textContent = ch === ' ' ? ' ' : ch;
+      const isPunct = part === '·' || part === '—';
+      span.className = 'hw' + (isPunct ? ' is-punct' : '');
+      span.style.setProperty('--i', i++);
+      span.textContent = part;
       el.appendChild(span);
     });
-    return [...el.querySelectorAll('.ch')];
+    return [...el.querySelectorAll('.hw')];
   }
 
   function intro() {
     const hookEl = document.getElementById('mind-hook');
-    const chars = splitHookChars(hookEl);
+    const words = splitHookWords(hookEl);
 
     gsap.from('.mind__logo, .mind__links a, .mind__links button', {
       y: -16, opacity: 0, stagger: 0.07, duration: 0.75
     });
     gsap.from('.mind__title', { y: 22, opacity: 0, duration: 0.9, delay: 0.08 });
 
-    // Physical fall + fluid colors already animating via CSS
-    if (chars.length) {
+    if (words.length) {
       const drop = Math.min(90, window.innerHeight * 0.1);
-      gsap.set(chars, { y: -drop, opacity: 0, rotation: 0 });
-      gsap.to(chars, {
+      gsap.set(words, { y: -drop, opacity: 0, force3D: true });
+      gsap.to(words, {
         y: 0, opacity: 1, force3D: true,
-        stagger: 0.028,
-        duration: 0.7,
-        ease: (t) => t * t, // gravity-in
+        stagger: 0.08,
+        duration: 0.72,
+        ease: (t) => t * t,
         delay: 0.2,
         onStart: () => { if (window.SaudiSound) SaudiSound.wordDrop(); },
         onComplete: () => { if (window.SaudiSound) SaudiSound.success(); }
       });
-      // bounce settle staggered lightly
-      chars.forEach((ch, i) => {
-        gsap.fromTo(ch,
+      words.forEach((w, i) => {
+        gsap.fromTo(w,
           { scaleY: 1 },
           {
             keyframes: [
-              { scaleY: 0.78, scaleX: 1.12, duration: 0.08 },
+              { scaleY: 0.82, scaleX: 1.08, duration: 0.08 },
               { scaleY: 1, scaleX: 1, duration: 0.45, ease: 'bounce.out' }
             ],
-            delay: 0.2 + i * 0.028 + 0.55
+            delay: 0.2 + i * 0.08 + 0.55
           }
         );
       });
