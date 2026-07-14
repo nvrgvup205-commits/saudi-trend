@@ -6,15 +6,16 @@
   const flash = document.getElementById('portal-flash');
   const portals = [...document.querySelectorAll('.portal')];
   const cursor = document.getElementById('cursor');
-  const trail = document.getElementById('cursor-trail');
+  const cursorDots = document.getElementById('cursor-dots');
   const modal = document.getElementById('contact-modal');
   const langBtn = document.getElementById('lang-switch');
   const canvas = document.getElementById('bg-canvas');
+  const skyflight = document.getElementById('skyflight');
   const ctx = canvas.getContext('2d');
 
   let activeRealm = null;
   let lang = localStorage.getItem('st-lang') || 'ar';
-  let mx = 0, my = 0, tx = 0, ty = 0, rx = 0, ry = 0;
+  let mx = 0, my = 0, lastDot = 0;
 
   // ===== Bilingual =====
   function applyLang(next) {
@@ -60,29 +61,27 @@
     }
   }, 120);
 
-  // ===== Luxury cursor =====
+  // ===== Signature cursor (golden arrow + sparkle dots) =====
   const isDesktop = window.matchMedia('(min-width: 769px)').matches;
-  if (isDesktop) {
+  if (isDesktop && cursor) {
     document.addEventListener('mousemove', (e) => {
       mx = e.clientX; my = e.clientY;
       cursor.style.left = mx + 'px';
       cursor.style.top = my + 'px';
+
+      const now = performance.now();
+      if (now - lastDot > 45 && cursorDots) {
+        lastDot = now;
+        const d = document.createElement('i');
+        d.style.left = mx + 'px';
+        d.style.top = my + 'px';
+        cursorDots.appendChild(d);
+        setTimeout(() => d.remove(), 700);
+      }
     });
 
     document.addEventListener('mousedown', () => cursor.classList.add('is-click'));
     document.addEventListener('mouseup', () => cursor.classList.remove('is-click'));
-
-    (function follow() {
-      // slow trail
-      tx += (mx - tx) * 0.08;
-      ty += (my - ty) * 0.08;
-      trail.style.left = tx + 'px';
-      trail.style.top = ty + 'px';
-
-      rx += (mx - rx) * 0.18;
-      ry += (my - ry) * 0.18;
-      requestAnimationFrame(follow);
-    })();
 
     const hoverSel = 'a, button, .portal, .flip-card, .btn-glow, .gallery__item, input, select, textarea, .lang-switch';
     document.querySelectorAll(hoverSel).forEach(el => {
@@ -166,18 +165,18 @@
     gsap.set('.gate .reveal-text', { clearProps: 'all' });
 
     const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
-    tl.fromTo('.logo--nav', { y: -24, opacity: 0 }, { y: 0, opacity: 1, duration: 1.2 })
+    tl.fromTo('.brand-mark--nav', { y: -24, opacity: 0 }, { y: 0, opacity: 1, duration: 1.2 })
       .fromTo('.gate__actions > *', { y: -16, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.12, duration: 1 }, '-=0.8')
       .fromTo('.gate__eyebrow', { y: 28, opacity: 0 }, { y: 0, opacity: 1, duration: 1.1 }, '-=0.6')
-      .fromTo('.gate__title .line > span', { y: 90, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.22, duration: 1.5 }, '-=0.7')
-      .fromTo('.gate__sub', { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 1.1 }, '-=0.9')
+      .fromTo('.gate__title .line > span', { y: 70, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.18, duration: 1.3 }, '-=0.7')
+      .fromTo('.gate__sub', { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 1 }, '-=0.9')
       .fromTo('.portal', {
-        y: 70, opacity: 0, scale: 0.88
+        y: 60, opacity: 0, scale: 0.9
       }, {
         y: 0, opacity: 1, scale: 1,
-        stagger: 0.22, duration: 1.5, transformPerspective: 900
-      }, '-=0.7')
-      .fromTo('.gate__hint', { opacity: 0 }, { opacity: 1, duration: 1 }, '-=0.6');
+        stagger: 0.18, duration: 1.35, transformPerspective: 900
+      }, '-=0.75')
+      .fromTo('.gate__hint', { opacity: 0 }, { opacity: 1, duration: 0.9 }, '-=0.55');
 
     portals.forEach((portal, i) => {
       gsap.to(portal.querySelector('.portal__frame'), {
@@ -207,27 +206,64 @@
     document.body.classList.add('locked', 'in-realm');
 
     portals.forEach(p => {
-      if (p !== portalEl) gsap.to(p, { opacity: 0.15, scale: 0.94, duration: 0.9, ease: 'power2.out' });
+      if (p !== portalEl) gsap.to(p, { opacity: 0.2, scale: 0.94, duration: 0.8, ease: 'power2.out' });
     });
 
-    gsap.timeline({
+    // Prepare skyflight bilingual tag
+    const tag = skyflight.querySelector('.skyflight__tag');
+    if (tag) tag.textContent = tag.getAttribute('data-' + lang) || tag.textContent;
+
+    const brand = skyflight.querySelector('.skyflight__brand');
+    const clouds = skyflight.querySelectorAll('.cloud');
+
+    gsap.set(skyflight, { opacity: 0 });
+    gsap.set(brand, { opacity: 0, y: 80, scale: 0.55 });
+    gsap.set(clouds, { x: 0, clearProps: false });
+
+    const tl = gsap.timeline({
       onComplete: () => {
         gate.classList.add('hidden');
         realm.classList.add('active');
         realm.setAttribute('aria-hidden', 'false');
         gsap.set(realm, { opacity: 1, scale: 1 });
         realm.querySelector('.realm__scroll').scrollTop = 0;
-        // reset flips
         realm.querySelectorAll('.flip-card.is-flipped').forEach(c => c.classList.remove('is-flipped'));
         animateRealmContent(realm);
-        gsap.set(flash, { opacity: 0 });
         portalEl.classList.remove('opening');
         gsap.set(portals, { opacity: 1, scale: 1, clearProps: 'transform' });
+        skyflight.classList.remove('active');
+        skyflight.setAttribute('aria-hidden', 'true');
+        gsap.set(skyflight, { opacity: 0 });
+        gsap.set(flash, { opacity: 0 });
       }
-    })
-    .to(portalEl.querySelector('.portal__frame'), { scale: 1.18, duration: 0.9, ease: 'power2.inOut' })
-    .to(flash, { opacity: 1, duration: 0.7, ease: 'power2.inOut' }, '-=0.35')
-    .to(gate, { opacity: 0.2, duration: 0.55 }, '-=0.55');
+    });
+
+    tl.to(portalEl.querySelector('.portal__frame'), { scale: 1.12, duration: 0.7, ease: 'power2.inOut' })
+      .add(() => {
+        skyflight.classList.add('active');
+        skyflight.setAttribute('aria-hidden', 'false');
+      })
+      .to(skyflight, { opacity: 1, duration: 0.85, ease: 'power2.inOut' }, '-=0.15')
+      .to(gate, { opacity: 0, duration: 0.6 }, '-=0.7')
+      // Fly through clouds
+      .to(clouds, {
+        y: (i) => -window.innerHeight * (0.45 + i * 0.08),
+        x: (i) => (i % 2 === 0 ? 120 : -140),
+        duration: 2.8,
+        ease: 'power1.inOut',
+        stagger: 0.05
+      }, '-=0.4')
+      .to('.skyflight__sun', { y: -40, scale: 1.15, duration: 2.4, ease: 'sine.inOut' }, '-=2.6')
+      // Brand flies in above the clouds
+      .to(brand, {
+        opacity: 1, y: 0, scale: 1,
+        duration: 1.6,
+        ease: 'power3.out'
+      }, '-=2.1')
+      .to(brand, { scale: 1.08, duration: 0.9, ease: 'sine.inOut', yoyo: true, repeat: 1 }, '-=0.4')
+      // Descend into realm
+      .to(brand, { y: -60, opacity: 0, scale: 1.35, duration: 1.1, ease: 'power2.in' })
+      .to(skyflight, { opacity: 0, duration: 0.7, ease: 'power2.inOut' }, '-=0.35');
   }
 
   function closeRealm() {
@@ -245,16 +281,16 @@
         activeRealm = null;
       }
     })
-    .to(flash, { opacity: 1, duration: 0.45 })
-    .to(realm, { opacity: 0, scale: 0.97, duration: 0.55 }, '-=0.1')
+    .to(flash, { opacity: 1, duration: 0.4 })
+    .to(realm, { opacity: 0, scale: 0.97, duration: 0.5 }, '-=0.1')
     .add(() => {
       realm.classList.remove('active');
       gate.classList.remove('hidden');
       gsap.set(gate, { opacity: 0 });
     })
-    .to(flash, { opacity: 0, duration: 0.75 })
-    .to(gate, { opacity: 1, duration: 0.9, ease: 'power3.out' }, '-=0.45')
-    .from('.portal', { y: 28, opacity: 0, stagger: 0.14, duration: 1, ease: 'power3.out' }, '-=0.55');
+    .to(flash, { opacity: 0, duration: 0.7 })
+    .to(gate, { opacity: 1, duration: 0.85, ease: 'power3.out' }, '-=0.4')
+    .fromTo('.portal', { y: 24, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.12, duration: 0.9, ease: 'power3.out' }, '-=0.5');
   }
 
   document.querySelectorAll('.realm__back').forEach(btn => {

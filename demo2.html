@@ -11,22 +11,60 @@
   <link rel="stylesheet" href="css/demo2.css">
 </head>
 <body>
-  <!-- Luxury custom cursor -->
+  <!-- Signature cursor: golden arrow + orbit -->
   <div class="cursor" id="cursor" aria-hidden="true">
-    <div class="cursor__diamond"></div>
-    <div class="cursor__core"></div>
-    <svg class="cursor__ornament" viewBox="0 0 40 40" fill="none">
-      <path d="M20 2L24 16L38 20L24 24L20 38L16 24L2 20L16 16Z" stroke="currentColor" stroke-width="1.2"/>
+    <svg class="cursor__svg" viewBox="0 0 48 48" fill="none">
+      <path class="cursor__blade" d="M8 6L42 22L26 26L22 42L8 6Z" fill="url(#curGrad)" stroke="#0a5c40" stroke-width="1.2" stroke-linejoin="round"/>
+      <circle class="cursor__ring" cx="22" cy="22" r="7" stroke="#d4af37" stroke-width="1.4" stroke-dasharray="4 3"/>
+      <circle cx="22" cy="22" r="2.2" fill="#d4af37"/>
+      <defs>
+        <linearGradient id="curGrad" x1="8" y1="6" x2="42" y2="42">
+          <stop stop-color="#f0e0a0"/><stop offset=".55" stop-color="#d4af37"/><stop offset="1" stop-color="#0d7a54"/>
+        </linearGradient>
+      </defs>
     </svg>
   </div>
-  <div class="cursor-trail" id="cursor-trail" aria-hidden="true"></div>
+  <div class="cursor-dots" id="cursor-dots" aria-hidden="true"></div>
+
+  <!-- Sky flight transition -->
+  <div class="skyflight" id="skyflight" aria-hidden="true">
+    <div class="skyflight__grad"></div>
+    <div class="skyflight__sun"></div>
+    <div class="skyflight__clouds">
+      <div class="cloud cloud--1"></div>
+      <div class="cloud cloud--2"></div>
+      <div class="cloud cloud--3"></div>
+      <div class="cloud cloud--4"></div>
+      <div class="cloud cloud--5"></div>
+      <div class="cloud cloud--6"></div>
+    </div>
+    <div class="skyflight__brand">
+      <div class="skyflight__seal">س</div>
+      <h2 class="skyflight__ar">سعودي تريند</h2>
+      <p class="skyflight__en">Saudi Trend</p>
+      <span class="skyflight__tag" data-ar="محلّق فوق سماء الإبداع" data-en="Flying above the sky of creativity">محلّق فوق سماء الإبداع</span>
+    </div>
+  </div>
 
   <!-- Preloader -->
   <div class="preloader" id="preloader">
-    <div class="logo logo--xl preloader__logo">
-      <span class="logo__ar">سعودي <em>تريند</em></span>
-      <span class="logo__divider"></span>
-      <span class="logo__en">Saudi <em>Trend</em></span>
+    <div class="brand-mark brand-mark--xl preloader__logo">
+      <div class="brand-mark__seal">
+        <svg viewBox="0 0 80 80" fill="none">
+          <circle cx="40" cy="40" r="36" stroke="url(#bm1)" stroke-width="1.5"/>
+          <circle cx="40" cy="40" r="28" stroke="url(#bm1)" stroke-width="1" stroke-dasharray="3 4" opacity=".7"/>
+          <path d="M40 12L44 32L64 40L44 48L40 68L36 48L16 40L36 32Z" fill="url(#bm2)"/>
+          <text x="40" y="45" text-anchor="middle" fill="#043528" font-size="14" font-weight="800" font-family="Cairo,sans-serif">ست</text>
+          <defs>
+            <linearGradient id="bm1" x1="0" y1="0" x2="80" y2="80"><stop stop-color="#d4af37"/><stop offset="1" stop-color="#1aad6f"/></linearGradient>
+            <linearGradient id="bm2" x1="16" y1="12" x2="64" y2="68"><stop stop-color="#e8d48b"/><stop offset="1" stop-color="#0d7a54"/></linearGradient>
+          </defs>
+        </svg>
+      </div>
+      <div class="brand-mark__type">
+        <span class="brand-mark__ar">سعودي <i>تريند</i></span>
+        <span class="brand-mark__en">Saudi Trend</span>
+      </div>
     </div>
     <div class="preloader__bar"><div class="preloader__fill" id="preloader-fill"></div></div>
     <p class="preloader__hint" data-ar="نُحضّر تجربة فاخرة..." data-en="Preparing a luxury experience...">نُحضّر تجربة فاخرة...</p>
@@ -39,14 +77,23 @@
   <!-- ========== GATE ========== -->
   <section class="gate" id="gate">
     <header class="gate__top">
-      <a href="demo2.html" class="logo logo--nav magnetic" data-s="0.2">
-        <span class="logo__mark" aria-hidden="true">
-          <svg viewBox="0 0 48 48" fill="none"><path d="M24 4L28 20L44 24L28 28L24 44L20 28L4 24L20 20Z" fill="url(#lg)"/><defs><linearGradient id="lg" x1="4" y1="4" x2="44" y2="44"><stop stop-color="#d4af37"/><stop offset="1" stop-color="#0d7a4f"/></linearGradient></defs></svg>
-        </span>
-        <span class="logo__text">
-          <span class="logo__ar">سعودي <em>تريند</em></span>
-          <span class="logo__en">Saudi <em>Trend</em></span>
-        </span>
+      <a href="demo2.html" class="brand-mark brand-mark--nav magnetic" data-s="0.2">
+        <div class="brand-mark__seal">
+          <svg viewBox="0 0 80 80" fill="none">
+            <circle cx="40" cy="40" r="36" stroke="url(#navBm1)" stroke-width="2"/>
+            <circle cx="40" cy="40" r="28" stroke="url(#navBm1)" stroke-width="1.2" stroke-dasharray="3 4" opacity=".75"/>
+            <path d="M40 14L43.5 32L62 40L43.5 48L40 66L36.5 48L18 40L36.5 32Z" fill="url(#navBm2)"/>
+            <text x="40" y="45" text-anchor="middle" fill="#043528" font-size="13" font-weight="800" font-family="Cairo,sans-serif">ست</text>
+            <defs>
+              <linearGradient id="navBm1" x1="0" y1="0" x2="80" y2="80"><stop stop-color="#d4af37"/><stop offset="1" stop-color="#1aad6f"/></linearGradient>
+              <linearGradient id="navBm2" x1="18" y1="14" x2="62" y2="66"><stop stop-color="#f0e0a0"/><stop offset="1" stop-color="#0d7a54"/></linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <div class="brand-mark__type">
+          <span class="brand-mark__ar">سعودي <i>تريند</i></span>
+          <span class="brand-mark__en">Saudi Trend</span>
+        </div>
       </a>
 
       <div class="gate__actions">
@@ -63,17 +110,16 @@
     <div class="gate__ornament gate__ornament--l" aria-hidden="true"></div>
     <div class="gate__ornament gate__ornament--r" aria-hidden="true"></div>
 
-    <div class="gate__hero">
+    <div class="gate__hero gate__hero--compact">
       <p class="gate__eyebrow reveal-text">
         <span class="pulse-dot"></span>
         <span data-ar="بوابة الأعمال الخليجية · ثلاث عوالم" data-en="Gulf business gateway · Three realms">بوابة الأعمال الخليجية · ثلاث عوالم</span>
       </p>
-      <h1 class="gate__title">
-        <span class="line reveal-text"><span data-ar="أهلاً بك في عالم" data-en="Welcome to the world of">أهلاً بك في عالم</span></span>
+      <h1 class="gate__title gate__title--compact">
         <span class="line reveal-text"><span class="brand-glow">سعودي تريند</span></span>
         <span class="line reveal-text line--en"><span class="brand-en">Saudi Trend</span></span>
       </h1>
-      <p class="gate__sub reveal-text" data-ar="اضغط على البوابة لتدخل — تسويق · تصميم وفيديو · أتمتة" data-en="Tap a portal to enter — Marketing · Design & Video · Automation">اضغط على البوابة لتدخل — تسويق · تصميم وفيديو · أتمتة</p>
+      <p class="gate__sub reveal-text" data-ar="اختر بوابتك وادخل عالمنا" data-en="Choose your portal and enter our world">اختر بوابتك وادخل عالمنا</p>
     </div>
 
     <div class="portals" id="portals">
@@ -151,9 +197,11 @@
 
     <div class="realm__scroll">
       <div class="realm__hero container">
-        <div class="logo logo--sm realm__logo">
-          <span class="logo__ar">سعودي <em>تريند</em></span>
-          <span class="logo__en">Saudi <em>Trend</em></span>
+        <div class="brand-mark brand-mark--sm realm__logo">
+          <div class="brand-mark__type">
+            <span class="brand-mark__ar">سعودي <i>تريند</i></span>
+            <span class="brand-mark__en">Saudi Trend</span>
+          </div>
         </div>
         <span class="realm__label reveal-text" data-ar="قسم التسويق" data-en="Marketing Division">قسم التسويق</span>
         <h2 class="realm__title reveal-text" data-ar="إدارة الحملات الإعلانية" data-en="Advertising Campaign Management">إدارة الحملات الإعلانية</h2>
@@ -301,9 +349,11 @@
 
     <div class="realm__scroll">
       <div class="realm__hero container">
-        <div class="logo logo--sm realm__logo">
-          <span class="logo__ar">سعودي <em>تريند</em></span>
-          <span class="logo__en">Saudi <em>Trend</em></span>
+        <div class="brand-mark brand-mark--sm realm__logo">
+          <div class="brand-mark__type">
+            <span class="brand-mark__ar">سعودي <i>تريند</i></span>
+            <span class="brand-mark__en">Saudi Trend</span>
+          </div>
         </div>
         <span class="realm__label reveal-text" data-ar="قسم التصميم والفيديو" data-en="Design & Video Division">قسم التصميم والفيديو</span>
         <h2 class="realm__title reveal-text" data-ar="هوية بصرية تليق بالطموح" data-en="Visual identity worthy of ambition">هوية بصرية تليق بالطموح</h2>
@@ -402,9 +452,11 @@
 
     <div class="realm__scroll">
       <div class="realm__hero container">
-        <div class="logo logo--sm realm__logo">
-          <span class="logo__ar">سعودي <em>تريند</em></span>
-          <span class="logo__en">Saudi <em>Trend</em></span>
+        <div class="brand-mark brand-mark--sm realm__logo">
+          <div class="brand-mark__type">
+            <span class="brand-mark__ar">سعودي <i>تريند</i></span>
+            <span class="brand-mark__en">Saudi Trend</span>
+          </div>
         </div>
         <span class="realm__label reveal-text" data-ar="قسم الأتمتة" data-en="Automation Division">قسم الأتمتة</span>
         <h2 class="realm__title reveal-text" data-ar="أتمتة الأعمال بذكاء" data-en="Smart business automation">أتمتة الأعمال بذكاء</h2>
@@ -519,9 +571,11 @@
     <div class="modal__backdrop"></div>
     <div class="modal__box">
       <button class="modal__close" type="button" aria-label="Close">&times;</button>
-      <div class="logo logo--sm">
-        <span class="logo__ar">سعودي <em>تريند</em></span>
-        <span class="logo__en">Saudi <em>Trend</em></span>
+      <div class="brand-mark brand-mark--sm">
+        <div class="brand-mark__type">
+          <span class="brand-mark__ar">سعودي <i>تريند</i></span>
+          <span class="brand-mark__en">Saudi Trend</span>
+        </div>
       </div>
       <h3 data-ar="تواصل معنا" data-en="Contact us">تواصل معنا</h3>
       <p data-ar="أخبرنا عن مشروعك وسنعود إليك بهدوء وفخامة." data-en="Tell us about your project — we will return with care.">أخبرنا عن مشروعك وسنعود إليك بهدوء وفخامة.</p>
