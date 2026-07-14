@@ -66,8 +66,32 @@
   const mctx = mindCanvas.getContext('2d');
 
   const GLYPHS = [
-    '{ }', '=>', 'CRM', 'SEO', 'API', '0x', '||', '&&', 'AI',
-    'نمو', 'بيع', 'أتمتة', 'data', 'KPI', 'funnel', '<>', '::',
+    // تسويق
+    { text: 'حملات', kind: 'market' },
+    { text: 'SEO', kind: 'market' },
+    { text: 'نمو', kind: 'market' },
+    { text: 'تحويل', kind: 'market' },
+    { text: 'محتوى', kind: 'market' },
+    { text: 'علامة', kind: 'market' },
+    { text: 'قمع', kind: 'market' },
+    { text: 'وصول', kind: 'market' },
+    // تصميم وفيديو
+    { text: 'هوية', kind: 'design' },
+    { text: 'موشن', kind: 'design' },
+    { text: 'فيديو', kind: 'design' },
+    { text: 'براند', kind: 'design' },
+    { text: 'إخراج', kind: 'design' },
+    { text: 'بصري', kind: 'design' },
+    { text: 'ستوري', kind: 'design' },
+    // أتمتة وبرمجيات
+    { text: 'أتمتة', kind: 'auto' },
+    { text: 'CRM', kind: 'auto' },
+    { text: 'API', kind: 'auto' },
+    { text: 'نظام', kind: 'auto' },
+    { text: 'تكامل', kind: 'auto' },
+    { text: 'ذكاء', kind: 'auto' },
+    { text: 'مسار', kind: 'auto' },
+    { text: 'لوحة', kind: 'auto' },
   ];
 
   const MindField = (() => {
@@ -121,16 +145,20 @@
         });
       }
       glyphs = [];
-      for (let i = 0; i < 18; i++) {
+      const nGlyphs = Math.min(16, Math.max(12, Math.floor(W / 110)));
+      for (let i = 0; i < nGlyphs; i++) {
+        const src = GLYPHS[i % GLYPHS.length];
         glyphs.push({
-          text: GLYPHS[i % GLYPHS.length],
+          text: src.text,
+          kind: src.kind,
           x: Math.random() * W,
           y: Math.random() * H,
-          vx: (Math.random() - 0.5) * 0.18,
-          vy: -0.12 - Math.random() * 0.22,
-          rot: (Math.random() - 0.5) * 0.4,
-          a: Math.random() * 0.22 + 0.08,
-          size: 11 + Math.random() * 8
+          vx: (Math.random() - 0.5) * 0.14,
+          vy: -0.08 - Math.random() * 0.16,
+          rot: (Math.random() - 0.5) * 0.18,
+          a: 0.38 + Math.random() * 0.28,
+          size: 22 + Math.random() * 18,
+          pulse: Math.random() * Math.PI * 2
         });
       }
       rivers = [];
@@ -162,6 +190,7 @@
     function kindColor(kind, a) {
       if (kind === 'market') return `rgba(212,175,55,${a})`;
       if (kind === 'auto') return `rgba(0,230,118,${a})`;
+      if (kind === 'design') return `rgba(232,224,200,${a})`;
       return `rgba(125,211,252,${a})`;
     }
 
@@ -222,21 +251,30 @@
       });
     }
 
-    function drawGlyphs(dt) {
-      mctx.font = '600 13px Cairo, Tajawal, monospace';
+    function drawGlyphs(t) {
       glyphs.forEach(g => {
-        g.x += g.vx; g.y += g.vy;
-        if (g.y < -30) { g.y = H + 20; g.x = Math.random() * W; }
-        if (g.x < -40) g.x = W + 20;
-        if (g.x > W + 40) g.x = -20;
+        g.x += g.vx;
+        g.y += g.vy;
+        if (g.y < -40) { g.y = H + 28; g.x = Math.random() * W; }
+        if (g.x < -80) g.x = W + 40;
+        if (g.x > W + 80) g.x = -40;
+
+        const pulse = 0.88 + Math.sin(t * 1.4 + g.pulse) * 0.12;
+        const alpha = Math.min(0.72, g.a * pulse);
+
         mctx.save();
         mctx.translate(g.x, g.y);
         mctx.rotate(g.rot);
-        mctx.globalAlpha = g.a;
-        mctx.fillStyle = '#7dd3fc';
+        mctx.font = `700 ${Math.round(g.size)}px "IBM Plex Sans Arabic", Cairo, Tajawal, sans-serif`;
+        mctx.textAlign = 'center';
+        mctx.textBaseline = 'middle';
+        mctx.shadowColor = kindColor(g.kind, 0.45);
+        mctx.shadowBlur = 14;
+        mctx.fillStyle = kindColor(g.kind, alpha);
         mctx.fillText(g.text, 0, 0);
         mctx.restore();
       });
+      mctx.shadowBlur = 0;
       mctx.globalAlpha = 1;
     }
 
