@@ -47,8 +47,11 @@
     });
     document.addEventListener('mousedown', () => cursor.classList.add('is-click'));
     document.addEventListener('mouseup', () => cursor.classList.remove('is-click'));
-    document.querySelectorAll('a, button, .lobe, .chamber__back, .chamber__grid article').forEach(el => {
-      el.addEventListener('mouseenter', () => cursor.classList.add('is-hover'));
+    document.querySelectorAll('a, button, .lobe, .chamber__back, .svc-card, .sound-toggle').forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        cursor.classList.add('is-hover');
+        if (window.SaudiSound) SaudiSound.tick();
+      });
       el.addEventListener('mouseleave', () => cursor.classList.remove('is-hover'));
     });
   }
@@ -395,6 +398,7 @@
     lobeEl.classList.add('is-opening');
     mind.classList.add('is-diving');
     document.body.classList.add('locked');
+    if (window.SaudiSound) SaudiSound.enter();
 
     const imgs = [...dive.querySelectorAll('.dive__img')];
     const eyebrow = dive.querySelector('.dive__eyebrow');
@@ -501,11 +505,12 @@
     const scroller = chamber.querySelector('.chamber__scroll');
     if (scroller) scroller.scrollTop = 0;
 
-    gsap.from(chamber.querySelectorAll('.chamber__hero-text > *, .chamber__grid article'), {
+    gsap.from(chamber.querySelectorAll('.chamber__hero-text > *, .svc-card'), {
       y: 28, opacity: 0, stagger: 0.05, duration: 0.7, ease: 'power3.out', delay: 0.06
     });
 
     if (lobeEl) lobeEl.classList.remove('is-opening');
+    if (window.SaudiSound) SaudiSound.success();
     busy = false;
   }
 
@@ -513,6 +518,8 @@
     if (!active || busy) return;
     const chamber = document.getElementById('chamber-' + active);
     if (!chamber) return;
+    if (window.SaudiSound) SaudiSound.back();
+    chamber.querySelectorAll('.svc-card.is-flipped').forEach(c => c.classList.remove('is-flipped'));
 
     gsap.to(chamber, {
       opacity: 0, duration: 0.4,
@@ -537,6 +544,32 @@
       if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); }
     });
   });
+
+  // Flip service cards
+  function bindServiceCards(scope) {
+    scope.querySelectorAll('.svc-card').forEach(card => {
+      if (card.dataset.bound) return;
+      card.dataset.bound = '1';
+      const flip = () => {
+        const grid = card.closest('.chamber__grid');
+        const was = card.classList.contains('is-flipped');
+        grid?.querySelectorAll('.svc-card.is-flipped').forEach(c => {
+          if (c !== card) c.classList.remove('is-flipped');
+        });
+        card.classList.toggle('is-flipped', !was);
+        if (window.SaudiSound) SaudiSound.flip();
+        if (window.gsap) {
+          gsap.fromTo(card, { scale: 0.97 }, { scale: 1, duration: 0.65, ease: 'elastic.out(1, 0.55)' });
+        }
+      };
+      card.addEventListener('click', (e) => { e.preventDefault(); flip(); });
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); flip(); }
+      });
+    });
+  }
+  bindServiceCards(document);
+  if (window.SaudiSound) SaudiSound.wireUI();
 
   document.querySelectorAll('.chamber__back').forEach(btn => {
     btn.addEventListener('click', closeChamber);

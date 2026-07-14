@@ -1001,3 +1001,22 @@ html[dir="ltr"] .modal__close { left: auto; right: 14px; }
   .gate__actions .gate__link { display: none; }
   .portal__frame { height: 220px; min-height: 200px; }
 }
+
+
+/* Sound toggle — shared prestige control */
+.sound-toggle {
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(212,175,55,.4);
+  background: rgba(212,175,55,.08);
+  color: #8a6d12;
+  font-size: 12px;
+  font-weight: 700;
+  transition: background .3s, color .3s, border-color .3s;
+}
+.sound-toggle:hover { background: rgba(212,175,55,.18); color: var(--green-deep); }
+.sound-toggle.is-muted {
+  border-color: rgba(4,53,40,.2);
+  color: var(--muted);
+  background: transparent;
+}

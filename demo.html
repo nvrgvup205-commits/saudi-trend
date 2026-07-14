@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Tajawal:wght@400;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/demo.css?v=liquid4">
+  <link rel="stylesheet" href="css/demo.css?v=cardsound1">
 </head>
 <body>
   <!-- Signature cursor: golden arrow + orbit — same as Demo 2 -->
@@ -88,6 +88,7 @@
     <header class="mind__top">
       <a href="demo.html" class="mind__logo">سعودي <em>تريند</em></a>
       <div class="mind__links">
+        <button type="button" class="sound-toggle" id="sound-toggle" aria-pressed="true" title="الصوت">♪ صوت</button>
         <a href="demo2.html">Demo 2</a>
         <a href="index.html">الكلاسيكية</a>
       </div>
@@ -154,18 +155,234 @@
         </div>
       </div>
       <div class="container chamber__grid">
-        <article><img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=700&q=80" alt=""><h3>قراءة السوق</h3><p>تحليل الجمهور والمنافسين برؤية محلية.</p><span class="offer">عرض استشارة مجانية</span></article>
-        <article><img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=700&q=80" alt=""><h3>حملات ذكية</h3><p>استهداف دقيق وعائد قابل للقياس.</p><span class="offer">خصم 20% لأول حملة</span></article>
-        <article><img src="https://images.unsplash.com/photo-1557804506-669a67965ba0?w=700&q=80" alt=""><h3>قرارات بالبيانات</h3><p>من عقل السوق… إلى خطة نجاح.</p><span class="offer">تقرير شهري مدمج</span></article>
-        <article><img src="https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=700&q=80" alt=""><h3>سوشيال ميديا</h3><p>حضور يومي يصنع ولاء الجمهور السعودي.</p><span class="offer">باقة محتوى شهر كامل</span></article>
-        <article><img src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=700&q=80" alt=""><h3>إدارة السمعة</h3><p>نبني ثقة علامتك في السوق بحذر واحتراف.</p><span class="offer">مراقبة سمعة 24/7</span></article>
-        <article><img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=700&q=80" alt=""><h3>عروض موسمية</h3><p>حملات رمضان واليوم الوطني وأهم مواسم المملكة.</p><span class="offer">باقة المواسم الثلاثة</span></article>
-        <article><img src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=700&q=80" alt=""><h3>شراكات مؤثرة</h3><p>نختار الأصوات المناسبة ونقيس الأثر الحقيقي.</p><span class="offer">قائمة مؤثرين جاهزة</span></article>
-        <article><img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=700&q=80" alt=""><h3>تسويق B2B</h3><p>رسائل تفهم صانع القرار داخل المؤسسات.</p><span class="offer">ورشة استراتيجية مجانية</span></article>
-        <article><img src="https://images.unsplash.com/photo-1556761175-b413da4baf72?w=700&q=80" alt=""><h3>إطلاق منتجات</h3><p>خطة متكاملة من التشويق إلى أول موجة مبيعات.</p><span class="offer">Launch Pack</span></article>
-        <article><img src="https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?w=700&q=80" alt=""><h3>إعلانات بحث</h3><p>كلمات مفتاحية تجلب عملاً جاهز للشراء.</p><span class="offer">إعداد حساب مجاني</span></article>
-        <article><img src="https://images.unsplash.com/photo-1553484771-371a605b060b?w=700&q=80" alt=""><h3>تسويق بالمحتوى</h3><p>مقالات وفيديوهات تبني سلطة علامتك.</p><span class="offer">خطة محتوى 90 يوم</span></article>
-        <article><img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=700&q=80" alt=""><h3>فعاليات وتفعيل</h3><p>تجارب حضورية تربط الجمهور بالمنتج.</p><span class="offer">باقة تفعيل الرياض</span></article>
+        <article class="svc-card" tabindex="0" role="button" aria-label="قراءة السوق">
+          <div class="svc-card__inner">
+            <div class="svc-card__face svc-card__face--front">
+              <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=700&q=80" alt="">
+              <div class="svc-card__body">
+                <h3>قراءة السوق</h3>
+                <p>تحليل الجمهور والمنافسين برؤية محلية.</p>
+                <span class="offer">عرض استشارة مجانية</span>
+                <span class="svc-card__hint">اضغط للتفاصيل ←</span>
+              </div>
+            </div>
+            <div class="svc-card__face svc-card__face--back">
+              <h3>قراءة السوق</h3>
+              <p>تحليل الجمهور والمنافسين برؤية محلية. احصل على: عرض استشارة مجانية. تواصل معنا لنبدأ التنفيذ بخطة واضحة تناسب منشأتك.</p>
+              <span class="offer">عرض استشارة مجانية</span>
+              <span class="svc-card__hint">اضغط للإغلاق</span>
+            </div>
+          </div>
+        </article>
+        <article class="svc-card" tabindex="0" role="button" aria-label="حملات ذكية">
+          <div class="svc-card__inner">
+            <div class="svc-card__face svc-card__face--front">
+              <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=700&q=80" alt="">
+              <div class="svc-card__body">
+                <h3>حملات ذكية</h3>
+                <p>استهداف دقيق وعائد قابل للقياس.</p>
+                <span class="offer">خصم 20% لأول حملة</span>
+                <span class="svc-card__hint">اضغط للتفاصيل ←</span>
+              </div>
+            </div>
+            <div class="svc-card__face svc-card__face--back">
+              <h3>حملات ذكية</h3>
+              <p>استهداف دقيق وعائد قابل للقياس. احصل على: خصم 20% لأول حملة. تواصل معنا لنبدأ التنفيذ بخطة واضحة تناسب منشأتك.</p>
+              <span class="offer">خصم 20% لأول حملة</span>
+              <span class="svc-card__hint">اضغط للإغلاق</span>
+            </div>
+          </div>
+        </article>
+        <article class="svc-card" tabindex="0" role="button" aria-label="قرارات بالبيانات">
+          <div class="svc-card__inner">
+            <div class="svc-card__face svc-card__face--front">
+              <img src="https://images.unsplash.com/photo-1557804506-669a67965ba0?w=700&q=80" alt="">
+              <div class="svc-card__body">
+                <h3>قرارات بالبيانات</h3>
+                <p>من عقل السوق… إلى خطة نجاح.</p>
+                <span class="offer">تقرير شهري مدمج</span>
+                <span class="svc-card__hint">اضغط للتفاصيل ←</span>
+              </div>
+            </div>
+            <div class="svc-card__face svc-card__face--back">
+              <h3>قرارات بالبيانات</h3>
+              <p>من عقل السوق… إلى خطة نجاح. احصل على: تقرير شهري مدمج. تواصل معنا لنبدأ التنفيذ بخطة واضحة تناسب منشأتك.</p>
+              <span class="offer">تقرير شهري مدمج</span>
+              <span class="svc-card__hint">اضغط للإغلاق</span>
+            </div>
+          </div>
+        </article>
+        <article class="svc-card" tabindex="0" role="button" aria-label="سوشيال ميديا">
+          <div class="svc-card__inner">
+            <div class="svc-card__face svc-card__face--front">
+              <img src="https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=700&q=80" alt="">
+              <div class="svc-card__body">
+                <h3>سوشيال ميديا</h3>
+                <p>حضور يومي يصنع ولاء الجمهور السعودي.</p>
+                <span class="offer">باقة محتوى شهر كامل</span>
+                <span class="svc-card__hint">اضغط للتفاصيل ←</span>
+              </div>
+            </div>
+            <div class="svc-card__face svc-card__face--back">
+              <h3>سوشيال ميديا</h3>
+              <p>حضور يومي يصنع ولاء الجمهور السعودي. احصل على: باقة محتوى شهر كامل. تواصل معنا لنبدأ التنفيذ بخطة واضحة تناسب منشأتك.</p>
+              <span class="offer">باقة محتوى شهر كامل</span>
+              <span class="svc-card__hint">اضغط للإغلاق</span>
+            </div>
+          </div>
+        </article>
+        <article class="svc-card" tabindex="0" role="button" aria-label="إدارة السمعة">
+          <div class="svc-card__inner">
+            <div class="svc-card__face svc-card__face--front">
+              <img src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=700&q=80" alt="">
+              <div class="svc-card__body">
+                <h3>إدارة السمعة</h3>
+                <p>نبني ثقة علامتك في السوق بحذر واحتراف.</p>
+                <span class="offer">مراقبة سمعة 24/7</span>
+                <span class="svc-card__hint">اضغط للتفاصيل ←</span>
+              </div>
+            </div>
+            <div class="svc-card__face svc-card__face--back">
+              <h3>إدارة السمعة</h3>
+              <p>نبني ثقة علامتك في السوق بحذر واحتراف. احصل على: مراقبة سمعة 24/7. تواصل معنا لنبدأ التنفيذ بخطة واضحة تناسب منشأتك.</p>
+              <span class="offer">مراقبة سمعة 24/7</span>
+              <span class="svc-card__hint">اضغط للإغلاق</span>
+            </div>
+          </div>
+        </article>
+        <article class="svc-card" tabindex="0" role="button" aria-label="عروض موسمية">
+          <div class="svc-card__inner">
+            <div class="svc-card__face svc-card__face--front">
+              <img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=700&q=80" alt="">
+              <div class="svc-card__body">
+                <h3>عروض موسمية</h3>
+                <p>حملات رمضان واليوم الوطني وأهم مواسم المملكة.</p>
+                <span class="offer">باقة المواسم الثلاثة</span>
+                <span class="svc-card__hint">اضغط للتفاصيل ←</span>
+              </div>
+            </div>
+            <div class="svc-card__face svc-card__face--back">
+              <h3>عروض موسمية</h3>
+              <p>حملات رمضان واليوم الوطني وأهم مواسم المملكة. احصل على: باقة المواسم الثلاثة. تواصل معنا لنبدأ التنفيذ بخطة واضحة تناسب منشأتك.</p>
+              <span class="offer">باقة المواسم الثلاثة</span>
+              <span class="svc-card__hint">اضغط للإغلاق</span>
+            </div>
+          </div>
+        </article>
+        <article class="svc-card" tabindex="0" role="button" aria-label="شراكات مؤثرة">
+          <div class="svc-card__inner">
+            <div class="svc-card__face svc-card__face--front">
+              <img src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=700&q=80" alt="">
+              <div class="svc-card__body">
+                <h3>شراكات مؤثرة</h3>
+                <p>نختار الأصوات المناسبة ونقيس الأثر الحقيقي.</p>
+                <span class="offer">قائمة مؤثرين جاهزة</span>
+                <span class="svc-card__hint">اضغط للتفاصيل ←</span>
+              </div>
+            </div>
+            <div class="svc-card__face svc-card__face--back">
+              <h3>شراكات مؤثرة</h3>
+              <p>نختار الأصوات المناسبة ونقيس الأثر الحقيقي. احصل على: قائمة مؤثرين جاهزة. تواصل معنا لنبدأ التنفيذ بخطة واضحة تناسب منشأتك.</p>
+              <span class="offer">قائمة مؤثرين جاهزة</span>
+              <span class="svc-card__hint">اضغط للإغلاق</span>
+            </div>
+          </div>
+        </article>
+        <article class="svc-card" tabindex="0" role="button" aria-label="تسويق B2B">
+          <div class="svc-card__inner">
+            <div class="svc-card__face svc-card__face--front">
+              <img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=700&q=80" alt="">
+              <div class="svc-card__body">
+                <h3>تسويق B2B</h3>
+                <p>رسائل تفهم صانع القرار داخل المؤسسات.</p>
+                <span class="offer">ورشة استراتيجية مجانية</span>
+                <span class="svc-card__hint">اضغط للتفاصيل ←</span>
+              </div>
+            </div>
+            <div class="svc-card__face svc-card__face--back">
+              <h3>تسويق B2B</h3>
+              <p>رسائل تفهم صانع القرار داخل المؤسسات. احصل على: ورشة استراتيجية مجانية. تواصل معنا لنبدأ التنفيذ بخطة واضحة تناسب منشأتك.</p>
+              <span class="offer">ورشة استراتيجية مجانية</span>
+              <span class="svc-card__hint">اضغط للإغلاق</span>
+            </div>
+          </div>
+        </article>
+        <article class="svc-card" tabindex="0" role="button" aria-label="إطلاق منتجات">
+          <div class="svc-card__inner">
+            <div class="svc-card__face svc-card__face--front">
+              <img src="https://images.unsplash.com/photo-1556761175-b413da4baf72?w=700&q=80" alt="">
+              <div class="svc-card__body">
+                <h3>إطلاق منتجات</h3>
+                <p>خطة متكاملة من التشويق إلى أول موجة مبيعات.</p>
+                <span class="offer">Launch Pack</span>
+                <span class="svc-card__hint">اضغط للتفاصيل ←</span>
+              </div>
+            </div>
+            <div class="svc-card__face svc-card__face--back">
+              <h3>إطلاق منتجات</h3>
+              <p>خطة متكاملة من التشويق إلى أول موجة مبيعات. احصل على: Launch Pack. تواصل معنا لنبدأ التنفيذ بخطة واضحة تناسب منشأتك.</p>
+              <span class="offer">Launch Pack</span>
+              <span class="svc-card__hint">اضغط للإغلاق</span>
+            </div>
+          </div>
+        </article>
+        <article class="svc-card" tabindex="0" role="button" aria-label="إعلانات بحث">
+          <div class="svc-card__inner">
+            <div class="svc-card__face svc-card__face--front">
+              <img src="https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?w=700&q=80" alt="">
+              <div class="svc-card__body">
+                <h3>إعلانات بحث</h3>
+                <p>كلمات مفتاحية تجلب عملاً جاهز للشراء.</p>
+                <span class="offer">إعداد حساب مجاني</span>
+                <span class="svc-card__hint">اضغط للتفاصيل ←</span>
+              </div>
+            </div>
+            <div class="svc-card__face svc-card__face--back">
+              <h3>إعلانات بحث</h3>
+              <p>كلمات مفتاحية تجلب عملاً جاهز للشراء. احصل على: إعداد حساب مجاني. تواصل معنا لنبدأ التنفيذ بخطة واضحة تناسب منشأتك.</p>
+              <span class="offer">إعداد حساب مجاني</span>
+              <span class="svc-card__hint">اضغط للإغلاق</span>
+            </div>
+          </div>
+        </article>
+        <article class="svc-card" tabindex="0" role="button" aria-label="تسويق بالمحتوى">
+          <div class="svc-card__inner">
+            <div class="svc-card__face svc-card__face--front">
+              <img src="https://images.unsplash.com/photo-1553484771-371a605b060b?w=700&q=80" alt="">
+              <div class="svc-card__body">
+                <h3>تسويق بالمحتوى</h3>
+                <p>مقالات وفيديوهات تبني سلطة علامتك.</p>
+                <span class="offer">خطة محتوى 90 يوم</span>
+                <span class="svc-card__hint">اضغط للتفاصيل ←</span>
+              </div>
+            </div>
+            <div class="svc-card__face svc-card__face--back">
+              <h3>تسويق بالمحتوى</h3>
+              <p>مقالات وفيديوهات تبني سلطة علامتك. احصل على: خطة محتوى 90 يوم. تواصل معنا لنبدأ التنفيذ بخطة واضحة تناسب منشأتك.</p>
+              <span class="offer">خطة محتوى 90 يوم</span>
+              <span class="svc-card__hint">اضغط للإغلاق</span>
+            </div>
+          </div>
+        </article>
+        <article class="svc-card" tabindex="0" role="button" aria-label="فعاليات وتفعيل">
+          <div class="svc-card__inner">
+            <div class="svc-card__face svc-card__face--front">
+              <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=700&q=80" alt="">
+              <div class="svc-card__body">
+                <h3>فعاليات وتفعيل</h3>
+                <p>تجارب حضورية تربط الجمهور بالمنتج.</p>
+                <span class="offer">باقة تفعيل الرياض</span>
+                <span class="svc-card__hint">اضغط للتفاصيل ←</span>
+              </div>
+            </div>
+            <div class="svc-card__face svc-card__face--back">
+              <h3>فعاليات وتفعيل</h3>
+              <p>تجارب حضورية تربط الجمهور بالمنتج. احصل على: باقة تفعيل الرياض. تواصل معنا لنبدأ التنفيذ بخطة واضحة تناسب منشأتك.</p>
+              <span class="offer">باقة تفعيل الرياض</span>
+              <span class="svc-card__hint">اضغط للإغلاق</span>
+            </div>
+          </div>
+        </article>
       </div>
     </div>
   </section>
@@ -183,18 +400,234 @@
         </div>
       </div>
       <div class="container chamber__grid">
-        <article><img src="https://images.unsplash.com/photo-1561070791-2526d30994b5?w=700&q=80" alt=""><h3>هوية بصرية</h3><p>تصميم يعكس عقل علامتك وطموحها.</p><span class="offer">هوية كاملة + دليل</span></article>
-        <article><img src="https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=700&q=80" alt=""><h3>فيديو وموشن</h3><p>قصص متحركة تلمس قرار المشتري.</p><span class="offer">ريل + برومو مجاني</span></article>
-        <article><img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=700&q=80" alt=""><h3>مواقع ومتاجر</h3><p>تجربة رقمية بنفس منطق السوق.</p><span class="offer">موقع خلال 14 يوم</span></article>
-        <article><img src="https://images.unsplash.com/photo-1586717791821-3f44a563fa4c?w=700&q=80" alt=""><h3>تصميم واجهات</h3><p>واجهات أنيقة تسهّل رحلة العميل.</p><span class="offer">UI Kit مجاني</span></article>
-        <article><img src="https://images.unsplash.com/photo-1634942537034-253176668a8d?w=700&q=80" alt=""><h3>دليل الهوية</h3><p>نظام بصري ثابت على كل المنصات.</p><span class="offer">Brand Book PDF</span></article>
-        <article><img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=700&q=80" alt=""><h3>موشن جرافيك</h3><p>حركة تبيع الفكرة في ثوانٍ.</p><span class="offer">باقة 5 موشن</span></article>
-        <article><img src="https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=700&q=80" alt=""><h3>تصوير احترافي</h3><p>صور منتج ومكان بروَى سعودية.</p><span class="offer">جلسة استوديو</span></article>
-        <article><img src="https://images.unsplash.com/photo-1559028012-481c04fa702d?w=700&q=80" alt=""><h3>مطبوعات فاخرة</h3><p>مواد تترك انطباعاً ملموساً وقوياً.</p><span class="offer">كتالوج ترحيبي</span></article>
-        <article><img src="https://images.unsplash.com/photo-1626785774573-4b7993143457?w=700&q=80" alt=""><h3>محتوى إبداعي</h3><p>أفكار بصرية تناسب السوق المحلي.</p><span class="offer">30 تصميم شهري</span></article>
-        <article><img src="https://images.unsplash.com/photo-1611162616475-46b635cb6868?w=700&q=80" alt=""><h3>غلاف سوشيال</h3><p>قوالب متناسقة لكل المنصات.</p><span class="offer">حزمة 12 قالب</span></article>
-        <article><img src="https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=700&q=80" alt=""><h3>إعلان تلفزيوني</h3><p>سْبوت قصير للبث والمنصات.</p><span class="offer">سيناريو مجاني</span></article>
-        <article><img src="https://images.unsplash.com/photo-1558655146-9f40138edfeb?w=700&q=80" alt=""><h3>تصميم تغليف</h3><p>عبوة تبيع المنتج من أول نظرة.</p><span class="offer">3 مفاهيم تصميم</span></article>
+        <article class="svc-card" tabindex="0" role="button" aria-label="هوية بصرية">
+          <div class="svc-card__inner">
+            <div class="svc-card__face svc-card__face--front">
+              <img src="https://images.unsplash.com/photo-1561070791-2526d30994b5?w=700&q=80" alt="">
+              <div class="svc-card__body">
+                <h3>هوية بصرية</h3>
+                <p>تصميم يعكس عقل علامتك وطموحها.</p>
+                <span class="offer">هوية كاملة + دليل</span>
+                <span class="svc-card__hint">اضغط للتفاصيل ←</span>
+              </div>
+            </div>
+            <div class="svc-card__face svc-card__face--back">
+              <h3>هوية بصرية</h3>
+              <p>تصميم يعكس عقل علامتك وطموحها. احصل على: هوية كاملة + دليل. تواصل معنا لنبدأ التنفيذ بخطة واضحة تناسب منشأتك.</p>
+              <span class="offer">هوية كاملة + دليل</span>
+              <span class="svc-card__hint">اضغط للإغلاق</span>
+            </div>
+          </div>
+        </article>
+        <article class="svc-card" tabindex="0" role="button" aria-label="فيديو وموشن">
+          <div class="svc-card__inner">
+            <div class="svc-card__face svc-card__face--front">
+              <img src="https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=700&q=80" alt="">
+              <div class="svc-card__body">
+                <h3>فيديو وموشن</h3>
+                <p>قصص متحركة تلمس قرار المشتري.</p>
+                <span class="offer">ريل + برومو مجاني</span>
+                <span class="svc-card__hint">اضغط للتفاصيل ←</span>
+              </div>
+            </div>
+            <div class="svc-card__face svc-card__face--back">
+              <h3>فيديو وموشن</h3>
+              <p>قصص متحركة تلمس قرار المشتري. احصل على: ريل + برومو مجاني. تواصل معنا لنبدأ التنفيذ بخطة واضحة تناسب منشأتك.</p>
+              <span class="offer">ريل + برومو مجاني</span>
+              <span class="svc-card__hint">اضغط للإغلاق</span>
+            </div>
+          </div>
+        </article>
+        <article class="svc-card" tabindex="0" role="button" aria-label="مواقع ومتاجر">
+          <div class="svc-card__inner">
+            <div class="svc-card__face svc-card__face--front">
+              <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=700&q=80" alt="">
+              <div class="svc-card__body">
+                <h3>مواقع ومتاجر</h3>
+                <p>تجربة رقمية بنفس منطق السوق.</p>
+                <span class="offer">موقع خلال 14 يوم</span>
+                <span class="svc-card__hint">اضغط للتفاصيل ←</span>
+              </div>
+            </div>
+            <div class="svc-card__face svc-card__face--back">
+              <h3>مواقع ومتاجر</h3>
+              <p>تجربة رقمية بنفس منطق السوق. احصل على: موقع خلال 14 يوم. تواصل معنا لنبدأ التنفيذ بخطة واضحة تناسب منشأتك.</p>
+              <span class="offer">موقع خلال 14 يوم</span>
+              <span class="svc-card__hint">اضغط للإغلاق</span>
+            </div>
+          </div>
+        </article>
+        <article class="svc-card" tabindex="0" role="button" aria-label="تصميم واجهات">
+          <div class="svc-card__inner">
+            <div class="svc-card__face svc-card__face--front">
+              <img src="https://images.unsplash.com/photo-1586717791821-3f44a563fa4c?w=700&q=80" alt="">
+              <div class="svc-card__body">
+                <h3>تصميم واجهات</h3>
+                <p>واجهات أنيقة تسهّل رحلة العميل.</p>
+                <span class="offer">UI Kit مجاني</span>
+                <span class="svc-card__hint">اضغط للتفاصيل ←</span>
+              </div>
+            </div>
+            <div class="svc-card__face svc-card__face--back">
+              <h3>تصميم واجهات</h3>
+              <p>واجهات أنيقة تسهّل رحلة العميل. احصل على: UI Kit مجاني. تواصل معنا لنبدأ التنفيذ بخطة واضحة تناسب منشأتك.</p>
+              <span class="offer">UI Kit مجاني</span>
+              <span class="svc-card__hint">اضغط للإغلاق</span>
+            </div>
+          </div>
+        </article>
+        <article class="svc-card" tabindex="0" role="button" aria-label="دليل الهوية">
+          <div class="svc-card__inner">
+            <div class="svc-card__face svc-card__face--front">
+              <img src="https://images.unsplash.com/photo-1634942537034-253176668a8d?w=700&q=80" alt="">
+              <div class="svc-card__body">
+                <h3>دليل الهوية</h3>
+                <p>نظام بصري ثابت على كل المنصات.</p>
+                <span class="offer">Brand Book PDF</span>
+                <span class="svc-card__hint">اضغط للتفاصيل ←</span>
+              </div>
+            </div>
+            <div class="svc-card__face svc-card__face--back">
+              <h3>دليل الهوية</h3>
+              <p>نظام بصري ثابت على كل المنصات. احصل على: Brand Book PDF. تواصل معنا لنبدأ التنفيذ بخطة واضحة تناسب منشأتك.</p>
+              <span class="offer">Brand Book PDF</span>
+              <span class="svc-card__hint">اضغط للإغلاق</span>
+            </div>
+          </div>
+        </article>
+        <article class="svc-card" tabindex="0" role="button" aria-label="موشن جرافيك">
+          <div class="svc-card__inner">
+            <div class="svc-card__face svc-card__face--front">
+              <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=700&q=80" alt="">
+              <div class="svc-card__body">
+                <h3>موشن جرافيك</h3>
+                <p>حركة تبيع الفكرة في ثوانٍ.</p>
+                <span class="offer">باقة 5 موشن</span>
+                <span class="svc-card__hint">اضغط للتفاصيل ←</span>
+              </div>
+            </div>
+            <div class="svc-card__face svc-card__face--back">
+              <h3>موشن جرافيك</h3>
+              <p>حركة تبيع الفكرة في ثوانٍ. احصل على: باقة 5 موشن. تواصل معنا لنبدأ التنفيذ بخطة واضحة تناسب منشأتك.</p>
+              <span class="offer">باقة 5 موشن</span>
+              <span class="svc-card__hint">اضغط للإغلاق</span>
+            </div>
+          </div>
+        </article>
+        <article class="svc-card" tabindex="0" role="button" aria-label="تصوير احترافي">
+          <div class="svc-card__inner">
+            <div class="svc-card__face svc-card__face--front">
+              <img src="https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=700&q=80" alt="">
+              <div class="svc-card__body">
+                <h3>تصوير احترافي</h3>
+                <p>صور منتج ومكان بروَى سعودية.</p>
+                <span class="offer">جلسة استوديو</span>
+                <span class="svc-card__hint">اضغط للتفاصيل ←</span>
+              </div>
+            </div>
+            <div class="svc-card__face svc-card__face--back">
+              <h3>تصوير احترافي</h3>
+              <p>صور منتج ومكان بروَى سعودية. احصل على: جلسة استوديو. تواصل معنا لنبدأ التنفيذ بخطة واضحة تناسب منشأتك.</p>
+              <span class="offer">جلسة استوديو</span>
+              <span class="svc-card__hint">اضغط للإغلاق</span>
+            </div>
+          </div>
+        </article>
+        <article class="svc-card" tabindex="0" role="button" aria-label="مطبوعات فاخرة">
+          <div class="svc-card__inner">
+            <div class="svc-card__face svc-card__face--front">
+              <img src="https://images.unsplash.com/photo-1559028012-481c04fa702d?w=700&q=80" alt="">
+              <div class="svc-card__body">
+                <h3>مطبوعات فاخرة</h3>
+                <p>مواد تترك انطباعاً ملموساً وقوياً.</p>
+                <span class="offer">كتالوج ترحيبي</span>
+                <span class="svc-card__hint">اضغط للتفاصيل ←</span>
+              </div>
+            </div>
+            <div class="svc-card__face svc-card__face--back">
+              <h3>مطبوعات فاخرة</h3>
+              <p>مواد تترك انطباعاً ملموساً وقوياً. احصل على: كتالوج ترحيبي. تواصل معنا لنبدأ التنفيذ بخطة واضحة تناسب منشأتك.</p>
+              <span class="offer">كتالوج ترحيبي</span>
+              <span class="svc-card__hint">اضغط للإغلاق</span>
+            </div>
+          </div>
+        </article>
+        <article class="svc-card" tabindex="0" role="button" aria-label="محتوى إبداعي">
+          <div class="svc-card__inner">
+            <div class="svc-card__face svc-card__face--front">
+              <img src="https://images.unsplash.com/photo-1626785774573-4b7993143457?w=700&q=80" alt="">
+              <div class="svc-card__body">
+                <h3>محتوى إبداعي</h3>
+                <p>أفكار بصرية تناسب السوق المحلي.</p>
+                <span class="offer">30 تصميم شهري</span>
+                <span class="svc-card__hint">اضغط للتفاصيل ←</span>
+              </div>
+            </div>
+            <div class="svc-card__face svc-card__face--back">
+              <h3>محتوى إبداعي</h3>
+              <p>أفكار بصرية تناسب السوق المحلي. احصل على: 30 تصميم شهري. تواصل معنا لنبدأ التنفيذ بخطة واضحة تناسب منشأتك.</p>
+              <span class="offer">30 تصميم شهري</span>
+              <span class="svc-card__hint">اضغط للإغلاق</span>
+            </div>
+          </div>
+        </article>
+        <article class="svc-card" tabindex="0" role="button" aria-label="غلاف سوشيال">
+          <div class="svc-card__inner">
+            <div class="svc-card__face svc-card__face--front">
+              <img src="https://images.unsplash.com/photo-1611162616475-46b635cb6868?w=700&q=80" alt="">
+              <div class="svc-card__body">
+                <h3>غلاف سوشيال</h3>
+                <p>قوالب متناسقة لكل المنصات.</p>
+                <span class="offer">حزمة 12 قالب</span>
+                <span class="svc-card__hint">اضغط للتفاصيل ←</span>
+              </div>
+            </div>
+            <div class="svc-card__face svc-card__face--back">
+              <h3>غلاف سوشيال</h3>
+              <p>قوالب متناسقة لكل المنصات. احصل على: حزمة 12 قالب. تواصل معنا لنبدأ التنفيذ بخطة واضحة تناسب منشأتك.</p>
+              <span class="offer">حزمة 12 قالب</span>
+              <span class="svc-card__hint">اضغط للإغلاق</span>
+            </div>
+          </div>
+        </article>
+        <article class="svc-card" tabindex="0" role="button" aria-label="إعلان تلفزيوني">
+          <div class="svc-card__inner">
+            <div class="svc-card__face svc-card__face--front">
+              <img src="https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=700&q=80" alt="">
+              <div class="svc-card__body">
+                <h3>إعلان تلفزيوني</h3>
+                <p>سْبوت قصير للبث والمنصات.</p>
+                <span class="offer">سيناريو مجاني</span>
+                <span class="svc-card__hint">اضغط للتفاصيل ←</span>
+              </div>
+            </div>
+            <div class="svc-card__face svc-card__face--back">
+              <h3>إعلان تلفزيوني</h3>
+              <p>سْبوت قصير للبث والمنصات. احصل على: سيناريو مجاني. تواصل معنا لنبدأ التنفيذ بخطة واضحة تناسب منشأتك.</p>
+              <span class="offer">سيناريو مجاني</span>
+              <span class="svc-card__hint">اضغط للإغلاق</span>
+            </div>
+          </div>
+        </article>
+        <article class="svc-card" tabindex="0" role="button" aria-label="تصميم تغليف">
+          <div class="svc-card__inner">
+            <div class="svc-card__face svc-card__face--front">
+              <img src="https://images.unsplash.com/photo-1558655146-9f40138edfeb?w=700&q=80" alt="">
+              <div class="svc-card__body">
+                <h3>تصميم تغليف</h3>
+                <p>عبوة تبيع المنتج من أول نظرة.</p>
+                <span class="offer">3 مفاهيم تصميم</span>
+                <span class="svc-card__hint">اضغط للتفاصيل ←</span>
+              </div>
+            </div>
+            <div class="svc-card__face svc-card__face--back">
+              <h3>تصميم تغليف</h3>
+              <p>عبوة تبيع المنتج من أول نظرة. احصل على: 3 مفاهيم تصميم. تواصل معنا لنبدأ التنفيذ بخطة واضحة تناسب منشأتك.</p>
+              <span class="offer">3 مفاهيم تصميم</span>
+              <span class="svc-card__hint">اضغط للإغلاق</span>
+            </div>
+          </div>
+        </article>
       </div>
     </div>
   </section>
@@ -212,23 +645,240 @@
         </div>
       </div>
       <div class="container chamber__grid">
-        <article><img src="https://images.unsplash.com/photo-1518186285589-2f7649de83e0?w=700&q=80" alt=""><h3>CRM ذكي</h3><p>علاقات العملاء في منظومة واحدة.</p><span class="offer">إعداد مجاني + تدريب</span></article>
-        <article><img src="https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=700&q=80" alt=""><h3>أتمتة التسويق</h3><p>رحلات تتفاعل مع سلوك العميل.</p><span class="offer">3 رحلات جاهزة</span></article>
-        <article><img src="https://images.unsplash.com/photo-1504639725590-34d0984388bd?w=700&q=80" alt=""><h3>تكامل الأنظمة</h3><p>ربط الأدوات لاستخلاص النجاح أسرع.</p><span class="offer">ربط أول أداة مجاناً</span></article>
-        <article><img src="https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?w=700&q=80" alt=""><h3>واتساب أعمال</h3><p>محادثات آلية تخدم عميلك 24/7.</p><span class="offer">بوت ردود جاهز</span></article>
-        <article><img src="https://images.unsplash.com/photo-1563986768494-4dee2763ff3f?w=700&q=80" alt=""><h3>إيميل أوتوماتيك</h3><p>تسلسل رسائل يبني العلاقة ويغلق الصفقة.</p><span class="offer">قوالب 10 رسائل</span></article>
-        <article><img src="https://images.unsplash.com/photo-1516321497487-e288fb19713f?w=700&q=80" alt=""><h3>ربط المتجر</h3><p>مزامنة الطلبات والمخزون بلا أخطاء.</p><span class="offer">تكامل سلة/زد</span></article>
-        <article><img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=700&q=80" alt=""><h3>مؤشرات الأداء</h3><p>لوحة واحدة لكل قرار مهم.</p><span class="offer">داشبورد مخصص</span></article>
-        <article><img src="https://images.unsplash.com/photo-1553877522-43269d4ea984?w=700&q=80" alt=""><h3>أتمتة الدعم</h3><p>ردود جاهزة ترفع الرضا وتوفر الوقت.</p><span class="offer">مكتبة ردود جاهزة</span></article>
-        <article><img src="https://images.unsplash.com/photo-1551836022-4c4c79ecde51?w=700&q=80" alt=""><h3>أتمتة المبيعات</h3><p>قمع ذكي يسرّع إغلاق الصفقات.</p><span class="offer">قمع مبيعات جاهز</span></article>
-        <article><img src="https://images.unsplash.com/photo-1518186285589-2f7649de83e0?w=700&q=80" alt=""><h3>Zapier / Make</h3><p>سيناريوهات تربط كل أدواتك بضغطة.</p><span class="offer">5 أتمتات جاهزة</span></article>
-        <article><img src="https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=700&q=80" alt=""><h3>تنبيهات ذكية</h3><p>إشعارات فورية للمبيعات والفرص.</p><span class="offer">تنبيهات واتساب</span></article>
-        <article><img src="https://images.unsplash.com/photo-1504639725590-34d0984388bd?w=700&q=80" alt=""><h3>تتبع العملاء</h3><p>رحلة العميل من أول نقرة حتى الشراء.</p><span class="offer">تتبع كامل مجاني</span></article>
+        <article class="svc-card" tabindex="0" role="button" aria-label="CRM ذكي">
+          <div class="svc-card__inner">
+            <div class="svc-card__face svc-card__face--front">
+              <img src="https://images.unsplash.com/photo-1518186285589-2f7649de83e0?w=700&q=80" alt="">
+              <div class="svc-card__body">
+                <h3>CRM ذكي</h3>
+                <p>علاقات العملاء في منظومة واحدة.</p>
+                <span class="offer">إعداد مجاني + تدريب</span>
+                <span class="svc-card__hint">اضغط للتفاصيل ←</span>
+              </div>
+            </div>
+            <div class="svc-card__face svc-card__face--back">
+              <h3>CRM ذكي</h3>
+              <p>علاقات العملاء في منظومة واحدة. احصل على: إعداد مجاني + تدريب. تواصل معنا لنبدأ التنفيذ بخطة واضحة تناسب منشأتك.</p>
+              <span class="offer">إعداد مجاني + تدريب</span>
+              <span class="svc-card__hint">اضغط للإغلاق</span>
+            </div>
+          </div>
+        </article>
+        <article class="svc-card" tabindex="0" role="button" aria-label="أتمتة التسويق">
+          <div class="svc-card__inner">
+            <div class="svc-card__face svc-card__face--front">
+              <img src="https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=700&q=80" alt="">
+              <div class="svc-card__body">
+                <h3>أتمتة التسويق</h3>
+                <p>رحلات تتفاعل مع سلوك العميل.</p>
+                <span class="offer">3 رحلات جاهزة</span>
+                <span class="svc-card__hint">اضغط للتفاصيل ←</span>
+              </div>
+            </div>
+            <div class="svc-card__face svc-card__face--back">
+              <h3>أتمتة التسويق</h3>
+              <p>رحلات تتفاعل مع سلوك العميل. احصل على: 3 رحلات جاهزة. تواصل معنا لنبدأ التنفيذ بخطة واضحة تناسب منشأتك.</p>
+              <span class="offer">3 رحلات جاهزة</span>
+              <span class="svc-card__hint">اضغط للإغلاق</span>
+            </div>
+          </div>
+        </article>
+        <article class="svc-card" tabindex="0" role="button" aria-label="تكامل الأنظمة">
+          <div class="svc-card__inner">
+            <div class="svc-card__face svc-card__face--front">
+              <img src="https://images.unsplash.com/photo-1504639725590-34d0984388bd?w=700&q=80" alt="">
+              <div class="svc-card__body">
+                <h3>تكامل الأنظمة</h3>
+                <p>ربط الأدوات لاستخلاص النجاح أسرع.</p>
+                <span class="offer">ربط أول أداة مجاناً</span>
+                <span class="svc-card__hint">اضغط للتفاصيل ←</span>
+              </div>
+            </div>
+            <div class="svc-card__face svc-card__face--back">
+              <h3>تكامل الأنظمة</h3>
+              <p>ربط الأدوات لاستخلاص النجاح أسرع. احصل على: ربط أول أداة مجاناً. تواصل معنا لنبدأ التنفيذ بخطة واضحة تناسب منشأتك.</p>
+              <span class="offer">ربط أول أداة مجاناً</span>
+              <span class="svc-card__hint">اضغط للإغلاق</span>
+            </div>
+          </div>
+        </article>
+        <article class="svc-card" tabindex="0" role="button" aria-label="واتساب أعمال">
+          <div class="svc-card__inner">
+            <div class="svc-card__face svc-card__face--front">
+              <img src="https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?w=700&q=80" alt="">
+              <div class="svc-card__body">
+                <h3>واتساب أعمال</h3>
+                <p>محادثات آلية تخدم عميلك 24/7.</p>
+                <span class="offer">بوت ردود جاهز</span>
+                <span class="svc-card__hint">اضغط للتفاصيل ←</span>
+              </div>
+            </div>
+            <div class="svc-card__face svc-card__face--back">
+              <h3>واتساب أعمال</h3>
+              <p>محادثات آلية تخدم عميلك 24/7. احصل على: بوت ردود جاهز. تواصل معنا لنبدأ التنفيذ بخطة واضحة تناسب منشأتك.</p>
+              <span class="offer">بوت ردود جاهز</span>
+              <span class="svc-card__hint">اضغط للإغلاق</span>
+            </div>
+          </div>
+        </article>
+        <article class="svc-card" tabindex="0" role="button" aria-label="إيميل أوتوماتيك">
+          <div class="svc-card__inner">
+            <div class="svc-card__face svc-card__face--front">
+              <img src="https://images.unsplash.com/photo-1563986768494-4dee2763ff3f?w=700&q=80" alt="">
+              <div class="svc-card__body">
+                <h3>إيميل أوتوماتيك</h3>
+                <p>تسلسل رسائل يبني العلاقة ويغلق الصفقة.</p>
+                <span class="offer">قوالب 10 رسائل</span>
+                <span class="svc-card__hint">اضغط للتفاصيل ←</span>
+              </div>
+            </div>
+            <div class="svc-card__face svc-card__face--back">
+              <h3>إيميل أوتوماتيك</h3>
+              <p>تسلسل رسائل يبني العلاقة ويغلق الصفقة. احصل على: قوالب 10 رسائل. تواصل معنا لنبدأ التنفيذ بخطة واضحة تناسب منشأتك.</p>
+              <span class="offer">قوالب 10 رسائل</span>
+              <span class="svc-card__hint">اضغط للإغلاق</span>
+            </div>
+          </div>
+        </article>
+        <article class="svc-card" tabindex="0" role="button" aria-label="ربط المتجر">
+          <div class="svc-card__inner">
+            <div class="svc-card__face svc-card__face--front">
+              <img src="https://images.unsplash.com/photo-1516321497487-e288fb19713f?w=700&q=80" alt="">
+              <div class="svc-card__body">
+                <h3>ربط المتجر</h3>
+                <p>مزامنة الطلبات والمخزون بلا أخطاء.</p>
+                <span class="offer">تكامل سلة/زد</span>
+                <span class="svc-card__hint">اضغط للتفاصيل ←</span>
+              </div>
+            </div>
+            <div class="svc-card__face svc-card__face--back">
+              <h3>ربط المتجر</h3>
+              <p>مزامنة الطلبات والمخزون بلا أخطاء. احصل على: تكامل سلة/زد. تواصل معنا لنبدأ التنفيذ بخطة واضحة تناسب منشأتك.</p>
+              <span class="offer">تكامل سلة/زد</span>
+              <span class="svc-card__hint">اضغط للإغلاق</span>
+            </div>
+          </div>
+        </article>
+        <article class="svc-card" tabindex="0" role="button" aria-label="مؤشرات الأداء">
+          <div class="svc-card__inner">
+            <div class="svc-card__face svc-card__face--front">
+              <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=700&q=80" alt="">
+              <div class="svc-card__body">
+                <h3>مؤشرات الأداء</h3>
+                <p>لوحة واحدة لكل قرار مهم.</p>
+                <span class="offer">داشبورد مخصص</span>
+                <span class="svc-card__hint">اضغط للتفاصيل ←</span>
+              </div>
+            </div>
+            <div class="svc-card__face svc-card__face--back">
+              <h3>مؤشرات الأداء</h3>
+              <p>لوحة واحدة لكل قرار مهم. احصل على: داشبورد مخصص. تواصل معنا لنبدأ التنفيذ بخطة واضحة تناسب منشأتك.</p>
+              <span class="offer">داشبورد مخصص</span>
+              <span class="svc-card__hint">اضغط للإغلاق</span>
+            </div>
+          </div>
+        </article>
+        <article class="svc-card" tabindex="0" role="button" aria-label="أتمتة الدعم">
+          <div class="svc-card__inner">
+            <div class="svc-card__face svc-card__face--front">
+              <img src="https://images.unsplash.com/photo-1553877522-43269d4ea984?w=700&q=80" alt="">
+              <div class="svc-card__body">
+                <h3>أتمتة الدعم</h3>
+                <p>ردود جاهزة ترفع الرضا وتوفر الوقت.</p>
+                <span class="offer">مكتبة ردود جاهزة</span>
+                <span class="svc-card__hint">اضغط للتفاصيل ←</span>
+              </div>
+            </div>
+            <div class="svc-card__face svc-card__face--back">
+              <h3>أتمتة الدعم</h3>
+              <p>ردود جاهزة ترفع الرضا وتوفر الوقت. احصل على: مكتبة ردود جاهزة. تواصل معنا لنبدأ التنفيذ بخطة واضحة تناسب منشأتك.</p>
+              <span class="offer">مكتبة ردود جاهزة</span>
+              <span class="svc-card__hint">اضغط للإغلاق</span>
+            </div>
+          </div>
+        </article>
+        <article class="svc-card" tabindex="0" role="button" aria-label="أتمتة المبيعات">
+          <div class="svc-card__inner">
+            <div class="svc-card__face svc-card__face--front">
+              <img src="https://images.unsplash.com/photo-1551836022-4c4c79ecde51?w=700&q=80" alt="">
+              <div class="svc-card__body">
+                <h3>أتمتة المبيعات</h3>
+                <p>قمع ذكي يسرّع إغلاق الصفقات.</p>
+                <span class="offer">قمع مبيعات جاهز</span>
+                <span class="svc-card__hint">اضغط للتفاصيل ←</span>
+              </div>
+            </div>
+            <div class="svc-card__face svc-card__face--back">
+              <h3>أتمتة المبيعات</h3>
+              <p>قمع ذكي يسرّع إغلاق الصفقات. احصل على: قمع مبيعات جاهز. تواصل معنا لنبدأ التنفيذ بخطة واضحة تناسب منشأتك.</p>
+              <span class="offer">قمع مبيعات جاهز</span>
+              <span class="svc-card__hint">اضغط للإغلاق</span>
+            </div>
+          </div>
+        </article>
+        <article class="svc-card" tabindex="0" role="button" aria-label="Zapier / Make">
+          <div class="svc-card__inner">
+            <div class="svc-card__face svc-card__face--front">
+              <img src="https://images.unsplash.com/photo-1518186285589-2f7649de83e0?w=700&q=80" alt="">
+              <div class="svc-card__body">
+                <h3>Zapier / Make</h3>
+                <p>سيناريوهات تربط كل أدواتك بضغطة.</p>
+                <span class="offer">5 أتمتات جاهزة</span>
+                <span class="svc-card__hint">اضغط للتفاصيل ←</span>
+              </div>
+            </div>
+            <div class="svc-card__face svc-card__face--back">
+              <h3>Zapier / Make</h3>
+              <p>سيناريوهات تربط كل أدواتك بضغطة. احصل على: 5 أتمتات جاهزة. تواصل معنا لنبدأ التنفيذ بخطة واضحة تناسب منشأتك.</p>
+              <span class="offer">5 أتمتات جاهزة</span>
+              <span class="svc-card__hint">اضغط للإغلاق</span>
+            </div>
+          </div>
+        </article>
+        <article class="svc-card" tabindex="0" role="button" aria-label="تنبيهات ذكية">
+          <div class="svc-card__inner">
+            <div class="svc-card__face svc-card__face--front">
+              <img src="https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=700&q=80" alt="">
+              <div class="svc-card__body">
+                <h3>تنبيهات ذكية</h3>
+                <p>إشعارات فورية للمبيعات والفرص.</p>
+                <span class="offer">تنبيهات واتساب</span>
+                <span class="svc-card__hint">اضغط للتفاصيل ←</span>
+              </div>
+            </div>
+            <div class="svc-card__face svc-card__face--back">
+              <h3>تنبيهات ذكية</h3>
+              <p>إشعارات فورية للمبيعات والفرص. احصل على: تنبيهات واتساب. تواصل معنا لنبدأ التنفيذ بخطة واضحة تناسب منشأتك.</p>
+              <span class="offer">تنبيهات واتساب</span>
+              <span class="svc-card__hint">اضغط للإغلاق</span>
+            </div>
+          </div>
+        </article>
+        <article class="svc-card" tabindex="0" role="button" aria-label="تتبع العملاء">
+          <div class="svc-card__inner">
+            <div class="svc-card__face svc-card__face--front">
+              <img src="https://images.unsplash.com/photo-1504639725590-34d0984388bd?w=700&q=80" alt="">
+              <div class="svc-card__body">
+                <h3>تتبع العملاء</h3>
+                <p>رحلة العميل من أول نقرة حتى الشراء.</p>
+                <span class="offer">تتبع كامل مجاني</span>
+                <span class="svc-card__hint">اضغط للتفاصيل ←</span>
+              </div>
+            </div>
+            <div class="svc-card__face svc-card__face--back">
+              <h3>تتبع العملاء</h3>
+              <p>رحلة العميل من أول نقرة حتى الشراء. احصل على: تتبع كامل مجاني. تواصل معنا لنبدأ التنفيذ بخطة واضحة تناسب منشأتك.</p>
+              <span class="offer">تتبع كامل مجاني</span>
+              <span class="svc-card__hint">اضغط للإغلاق</span>
+            </div>
+          </div>
+        </article>
       </div>
     </div>
   </section>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  <script src="js/demo.js?v=liquid4"></script>
+  <script src="js/soundscape.js?v=cardsound1"></script>
+  <script src="js/demo.js?v=cardsound1"></script>
 </body>
 </html>

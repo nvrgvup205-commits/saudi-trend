@@ -101,8 +101,11 @@
     document.addEventListener('mousedown', () => cursor.classList.add('is-click'));
     document.addEventListener('mouseup', () => cursor.classList.remove('is-click'));
 
-    document.querySelectorAll('a, button, .portal, .flip-card, .btn-glow, .gallery__item, input, select, textarea, .lang-switch').forEach(el => {
-      el.addEventListener('mouseenter', () => cursor.classList.add('is-hover'));
+    document.querySelectorAll('a, button, .portal, .flip-card, .btn-glow, .gallery__item, input, select, textarea, .lang-switch, .sound-toggle').forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        cursor.classList.add('is-hover');
+        if (window.SaudiSound) SaudiSound.tick();
+      });
       el.addEventListener('mouseleave', () => cursor.classList.remove('is-hover'));
     });
   }
@@ -334,6 +337,7 @@
 
     portalEl.classList.add('opening');
     document.body.classList.add('locked', 'in-realm');
+    if (window.SaudiSound) SaudiSound.enter();
 
     portals.forEach(p => {
       if (p !== portalEl) gsap.to(p, { opacity: 0.3, scale: 0.96, duration: 0.5 });
@@ -396,6 +400,7 @@
   function closeRealm() {
     if (!activeRealm) return;
     if (openTl && openTl.isActive()) openTl.kill();
+    if (window.SaudiSound) SaudiSound.back();
 
     const id = activeRealm;
     const realm = document.getElementById('realm-' + id);
@@ -464,6 +469,7 @@
           if (c !== card) c.classList.remove('is-flipped');
         });
         card.classList.toggle('is-flipped', !was);
+        if (window.SaudiSound) SaudiSound.flip();
         gsap.fromTo(card, { scale: 0.97 }, { scale: 1, duration: 0.7, ease: 'elastic.out(1, 0.55)' });
       };
       card.addEventListener('click', (e) => { e.stopPropagation(); flip(); });
@@ -473,6 +479,7 @@
     });
   }
   bindFlips(document);
+  if (window.SaudiSound) SaudiSound.wireUI();
 
   function animateRealmContent(realm) {
     applyLang(lang);
