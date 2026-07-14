@@ -569,21 +569,41 @@ html[data-lang="en"] .lang-switch__en { color: var(--green-mid); }
   opacity: 0;
   visibility: hidden;
   overflow: hidden;
+  background: #06261c;
 }
 .skyflight.active {
   opacity: 1;
   visibility: visible;
   pointer-events: none;
 }
+
+/* Blurred + green/gold tinted sky world — brand sits crisp above */
+.skyflight__scene {
+  position: absolute; inset: -28px;
+  z-index: 0;
+  filter: blur(18px) saturate(1.15) brightness(0.92);
+  transform: scale(1.08);
+  will-change: filter, transform;
+}
 .skyflight__grad {
   position: absolute; inset: 0;
   background:
     linear-gradient(180deg,
       #6ec6ff 0%,
-      #a8daf8 25%,
-      #e8f4fc 55%,
-      #f7f1e5 85%,
+      #a8daf8 22%,
+      #e8f4fc 48%,
+      #f7f1e5 72%,
       #0a5c40 100%);
+}
+.skyflight__tint {
+  position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 70% 55% at 50% 35%, rgba(212,175,55,.18), transparent 60%),
+    linear-gradient(180deg,
+      rgba(6, 80, 52, .28) 0%,
+      rgba(13, 122, 84, .22) 40%,
+      rgba(4, 53, 40, .45) 100%);
+  mix-blend-mode: soft-light;
 }
 .skyflight__sun {
   position: absolute;
@@ -625,21 +645,26 @@ html[data-lang="en"] .lang-switch__en { color: var(--green-mid); }
 .cloud--6::before { width: 120px; height: 120px; top: -60px; right: 50px; }
 .cloud--6::after { width: 90px; height: 90px; top: -45px; right: 140px; }
 
+/* Brand — always sharp, above blurred scene */
 .skyflight__brand {
   position: absolute; inset: 0;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: 8px; text-align: center; z-index: 2;
+  gap: 8px; text-align: center; z-index: 3;
   transform: translateY(40px) scale(0.7);
   opacity: 0;
+  isolation: isolate;
+  filter: none !important;
+  -webkit-font-smoothing: antialiased;
 }
 .skyflight__seal {
   width: 72px; height: 72px; border-radius: 50%;
   display: grid; place-items: center;
   background: linear-gradient(145deg, #fff, #e8d48b);
   border: 2px solid rgba(212,175,55,.6);
-  box-shadow: 0 12px 40px rgba(4,53,40,.25);
+  box-shadow: 0 12px 40px rgba(4,53,40,.25), 0 0 0 8px rgba(255,255,255,.12);
   margin-bottom: 8px;
   padding: 14px;
+  filter: none !important;
 }
 .skyflight__seal svg { width: 100%; height: 100%; }
 .skyflight__ar {
@@ -647,8 +672,12 @@ html[data-lang="en"] .lang-switch__en { color: var(--green-mid); }
   font-size: clamp(2.4rem, 7vw, 5rem);
   font-weight: 900;
   color: var(--green-deep);
-  text-shadow: 0 10px 40px rgba(255,255,255,.8), 0 2px 0 rgba(212,175,55,.4);
+  text-shadow:
+    0 1px 0 rgba(255,255,255,.9),
+    0 8px 28px rgba(4,53,40,.2),
+    0 2px 0 rgba(212,175,55,.35);
   letter-spacing: -.03em;
+  filter: none !important;
 }
 .skyflight__en {
   font-family: var(--font-en);
@@ -657,14 +686,18 @@ html[data-lang="en"] .lang-switch__en { color: var(--green-mid); }
   text-transform: uppercase;
   color: var(--gold-dim);
   font-weight: 600;
+  text-shadow: 0 1px 0 rgba(255,255,255,.7);
+  filter: none !important;
 }
 .skyflight__tag {
   margin-top: 12px;
   padding: 8px 18px; border-radius: 50px;
-  background: rgba(255,255,255,.55);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(212,175,55,.4);
+  background: rgba(255,255,255,.72);
+  border: 1px solid rgba(212,175,55,.45);
   font-size: 13px; font-weight: 700; color: var(--green);
+  box-shadow: 0 8px 24px rgba(4,53,40,.12);
+  filter: none !important;
+  backdrop-filter: none;
 }
 
 .portal-flash {
