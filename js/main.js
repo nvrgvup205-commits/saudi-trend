@@ -209,6 +209,43 @@
     });
   }
 
+  // ── Elegant hero lexicon — curated constellation + entrance ──
+  const lexiconRoot = document.getElementById('hero-lexicon');
+  const LEXICON = [
+    { text: 'استراتيجية', tone: 'gold', x: 7,  y: 22, size: 1.45, from: 'left' },
+    { text: 'تميّز',       tone: 'mist', x: 46, y: 13, size: 1.2,  from: 'top' },
+    { text: 'هوية',        tone: 'gold', x: 78, y: 17, size: 1.35, from: 'top' },
+    { text: 'حضور',        tone: 'jade', x: 18, y: 38, size: 1.0,  from: 'left' },
+    { text: 'إبداع',       tone: 'mist', x: 88, y: 34, size: 1.1,  from: 'right' },
+    { text: 'نمو',         tone: 'gold', x: 10, y: 58, size: 1.3,  from: 'left' },
+    { text: 'موشن',        tone: 'mist', x: 82, y: 54, size: 0.95, from: 'right' },
+    { text: 'أتمتة',       tone: 'jade', x: 14, y: 76, size: 1.2,  from: 'bottom' },
+    { text: 'فيديو',       tone: 'mist', x: 90, y: 72, size: 1.05, from: 'right' },
+    { text: 'تكامل',       tone: 'jade', x: 36, y: 82, size: 0.95, from: 'bottom' },
+    { text: 'رؤية',        tone: 'gold', x: 28, y: 18, size: 1.05, from: 'top' },
+    { text: 'كفاءة',       tone: 'jade', x: 62, y: 78, size: 0.9,  from: 'bottom' },
+  ];
+
+  function mountLexicon() {
+    if (!lexiconRoot) return [];
+    lexiconRoot.innerHTML = '';
+    const narrow = window.innerWidth < 768;
+    const list = narrow ? LEXICON.filter((_, i) => i % 2 === 0) : LEXICON;
+    return list.map((item) => {
+      const el = document.createElement('span');
+      el.className = `hero__word hero__word--${item.tone}`;
+      el.textContent = item.text;
+      el.style.left = item.x + '%';
+      el.style.top = item.y + '%';
+      el.style.fontSize = `clamp(${0.85 * item.size}rem, ${2.1 * item.size}vw, ${1.55 * item.size}rem)`;
+      el.dataset.from = item.from;
+      lexiconRoot.appendChild(el);
+      return el;
+    });
+  }
+
+  const lexiconWords = mountLexicon();
+
   // ── GSAP entrance + scroll reveals ──
   if (window.gsap && !reduceMotion) {
     if (window.SaudiSound) {
@@ -217,11 +254,46 @@
 
     const heroTl = gsap.timeline({ defaults: { ease: 'power3.out' } });
     heroTl
+      .from('.hero__eyebrow', { y: 24, opacity: 0, duration: 0.8 }, 0.05)
       .from('.hero__brand', { y: 50, opacity: 0, duration: 1.15 }, 0.15)
-      .from('.hero__title', { y: 36, opacity: 0, duration: 0.95 }, 0.4)
-      .from('.hero__description', { y: 28, opacity: 0, duration: 0.85 }, 0.55)
-      .from('.hero__buttons', { y: 24, opacity: 0, duration: 0.8 }, 0.7)
-      .from('.hero__scroll', { opacity: 0, duration: 0.7 }, 1);
+      .from('.hero__rule', { scaleX: 0, opacity: 0, duration: 0.7, transformOrigin: '100% 50%' }, 0.45)
+      .from('.hero__title', { y: 36, opacity: 0, duration: 0.95 }, 0.5)
+      .from('.hero__description', { y: 28, opacity: 0, duration: 0.85 }, 0.65)
+      .from('.hero__buttons', { y: 24, opacity: 0, duration: 0.8 }, 0.8)
+      .from('.hero__scroll', { opacity: 0, duration: 0.7 }, 1.1);
+
+    // Signature lexicon entrance — drift in from composure axes, then soft float
+    lexiconWords.forEach((el, i) => {
+      const from = el.dataset.from;
+      const dist = 48 + (i % 3) * 10;
+      const startX = from === 'left' ? -dist : from === 'right' ? dist : (i % 2 ? 12 : -12);
+      const startY = from === 'top' ? -dist : from === 'bottom' ? dist : 28;
+      gsap.fromTo(
+        el,
+        { opacity: 0, scale: 0.86, xPercent: -50, yPercent: -50, x: startX, y: startY },
+        {
+          opacity: 1,
+          scale: 1,
+          xPercent: -50,
+          yPercent: -50,
+          x: 0,
+          y: 0,
+          duration: 1.55,
+          delay: 0.55 + i * 0.09,
+          ease: 'expo.out',
+          onComplete: () => {
+            gsap.to(el, {
+              y: (i % 2 ? -1 : 1) * (6 + (i % 4)),
+              x: (i % 3 ? 1 : -1) * (4 + (i % 3)),
+              duration: 4.5 + (i % 5) * 0.45,
+              yoyo: true,
+              repeat: -1,
+              ease: 'sine.inOut',
+            });
+          },
+        }
+      );
+    });
 
     if (heroImg) {
       gsap.to(heroImg, {
@@ -304,6 +376,9 @@
     document.querySelectorAll('.reveal').forEach((el) => {
       el.style.opacity = '1';
       el.style.transform = 'none';
+    });
+    lexiconWords.forEach((el) => {
+      el.style.opacity = '0.55';
     });
   }
 
