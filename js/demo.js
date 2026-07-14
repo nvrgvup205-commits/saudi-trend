@@ -575,16 +575,22 @@
       liquidCtx.clearRect(0, 0, W, H);
       liquidCtx.drawImage(off, 0, 0, W, H);
 
-      // Extra soft downsample blur pass under center (text zone) — higher blur behind words
+      // Soft professional depth under the editorial stage
       blurCtx.clearRect(0, 0, blur.width, blur.height);
       blurCtx.drawImage(liquidCanvas, 0, 0, blur.width, blur.height);
       liquidCtx.save();
-      liquidCtx.globalAlpha = 0.55;
-      liquidCtx.filter = 'blur(18px) brightness(0.85)';
-      const lw = W * 0.78, lh = H * 0.42;
+      liquidCtx.globalAlpha = 0.48;
+      liquidCtx.filter = 'blur(16px) brightness(0.78) saturate(0.9)';
+      const lw = W * 0.72, lh = H * 0.34;
+      const lx = (W - lw) / 2, ly = (H - lh) / 2;
+      const rr = Math.min(28, lh * 0.18);
       liquidCtx.beginPath();
-      // rounded rect approx via ellipse
-      liquidCtx.ellipse(W / 2, H / 2, lw / 2, lh / 2, 0, 0, Math.PI * 2);
+      liquidCtx.moveTo(lx + rr, ly);
+      liquidCtx.arcTo(lx + lw, ly, lx + lw, ly + lh, rr);
+      liquidCtx.arcTo(lx + lw, ly + lh, lx, ly + lh, rr);
+      liquidCtx.arcTo(lx, ly + lh, lx, ly, rr);
+      liquidCtx.arcTo(lx, ly, lx + lw, ly, rr);
+      liquidCtx.closePath();
       liquidCtx.clip();
       liquidCtx.drawImage(blur, 0, 0, W, H);
       liquidCtx.filter = 'none';
@@ -594,11 +600,11 @@
     function tickWaterSVG(now) {
       if (!waterTurb || !waterMap) return;
       const t = (now - t0) / 1000;
-      // Animate fractal noise frequency — living water
-      const fx = 0.009 + Math.sin(t * 0.35) * 0.004;
-      const fy = 0.014 + Math.cos(t * 0.28) * 0.005;
+      // Gentle living depth — restrained for a premium read
+      const fx = 0.007 + Math.sin(t * 0.28) * 0.002;
+      const fy = 0.01 + Math.cos(t * 0.22) * 0.0025;
       waterTurb.setAttribute('baseFrequency', fx.toFixed(4) + ' ' + fy.toFixed(4));
-      const scale = 38 + Math.sin(t * 0.65) * 14 + Math.cos(t * 1.05) * 8;
+      const scale = 12 + Math.sin(t * 0.5) * 4;
       waterMap.setAttribute('scale', scale.toFixed(2));
     }
 
