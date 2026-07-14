@@ -10,7 +10,8 @@
   --text: #e8f5ef;
   --muted: #7a9a8a;
   --font: 'IBM Plex Sans Arabic', 'Cairo', 'Tajawal', sans-serif;
-  --font-display: 'Cormorant Garamond', 'IBM Plex Sans Arabic', Georgia, serif;
+  --font-display: 'Noto Kufi Arabic', 'IBM Plex Sans Arabic', sans-serif;
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
   --ease: cubic-bezier(.22, 1, .36, 1);
 }
 
@@ -205,10 +206,18 @@ body, body * { cursor: none !important; }
 .eye-gate .eye-blink {
   pointer-events: none;
 }
+.lobe__kicker {
+  fill: rgba(212, 175, 55, 0.92);
+  font-family: var(--font);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  pointer-events: none;
+}
 .lobe__label {
   fill: #fff;
-  font-family: var(--font);
-  font-size: 22px;
+  font-family: var(--font-display);
+  font-size: 20px;
   font-weight: 800;
   pointer-events: none;
   paint-order: stroke fill;
@@ -227,9 +236,94 @@ body, body * { cursor: none !important; }
   pointer-events: none;
 }
 
+/* Mobile center eye trigger — reveals the three gates */
+.brain__trigger {
+  display: none;
+  position: relative;
+  z-index: 6;
+  width: min(220px, 70vw);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  background:
+    radial-gradient(circle at 40% 35%, rgba(232, 255, 240, 0.35), transparent 28%),
+    radial-gradient(circle at 50% 50%, #00c853 0%, #0a5c40 48%, #02140c 72%);
+  box-shadow:
+    0 0 0 10px rgba(0, 200, 83, 0.08),
+    0 0 40px rgba(0, 200, 83, 0.35),
+    inset 0 0 24px rgba(0, 0, 0, 0.35);
+  color: #fff;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: none;
+  transition: transform .45s var(--ease), box-shadow .45s, opacity .45s, visibility .45s;
+}
+.brain__trigger-pulse {
+  position: absolute; inset: -12px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 230, 118, 0.35);
+  animation: triggerPulse 2.8s ease-out infinite;
+  pointer-events: none;
+}
+@keyframes triggerPulse {
+  0% { transform: scale(0.92); opacity: .7; }
+  100% { transform: scale(1.18); opacity: 0; }
+}
+.brain__trigger-eye {
+  position: relative;
+  width: 54px; height: 54px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #e8fff0, #00e676 45%, #013220 80%);
+  box-shadow: 0 0 18px rgba(0, 230, 118, 0.55);
+  animation: triggerBlink 5.5s ease-in-out infinite;
+  transform-origin: center;
+}
+.brain__trigger-iris {
+  position: absolute; inset: 30%;
+  border-radius: 50%;
+  background: #02140c;
+}
+.brain__trigger-shine {
+  position: absolute; top: 18%; right: 28%;
+  width: 8px; height: 8px; border-radius: 50%;
+  background: rgba(255,255,255,.7);
+}
+@keyframes triggerBlink {
+  0%, 42%, 54%, 100% { transform: scaleY(1); }
+  48% { transform: scaleY(0.12); }
+}
+.brain__trigger-copy {
+  display: grid; gap: 2px; text-align: center; position: relative; z-index: 1;
+}
+.brain__trigger-kicker {
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  color: rgba(212, 175, 55, 0.9);
+  font-weight: 600;
+}
+.brain__trigger-title {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 800;
+  color: #fff;
+}
+.brain__trigger:hover,
+.brain__trigger:focus-visible {
+  transform: scale(1.04);
+  box-shadow:
+    0 0 0 12px rgba(0, 200, 83, 0.12),
+    0 0 56px rgba(0, 200, 83, 0.45),
+    inset 0 0 24px rgba(0, 0, 0, 0.3);
+  outline: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .brain__svg--eyes animate,
   .brain__svg--eyes animateTransform { display: none; }
+  .brain__trigger-pulse,
+  .brain__trigger-eye { animation: none; }
 }
 
 /* Dive — professional depth field; sharp editorial typography */
@@ -527,10 +621,33 @@ body, body * { cursor: none !important; }
 @media (max-width: 800px) {
   .chamber__grid { grid-template-columns: 1fr; }
   .svc-card { height: 300px; }
-  .lobe__label { font-size: 16px; }
-  .lobe__hint { font-size: 11px; }
+  .lobe__label { font-size: 15px; }
+  .lobe__kicker { font-size: 9px; }
   .brain__svg { max-height: min(52vh, 340px); }
   .mind__intro { padding: 4px 16px; }
+
+  .brain__trigger { display: flex; }
+  .brain:not(.is-open) .brain__svg {
+    position: absolute;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: scale(0.55);
+  }
+  .brain.is-open .brain__trigger {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: scale(0.7);
+    position: absolute;
+  }
+  .brain.is-open .brain__svg {
+    position: relative;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: none;
+  }
 }
 @media (max-height: 700px) {
   .mind__title { font-size: clamp(1.1rem, 3.2vw, 1.7rem); margin-bottom: 4px; }
@@ -540,4 +657,6 @@ body, body * { cursor: none !important; }
 @media (max-width: 480px) {
   .mind__links a:last-child { display: none; }
   .brain__svg { max-height: 48vh; }
+  .brain__trigger { width: min(200px, 72vw); }
+  .brain__trigger-title { font-size: 14px; }
 }
