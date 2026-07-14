@@ -517,12 +517,14 @@ html[data-lang="en"] .lang-switch__en { color: var(--green-mid); }
 .skyflight {
   position: fixed; inset: 0; z-index: 9500;
   pointer-events: none;
-  opacity: 0; visibility: hidden;
+  opacity: 0;
+  visibility: hidden;
   overflow: hidden;
 }
 .skyflight.active {
-  opacity: 1; visibility: visible;
-  pointer-events: all;
+  opacity: 1;
+  visibility: visible;
+  pointer-events: none;
 }
 .skyflight__grad {
   position: absolute; inset: 0;
