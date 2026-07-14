@@ -185,17 +185,36 @@ body, body * { cursor: none !important; }
   max-height: min(58vh, 420px);
   filter: drop-shadow(0 0 40px rgba(0,200,83,.25));
 }
+.brain__svg--eyes {
+  filter: drop-shadow(0 0 28px rgba(0,200,83,.22));
+}
 .lobe {
   cursor: none;
-  transition: filter .4s;
+  transition: filter .4s, opacity .4s;
 }
 .lobe:hover,
 .lobe:focus {
-  filter: brightness(1.2) drop-shadow(0 0 16px rgba(0,230,118,.5));
+  filter: brightness(1.18) drop-shadow(0 0 18px rgba(0,230,118,.55));
   outline: none;
 }
 .lobe.is-opening {
-  filter: brightness(1.4) drop-shadow(0 0 28px rgba(0,230,118,.8));
+  filter: brightness(1.35) drop-shadow(0 0 28px rgba(0,230,118,.85));
+}
+.eye-gate .eye__ring {
+  transition: stroke .35s, opacity .35s;
+}
+.eye-gate:hover .eye__ring,
+.eye-gate:focus .eye__ring {
+  stroke: rgba(212,175,55,.65);
+}
+.eye-gate:hover .eye__iris,
+.eye-gate:focus .eye__iris {
+  filter: brightness(1.15);
+}
+.eye-gate .lobe__label,
+.eye-gate .lobe__hint {
+  fill: #fff;
+  pointer-events: none;
 }
 .lobe__label {
   fill: #fff;
@@ -214,6 +233,10 @@ body, body * { cursor: none !important; }
 .brain__core {
   filter: drop-shadow(0 0 16px var(--green));
   pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brain__svg--eyes animate { display: none; }
 }
 
 /* Dive — professional depth field; sharp editorial typography */

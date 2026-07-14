@@ -1,0 +1,46 @@
+<!--
+  39H/J *1JF/ · Demo 1 · BRAIN GATES CLASSIC (restore snapshot)
+  ============================================================
+  To restore: replace the <svg class="brain__svg">...</svg> block
+  inside demo.html with the SVG below, and remove .eye-gate CSS
+  overrides if desired. Keep class="lobe" + data-section attrs.
+  Saved when introducing the blinking "eye gate" design.
+-->
+<svg class="brain__svg" viewBox="0 0 640 380" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+  <defs>
+    <linearGradient id="lobeGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#69f0ae"/>
+      <stop offset="100%" stop-color="#004d26"/>
+    </linearGradient>
+    <linearGradient id="lobeGrad2" x1="1" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#69f0ae"/>
+      <stop offset="100%" stop-color="#004d26"/>
+    </linearGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+
+  <g class="lobe lobe--market" data-section="market" data-hook-title="F:H5 AJ 9BD #5-'( 'D#9E'D" data-hook-sub="H#9E'B 'D3HB 'D*3HJBJ& F3*.1, 'D#AC'1 HF5D D#9DI F*'&, 'D-ED'*" role="button" tabindex="0">
+    <path d="M300 200 C290 100, 180 60, 110 110 C40 165, 55 275, 140 315 C200 340, 270 295, 300 235 Z" fill="url(#lobeGrad)" opacity=".9"/>
+    <path d="M290 190 C270 130, 200 100, 140 135 C95 162, 100 235, 155 265 C200 285, 260 255, 290 218" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="2"/>
+    <text x="175" y="205" text-anchor="middle" class="lobe__label">'D*3HJB</text>
+  </g>
+
+  <g class="lobe lobe--auto" data-section="auto" data-hook-title="F:H5 AJ 9BD 'DEF4#)" data-hook-sub="H#9E'B 'D9EDJ'*& F3*.1, #F8E) #*E*) *BH/C D#9DI CA'!) HF*'&," role="button" tabindex="0">
+    <path d="M340 200 C350 100, 460 60, 530 110 C600 165, 585 275, 500 315 C440 340, 370 295, 340 235 Z" fill="url(#lobeGrad2)" opacity=".9"/>
+    <path d="M350 190 C370 130, 440 100, 500 135 C545 162, 540 235, 485 265 C440 285, 380 255, 350 218" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="2"/>
+    <text x="465" y="205" text-anchor="middle" class="lobe__label">'D#*E*)</text>
+  </g>
+
+  <g class="lobe lobe--design" data-section="design" data-hook-title="F:H5 AJ 9BD 'D9D'E)" data-hook-sub="H#9E'B 'D0HB H'D3HB& F3*.1, GHJ) HAJ/JH J5D'F D#9DI *#+J1" role="button" tabindex="0">
+    <path d="M320 42 C260 42, 220 88, 220 140 C220 178, 260 208, 320 208 C380 208, 420 178, 420 140 C420 88, 380 42, 320 42 Z" fill="url(#lobeGrad)" filter="url(#glow)" opacity=".95"/>
+    <path d="M320 68 C280 68, 255 100, 255 135 C255 158, 285 178, 320 178 C355 178, 385 158, 385 135 C385 100, 360 68, 320 68" fill="none" stroke="rgba(255,255,255,.3)" stroke-width="2"/>
+    <text x="320" y="128" text-anchor="middle" class="lobe__label">'D*5EJE</text>
+    <text x="320" y="152" text-anchor="middle" class="lobe__hint">H'DAJ/JH</text>
+  </g>
+
+  <circle class="brain__core" cx="320" cy="218" r="16" fill="#00c853"/>
+  <circle cx="320" cy="218" r="26" fill="none" stroke="#00e676" stroke-width="1.5" opacity=".5">
+    <animate attributeName="r" values="22;32;22" dur="3s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values=".6;.15;.6" dur="3s" repeatCount="indefinite"/>
+  </circle>
+</svg>
