@@ -57,61 +57,319 @@
     });
   }
 
-  // Particles
-  let particles = [];
-  function resize() {
-    canvas.width = innerWidth;
-    canvas.height = innerHeight;
-  }
-  function spawn() {
-    particles = [];
-    const n = Math.min(55, Math.floor(innerWidth / 24));
-    for (let i = 0; i < n; i++) {
-      particles.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        r: Math.random() * 1.8 + 0.3,
-        vx: (Math.random() - 0.5) * 0.25,
-        vy: (Math.random() - 0.5) * 0.25,
-        a: Math.random() * 0.4 + 0.1
+  /* ============================================================
+   * MindField — multi-layer genius backdrop
+   * flow-field nodes + code glyphs + orbit rings + data rivers
+   * Motifs: marketing signals · automation loops · software rails
+   * ============================================================ */
+  const mindCanvas = document.getElementById('mind-field') || canvas;
+  const mctx = mindCanvas.getContext('2d');
+
+  const GLYPHS = [
+    '{ }', '=>', 'CRM', 'SEO', 'API', '0x', '||', '&&', 'AI',
+    'نمو', 'بيع', 'أتمتة', 'data', 'KPI', 'funnel', '<>', '::',
+  ];
+
+  const MindField = (() => {
+    let W = 0, H = 0, dpr = 1, raf = 0, t0 = 0;
+    let nodes = [];
+    let glyphs = [];
+    let rivers = [];
+    let rings = [];
+    let packets = [];
+
+    // Cheap value-noise (hash) for organic flow
+    function hash(x, y) {
+      const s = Math.sin(x * 127.1 + y * 311.7) * 43758.5453;
+      return s - Math.floor(s);
+    }
+    function noise(x, y) {
+      const xi = Math.floor(x), yi = Math.floor(y);
+      const xf = x - xi, yf = y - yi;
+      const u = xf * xf * (3 - 2 * xf);
+      const v = yf * yf * (3 - 2 * yf);
+      const a = hash(xi, yi), b = hash(xi + 1, yi);
+      const c = hash(xi, yi + 1), d = hash(xi + 1, yi + 1);
+      return a * (1 - u) * (1 - v) + b * u * (1 - v) + c * (1 - u) * v + d * u * v;
+    }
+    function flowAngle(x, y, t) {
+      const n = noise(x * 0.0018 + t * 0.03, y * 0.0018 - t * 0.02);
+      return n * Math.PI * 2;
+    }
+
+    function resize() {
+      dpr = Math.min(window.devicePixelRatio || 1, 1.6);
+      W = window.innerWidth; H = window.innerHeight;
+      mindCanvas.width = Math.floor(W * dpr);
+      mindCanvas.height = Math.floor(H * dpr);
+      mindCanvas.style.width = W + 'px';
+      mindCanvas.style.height = H + 'px';
+      mctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      seed();
+    }
+
+    function seed() {
+      const count = Math.min(95, Math.floor(W * H / 14000));
+      nodes = [];
+      for (let i = 0; i < count; i++) {
+        nodes.push({
+          x: Math.random() * W,
+          y: Math.random() * H,
+          r: Math.random() * 1.8 + 0.5,
+          a: Math.random() * 0.45 + 0.15,
+          kind: Math.random() > 0.55 ? 'market' : (Math.random() > 0.5 ? 'auto' : 'code')
+        });
+      }
+      glyphs = [];
+      for (let i = 0; i < 18; i++) {
+        glyphs.push({
+          text: GLYPHS[i % GLYPHS.length],
+          x: Math.random() * W,
+          y: Math.random() * H,
+          vx: (Math.random() - 0.5) * 0.18,
+          vy: -0.12 - Math.random() * 0.22,
+          rot: (Math.random() - 0.5) * 0.4,
+          a: Math.random() * 0.22 + 0.08,
+          size: 11 + Math.random() * 8
+        });
+      }
+      rivers = [];
+      for (let i = 0; i < 5; i++) {
+        rivers.push({
+          y: H * (0.15 + i * 0.16),
+          phase: Math.random() * Math.PI * 2,
+          amp: 18 + Math.random() * 28,
+          speed: 0.35 + Math.random() * 0.45,
+          hue: i % 3
+        });
+      }
+      rings = [
+        { cx: W * 0.18, cy: H * 0.72, r: 70, spin: 0.25 },
+        { cx: W * 0.82, cy: H * 0.28, r: 90, spin: -0.2 },
+        { cx: W * 0.5, cy: H * 0.88, r: 55, spin: 0.32 }
+      ];
+      packets = [];
+      for (let i = 0; i < 24; i++) {
+        packets.push({
+          t: Math.random(),
+          path: i % rivers.length,
+          speed: 0.08 + Math.random() * 0.12,
+          size: 2 + Math.random() * 2
+        });
+      }
+    }
+
+    function kindColor(kind, a) {
+      if (kind === 'market') return `rgba(212,175,55,${a})`;
+      if (kind === 'auto') return `rgba(0,230,118,${a})`;
+      return `rgba(125,211,252,${a})`;
+    }
+
+    function drawRivers(t) {
+      rivers.forEach((rv, idx) => {
+        mctx.beginPath();
+        for (let x = 0; x <= W; x += 8) {
+          const yy = rv.y + Math.sin(x * 0.01 + t * rv.speed + rv.phase) * rv.amp
+            + Math.sin(x * 0.023 - t * 0.4 + rv.phase) * rv.amp * 0.35;
+          if (x === 0) mctx.moveTo(x, yy); else mctx.lineTo(x, yy);
+        }
+        const cols = [
+          'rgba(212,175,55,0.14)',
+          'rgba(0,200,83,0.16)',
+          'rgba(125,211,252,0.14)'
+        ];
+        mctx.strokeStyle = cols[rv.hue];
+        mctx.lineWidth = 1.4;
+        mctx.stroke();
+
+        // data packets riding the river
+        packets.filter(p => p.path === idx).forEach(p => {
+          p.t = (p.t + p.speed * 0.016) % 1;
+          const x = p.t * W;
+          const yy = rv.y + Math.sin(x * 0.01 + t * rv.speed + rv.phase) * rv.amp;
+          mctx.beginPath();
+          mctx.arc(x, yy, p.size, 0, Math.PI * 2);
+          mctx.fillStyle = cols[rv.hue].replace('0.1', '0.55').replace('0.14', '0.55').replace('0.16', '0.55');
+          mctx.fill();
+        });
       });
     }
-  }
-  function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    particles.forEach((pt, i) => {
-      pt.x += pt.vx; pt.y += pt.vy;
-      if (pt.x < 0) pt.x = canvas.width;
-      if (pt.x > canvas.width) pt.x = 0;
-      if (pt.y < 0) pt.y = canvas.height;
-      if (pt.y > canvas.height) pt.y = 0;
-      ctx.beginPath();
-      ctx.arc(pt.x, pt.y, pt.r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(0,200,83,${pt.a})`;
-      ctx.fill();
-      for (let j = i + 1; j < particles.length; j++) {
-        const q = particles[j];
-        const d = Math.hypot(pt.x - q.x, pt.y - q.y);
-        if (d < 110) {
-          ctx.beginPath();
-          ctx.moveTo(pt.x, pt.y);
-          ctx.lineTo(q.x, q.y);
-          ctx.strokeStyle = `rgba(0,200,83,${0.08 * (1 - d / 110)})`;
-          ctx.stroke();
+
+    function drawRings(t) {
+      rings.forEach((rg, i) => {
+        const a = t * rg.spin;
+        mctx.save();
+        mctx.translate(rg.cx, rg.cy);
+        mctx.rotate(a);
+        mctx.strokeStyle = i === 1 ? 'rgba(212,175,55,0.22)' : 'rgba(0,200,83,0.2)';
+        mctx.lineWidth = 1.2;
+        mctx.beginPath();
+        mctx.arc(0, 0, rg.r, 0, Math.PI * 2);
+        mctx.stroke();
+        // automation teeth / marketing notches
+        for (let k = 0; k < 8; k++) {
+          const ang = (k / 8) * Math.PI * 2;
+          const x1 = Math.cos(ang) * (rg.r - 6);
+          const y1 = Math.sin(ang) * (rg.r - 6);
+          const x2 = Math.cos(ang) * (rg.r + 8);
+          const y2 = Math.sin(ang) * (rg.r + 8);
+          mctx.beginPath();
+          mctx.moveTo(x1, y1); mctx.lineTo(x2, y2);
+          mctx.strokeStyle = 'rgba(125,211,252,0.18)';
+          mctx.stroke();
         }
-      }
-    });
-    requestAnimationFrame(draw);
+        mctx.restore();
+      });
+    }
+
+    function drawGlyphs(dt) {
+      mctx.font = '600 13px Cairo, Tajawal, monospace';
+      glyphs.forEach(g => {
+        g.x += g.vx; g.y += g.vy;
+        if (g.y < -30) { g.y = H + 20; g.x = Math.random() * W; }
+        if (g.x < -40) g.x = W + 20;
+        if (g.x > W + 40) g.x = -20;
+        mctx.save();
+        mctx.translate(g.x, g.y);
+        mctx.rotate(g.rot);
+        mctx.globalAlpha = g.a;
+        mctx.fillStyle = '#7dd3fc';
+        mctx.fillText(g.text, 0, 0);
+        mctx.restore();
+      });
+      mctx.globalAlpha = 1;
+    }
+
+    function frame(now) {
+      const t = (now - t0) / 1000;
+      mctx.clearRect(0, 0, W, H);
+
+      // deep radial wash
+      const grd = mctx.createRadialGradient(W * 0.5, H * 0.4, 40, W * 0.5, H * 0.5, Math.max(W, H) * 0.7);
+      grd.addColorStop(0, 'rgba(0,60,35,0.22)');
+      grd.addColorStop(0.45, 'rgba(3,10,8,0.05)');
+      grd.addColorStop(1, 'rgba(2,8,6,0)');
+      mctx.fillStyle = grd;
+      mctx.fillRect(0, 0, W, H);
+
+      drawRivers(t);
+      drawRings(t);
+
+      // flow-field drifting nodes + synaptic links
+      nodes.forEach((n, i) => {
+        const ang = flowAngle(n.x, n.y, t);
+        n.x += Math.cos(ang) * 0.55;
+        n.y += Math.sin(ang) * 0.55;
+        if (n.x < -20) n.x = W + 20;
+        if (n.x > W + 20) n.x = -20;
+        if (n.y < -20) n.y = H + 20;
+        if (n.y > H + 20) n.y = -20;
+
+        mctx.beginPath();
+        mctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+        mctx.fillStyle = kindColor(n.kind, n.a);
+        mctx.fill();
+
+        for (let j = i + 1; j < nodes.length; j++) {
+          const q = nodes[j];
+          const dx = n.x - q.x, dy = n.y - q.y;
+          const d = Math.hypot(dx, dy);
+          if (d < 130) {
+            mctx.beginPath();
+            mctx.moveTo(n.x, n.y);
+            mctx.lineTo(q.x, q.y);
+            const mid = 0.5 * (1 - d / 130);
+            mctx.strokeStyle = kindColor(n.kind, mid * 0.55);
+            mctx.lineWidth = 0.8;
+            mctx.stroke();
+          }
+        }
+      });
+
+      drawGlyphs(t);
+
+      // soft vignette
+      const vig = mctx.createRadialGradient(W / 2, H / 2, H * 0.2, W / 2, H / 2, H * 0.85);
+      vig.addColorStop(0, 'rgba(0,0,0,0)');
+      vig.addColorStop(1, 'rgba(2,8,6,0.55)');
+      mctx.fillStyle = vig;
+      mctx.fillRect(0, 0, W, H);
+
+      raf = requestAnimationFrame(frame);
+    }
+
+    function start() {
+      t0 = performance.now();
+      resize();
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(frame);
+    }
+
+    addEventListener('resize', resize);
+    return { start };
+  })();
+
+  // Keep legacy particle canvas quiet (MindField owns the spectacle)
+  if (canvas) {
+    canvas.width = 1; canvas.height = 1;
   }
-  resize(); spawn(); draw();
-  addEventListener('resize', () => { resize(); spawn(); });
+  MindField.start();
+
+  function splitHookChars(el) {
+    if (!el) return [];
+    const text = el.getAttribute('aria-label') || el.textContent || '';
+    el.innerHTML = '';
+    const chars = [...text];
+    chars.forEach((ch, i) => {
+      const span = document.createElement('span');
+      span.className = 'ch' + (ch === ' ' ? ' is-space' : '');
+      span.style.setProperty('--i', i);
+      span.textContent = ch === ' ' ? ' ' : ch;
+      el.appendChild(span);
+    });
+    return [...el.querySelectorAll('.ch')];
+  }
 
   function intro() {
-    gsap.from('.mind__logo, .mind__links a', { y: -16, opacity: 0, stagger: 0.08, duration: 0.8 });
-    gsap.from('.mind__title, .mind__sub', { y: 24, opacity: 0, stagger: 0.12, duration: 0.95, delay: 0.1 });
+    const hookEl = document.getElementById('mind-hook');
+    const chars = splitHookChars(hookEl);
+
+    gsap.from('.mind__logo, .mind__links a, .mind__links button', {
+      y: -16, opacity: 0, stagger: 0.07, duration: 0.75
+    });
+    gsap.from('.mind__title', { y: 22, opacity: 0, duration: 0.9, delay: 0.08 });
+
+    // Physical fall + fluid colors already animating via CSS
+    if (chars.length) {
+      const drop = Math.min(90, window.innerHeight * 0.1);
+      gsap.set(chars, { y: -drop, opacity: 0, rotation: 0 });
+      gsap.to(chars, {
+        y: 0, opacity: 1, force3D: true,
+        stagger: 0.028,
+        duration: 0.7,
+        ease: (t) => t * t, // gravity-in
+        delay: 0.2,
+        onStart: () => { if (window.SaudiSound) SaudiSound.wordDrop(); },
+        onComplete: () => { if (window.SaudiSound) SaudiSound.success(); }
+      });
+      // bounce settle staggered lightly
+      chars.forEach((ch, i) => {
+        gsap.fromTo(ch,
+          { scaleY: 1 },
+          {
+            keyframes: [
+              { scaleY: 0.78, scaleX: 1.12, duration: 0.08 },
+              { scaleY: 1, scaleX: 1, duration: 0.45, ease: 'bounce.out' }
+            ],
+            delay: 0.2 + i * 0.028 + 0.55
+          }
+        );
+      });
+    }
+
     gsap.from('.lobe', {
       scale: 0.75, opacity: 0, transformOrigin: '320px 200px',
-      stagger: 0.12, duration: 1, delay: 0.25, ease: 'power3.out'
+      stagger: 0.12, duration: 1, delay: 0.45, ease: 'power3.out'
     });
   }
 
