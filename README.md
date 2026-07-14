@@ -6,7 +6,8 @@
 
 | الملف | الوصف |
 |-------|--------|
-| **`demo.html`** | النسخة التجريبية — تصميم داكن مع موشن غني (GSAP، جسيمات، مؤشر مخصص، تمرير أفقي) |
+| **`demo2.html`** | **Demo 2** — بوابة تفاعلية تفتح لـ 3 أقسام (تسويق · تصميم وفيديو · أتمتة) بستايل سعودي أخضر |
+| **`demo.html`** | Demo 1 — تصميم داكن مع موشن غني |
 | **`index.html`** | النسخة الكلاسيكية — تصميم فاتح واحترافي |
 
 ## التشغيل
@@ -15,8 +16,9 @@
 python3 -m http.server 8000
 ```
 
-- النسخة التجريبية: [http://localhost:8000/demo.html](http://localhost:8000/demo.html)
-- النسخة الكلاسيكية: [http://localhost:8000](http://localhost:8000)
+- **Demo 2 (البوابة):** [http://localhost:8000/demo2.html](http://localhost:8000/demo2.html)
+- Demo 1: [http://localhost:8000/demo.html](http://localhost:8000/demo.html)
+- الكلاسيكية: [http://localhost:8000](http://localhost:8000)
 
 ## مميزات النسخة التجريبية
 

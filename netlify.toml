@@ -11,3 +11,8 @@
   from = "/demo"
   to = "/demo.html"
   status = 200
+
+[[redirects]]
+  from = "/demo2"
+  to = "/demo2.html"
+  status = 200
