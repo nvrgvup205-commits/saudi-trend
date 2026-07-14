@@ -6,6 +6,7 @@
   const dive = document.getElementById('dive');
   const lobes = [...document.querySelectorAll('.lobe')];
   const cursor = document.getElementById('cursor');
+  const cursorDots = document.getElementById('cursor-dots');
   const canvas = document.getElementById('particles-canvas');
   const ctx = canvas.getContext('2d');
   const hookTitle = document.getElementById('dive-hook-title');
@@ -13,6 +14,7 @@
 
   let active = null;
   let busy = false;
+  let mx = 0, my = 0, lastDot = 0;
 
   let p = 0;
   const timer = setInterval(() => {
@@ -27,17 +29,31 @@
     }
   }, 90);
 
+  // Cursor like Demo 2
   if (window.matchMedia('(min-width: 769px)').matches && cursor) {
     document.addEventListener('mousemove', (e) => {
-      cursor.style.left = e.clientX + 'px';
-      cursor.style.top = e.clientY + 'px';
+      mx = e.clientX; my = e.clientY;
+      cursor.style.left = mx + 'px';
+      cursor.style.top = my + 'px';
+      const now = performance.now();
+      if (now - lastDot > 50 && cursorDots) {
+        lastDot = now;
+        const d = document.createElement('i');
+        d.style.left = mx + 'px';
+        d.style.top = my + 'px';
+        cursorDots.appendChild(d);
+        setTimeout(() => d.remove(), 700);
+      }
     });
-    document.querySelectorAll('a, button, .lobe, .chamber__back').forEach(el => {
+    document.addEventListener('mousedown', () => cursor.classList.add('is-click'));
+    document.addEventListener('mouseup', () => cursor.classList.remove('is-click'));
+    document.querySelectorAll('a, button, .lobe, .chamber__back, .chamber__grid article').forEach(el => {
       el.addEventListener('mouseenter', () => cursor.classList.add('is-hover'));
       el.addEventListener('mouseleave', () => cursor.classList.remove('is-hover'));
     });
   }
 
+  // Particles
   let particles = [];
   function resize() {
     canvas.width = innerWidth;
@@ -95,6 +111,18 @@
     });
   }
 
+  function splitWords(el, text) {
+    el.innerHTML = '';
+    const words = text.split(/\s+/).filter(Boolean);
+    words.forEach((w) => {
+      const span = document.createElement('span');
+      span.className = 'dive__word';
+      span.textContent = w;
+      el.appendChild(span);
+    });
+    return [...el.querySelectorAll('.dive__word')];
+  }
+
   function openChamber(id, lobeEl) {
     if (busy || active) return;
     busy = true;
@@ -104,17 +132,22 @@
 
     const imgs = [...dive.querySelectorAll('.dive__img')];
     const caption = dive.querySelector('.dive__caption');
-    const blur = dive.querySelector('.dive__blur');
+    const eyebrow = dive.querySelector('.dive__eyebrow');
+    const titleText = lobeEl.dataset.hookTitle || 'نغوص في عقل أصحاب الأعمال';
+    const subText = lobeEl.dataset.hookSub || 'وأعماق السوق… نستخرج الأفكار ونصل لأعلى النتائج';
 
-    if (hookTitle) hookTitle.textContent = lobeEl.dataset.hookTitle || 'نغوص في عقل أصحاب الأعمال';
-    if (hookSub) hookSub.textContent = lobeEl.dataset.hookSub || 'وأعماق السوق… نستخرج الأفكار ونصل لأعلى النتائج';
+    const titleWords = splitWords(hookTitle, titleText);
+    const subWords = splitWords(hookSub, subText);
 
-    const safety = setTimeout(() => enterChamber(id, lobeEl), 6500);
+    const safety = setTimeout(() => enterChamber(id, lobeEl), 7500);
 
     gsap.set(dive, { opacity: 0, visibility: 'hidden' });
-    gsap.set(imgs, { opacity: 0, scale: 1.35, rotate: 0, filter: 'brightness(0.7) blur(8px)' });
-    gsap.set(caption, { opacity: 0, y: 36, scale: 0.92 });
-    gsap.set(blur, { scale: 1.2 });
+    gsap.set(imgs, {
+      opacity: 0,
+      scale: 1.25,
+      filter: 'blur(18px) brightness(0.45) saturate(1.2)'
+    });
+    gsap.set([eyebrow, ...titleWords, ...subWords], { opacity: 0, y: 16 });
 
     const tl = gsap.timeline({
       onComplete: () => {
@@ -123,55 +156,64 @@
       }
     });
 
-    tl.to({}, { duration: 0.2 })
+    tl.to({}, { duration: 0.15 })
       .add(() => {
         dive.classList.add('active');
         dive.setAttribute('aria-hidden', 'false');
         gsap.set(dive, { visibility: 'visible' });
       })
-      .to(dive, { opacity: 1, duration: 0.35 })
-      .to(mind, { opacity: 0, duration: 0.3 }, '<')
-      .to(blur, { scale: 1, duration: 0.6, ease: 'power2.out' }, '<');
+      .to(dive, { opacity: 1, duration: 0.3 })
+      .to(mind, { opacity: 0, duration: 0.28 }, '<');
 
-    // Rapid overlapping 10-frame montage
+    // First image appears ASAP as blurred backdrop
+    tl.to(imgs[0], {
+      opacity: 1,
+      scale: 1.08,
+      filter: 'blur(16px) brightness(0.5) saturate(1.15)',
+      duration: 0.45,
+      ease: 'power2.out'
+    }, 0.2);
+
+    // Hook visible from start of montage — word by word
+    tl.to(eyebrow, { opacity: 1, y: 0, duration: 0.35 }, 0.28)
+      .to(titleWords, {
+        opacity: 1, y: 0, stagger: 0.07, duration: 0.35, ease: 'power2.out'
+      }, 0.38)
+      .to(subWords, {
+        opacity: 1, y: 0, stagger: 0.05, duration: 0.32, ease: 'power2.out'
+      }, 0.55);
+
+    // Rapid cycling of remaining images UNDER the glass text
     imgs.forEach((img, i) => {
-      const start = 0.35 + i * 0.18;
-      const rot = (i % 2 === 0 ? -3 : 3) + (i * 0.4);
+      if (i === 0) return;
+      const start = 0.55 + (i - 1) * 0.22;
       tl.fromTo(img,
-        { opacity: 0, scale: 1.4, rotate: rot, filter: 'brightness(0.55) blur(12px) saturate(1.3)' },
         {
-          opacity: 0.95,
-          scale: 1.05,
-          rotate: 0,
-          filter: 'brightness(0.8) blur(0px) saturate(1.2)',
+          opacity: 0,
+          scale: 1.22,
+          filter: 'blur(22px) brightness(0.4) saturate(1.25)'
+        },
+        {
+          opacity: 1,
+          scale: 1.06,
+          filter: 'blur(14px) brightness(0.52) saturate(1.15)',
           duration: 0.28,
           ease: 'power2.out'
         },
         start
       );
-      if (i < imgs.length - 1) {
-        tl.to(img, {
-          opacity: 0,
-          scale: 1.12,
-          filter: 'brightness(1.1) blur(6px)',
-          duration: 0.22,
-          ease: 'power1.in'
-        }, start + 0.22);
-      }
+      tl.to(imgs[i - 1], {
+        opacity: 0,
+        scale: 1.12,
+        duration: 0.24,
+        ease: 'power1.in'
+      }, start + 0.12);
     });
 
-    // Hook overlays the montage peak
-    tl.to(caption, {
-      opacity: 1, y: 0, scale: 1,
-      duration: 0.55,
-      ease: 'power3.out'
-    }, 0.35 + imgs.length * 0.12)
-      .to({}, { duration: 0.85 })
-      .to([caption, imgs[imgs.length - 1], dive], {
-        opacity: 0,
-        duration: 0.4,
-        ease: 'power2.in'
-      });
+    // Hold last frame + text, then exit
+    const endAt = 0.55 + (imgs.length - 1) * 0.22 + 0.35;
+    tl.to({}, { duration: 0.9 }, endAt)
+      .to(dive, { opacity: 0, duration: 0.4, ease: 'power2.in' });
   }
 
   function enterChamber(id, lobeEl) {
@@ -198,7 +240,7 @@
     if (scroller) scroller.scrollTop = 0;
 
     gsap.from(chamber.querySelectorAll('.chamber__hero-text > *, .chamber__grid article'), {
-      y: 28, opacity: 0, stagger: 0.08, duration: 0.8, ease: 'power3.out', delay: 0.1
+      y: 28, opacity: 0, stagger: 0.07, duration: 0.75, ease: 'power3.out', delay: 0.08
     });
 
     if (lobeEl) lobeEl.classList.remove('is-opening');
