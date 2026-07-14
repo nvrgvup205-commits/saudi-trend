@@ -3,507 +3,171 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>سعودي تريند | تجربة تفاعلية</title>
+  <title>سعودي تريند | غوص في عقل السوق — Demo 1</title>
+  <meta name="description" content="نغوص في عقل أصحاب الأعمال والسوق لاستخلاص وسائل النجاح — سعودي تريند">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Tajawal:wght@400;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/demo.css">
 </head>
 <body>
-  <!-- Custom Cursor -->
-  <div class="cursor" id="cursor"></div>
-  <div class="cursor-follower" id="cursor-follower"></div>
-
-  <!-- Preloader -->
-  <div class="preloader" id="preloader">
-    <div class="preloader__inner">
-      <div class="preloader__logo">
-        <span class="preloader__letter">س</span>
-        <span class="preloader__letter">ت</span>
-      </div>
-      <div class="preloader__bar">
-        <div class="preloader__progress" id="preloader-progress"></div>
-      </div>
-      <p class="preloader__text">نُحضّر تجربتك...</p>
-    </div>
+  <div class="cursor" id="cursor" aria-hidden="true">
+    <div class="cursor__ring"></div>
+    <div class="cursor__dot"></div>
   </div>
 
-  <!-- Noise Overlay -->
+  <div class="preloader" id="preloader">
+    <p class="preloader__brand">سعودي <em>تريند</em></p>
+    <div class="preloader__bar"><div class="preloader__fill" id="preloader-fill"></div></div>
+    <p class="preloader__hint">نُجهّز العقل...</p>
+  </div>
+
+  <canvas id="particles-canvas"></canvas>
   <div class="noise"></div>
 
-  <!-- Canvas Particles -->
-  <canvas id="particles-canvas"></canvas>
-
-  <!-- Navigation -->
-  <header class="nav" id="nav">
-    <div class="nav__inner container">
-      <a href="#" class="nav__brand magnetic" data-strength="0.3">
-        <div class="nav__brand-mark">
-          <span>ST</span>
-          <div class="nav__brand-ring"></div>
-        </div>
-        <span class="nav__brand-name">سعودي <em>تريند</em></span>
-      </a>
-      <nav class="nav__links">
-        <a href="#hero" class="nav__link magnetic" data-strength="0.2">الرئيسية</a>
-        <a href="#vision" class="nav__link magnetic" data-strength="0.2">رؤيتنا</a>
-        <a href="#services" class="nav__link magnetic" data-strength="0.2">خدماتنا</a>
-        <a href="#showcase" class="nav__link magnetic" data-strength="0.2">أعمالنا</a>
-        <a href="#contact" class="nav__cta magnetic" data-strength="0.4">
-          <span>ابدأ الآن</span>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-        </a>
-      </nav>
-      <button class="nav__burger" id="nav-burger" aria-label="القائمة">
-        <span></span><span></span>
-      </button>
+  <!-- Dive overlay -->
+  <div class="dive" id="dive" aria-hidden="true">
+    <div class="dive__tunnel"></div>
+    <div class="dive__riyal">
+      <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1400&q=80" alt="" class="dive__img dive__img--1">
+      <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=1400&q=80" alt="" class="dive__img dive__img--2">
+      <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=1400&q=80" alt="" class="dive__img dive__img--3">
     </div>
-  </header>
-
-  <!-- Mobile Menu -->
-  <div class="mobile-menu" id="mobile-menu">
-    <div class="mobile-menu__links">
-      <a href="#hero" class="mobile-link">الرئيسية</a>
-      <a href="#vision" class="mobile-link">رؤيتنا</a>
-      <a href="#services" class="mobile-link">خدماتنا</a>
-      <a href="#showcase" class="mobile-link">أعمالنا</a>
-      <a href="#contact" class="mobile-link">تواصل معنا</a>
+    <div class="dive__caption">
+      <span class="dive__eyebrow">سعودي تريند</span>
+      <h2>نغوص في عقل السوق</h2>
+      <p>وأصحاب الأعمال… لاستخلاص وسائل النجاح</p>
     </div>
   </div>
 
-  <main>
-    <!-- HERO -->
-    <section class="hero" id="hero">
-      <div class="hero__orbs">
-        <div class="orb orb--1"></div>
-        <div class="orb orb--2"></div>
-        <div class="orb orb--3"></div>
+  <!-- GATE: Brain -->
+  <section class="mind" id="mind">
+    <header class="mind__top">
+      <a href="demo.html" class="mind__logo">سعودي <em>تريند</em></a>
+      <div class="mind__links">
+        <a href="demo2.html">Demo 2</a>
+        <a href="index.html">الكلاسيكية</a>
       </div>
+    </header>
 
-      <div class="hero__grid-lines"></div>
-
-      <div class="container hero__content">
-        <div class="hero__tag reveal-up">
-          <span class="hero__tag-dot"></span>
-          شريكك الاستراتيجي في النجاح
-        </div>
-
-        <h1 class="hero__title">
-          <span class="hero__line reveal-up" data-delay="0.1">
-            <span class="hero__word">نصنع</span>
-          </span>
-          <span class="hero__line reveal-up" data-delay="0.2">
-            <span class="hero__word hero__word--gradient" data-text="اتجاهات">اتجاهات</span>
-          </span>
-          <span class="hero__line reveal-up" data-delay="0.3">
-            <span class="hero__word">تُغيّر</span>
-            <span class="hero__word hero__word--outline">القواعد</span>
-          </span>
-        </h1>
-
-        <p class="hero__desc reveal-up" data-delay="0.5">
-          سعودي تريند — حيث يلتقي الإبداع بالاستراتيجية. نُقدّم حلولاً تسويقية
-          ذكية تُحوّل رؤيتك إلى نتائج ملموسة ونمو مستدام.
-        </p>
-
-        <div class="hero__actions reveal-up" data-delay="0.6">
-          <a href="#contact" class="btn btn--glow magnetic" data-strength="0.35">
-            <span class="btn__text">ابدأ مشروعك</span>
-            <span class="btn__shine"></span>
-          </a>
-          <a href="#showcase" class="btn btn--ghost magnetic" data-strength="0.25">
-            <span class="btn__play">
-              <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-            </span>
-            شاهد أعمالنا
-          </a>
-        </div>
-
-        <div class="hero__scroll reveal-up" data-delay="0.8">
-          <div class="hero__scroll-line"></div>
-          <span>اسحب للأسفل</span>
-        </div>
-      </div>
-
-      <!-- Floating Cards -->
-      <div class="hero__floats">
-        <div class="float-card float-card--1" data-speed="0.03">
-          <div class="float-card__icon">📈</div>
-          <div class="float-card__val">+247%</div>
-          <div class="float-card__lbl">نمو المبيعات</div>
-        </div>
-        <div class="float-card float-card--2" data-speed="0.05">
-          <div class="float-card__icon">🎯</div>
-          <div class="float-card__val">98.5%</div>
-          <div class="float-card__lbl">دقة الاستهداف</div>
-        </div>
-        <div class="float-card float-card--3" data-speed="0.04">
-          <div class="float-card__icon">⚡</div>
-          <div class="float-card__val">3x</div>
-          <div class="float-card__lbl">عائد الاستثمار</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- MARQUEE -->
-    <section class="marquee-section">
-      <div class="marquee marquee--1">
-        <div class="marquee__track">
-          <span>تسويق رقمي</span><span class="marquee__dot">✦</span>
-          <span>استراتيجيات</span><span class="marquee__dot">✦</span>
-          <span>علامة تجارية</span><span class="marquee__dot">✦</span>
-          <span>محتوى إبداعي</span><span class="marquee__dot">✦</span>
-          <span>حلول تقنية</span><span class="marquee__dot">✦</span>
-          <span>استشارات</span><span class="marquee__dot">✦</span>
-          <span>تسويق رقمي</span><span class="marquee__dot">✦</span>
-          <span>استراتيجيات</span><span class="marquee__dot">✦</span>
-          <span>علامة تجارية</span><span class="marquee__dot">✦</span>
-          <span>محتوى إبداعي</span><span class="marquee__dot">✦</span>
-          <span>حلول تقنية</span><span class="marquee__dot">✦</span>
-          <span>استشارات</span><span class="marquee__dot">✦</span>
-        </div>
-      </div>
-      <div class="marquee marquee--2">
-        <div class="marquee__track">
-          <span>نمو مستدام</span><span class="marquee__dot">◆</span>
-          <span>نتائج قابلة للقياس</span><span class="marquee__dot">◆</span>
-          <span>ابتكار مستمر</span><span class="marquee__dot">◆</span>
-          <span>شراكة حقيقية</span><span class="marquee__dot">◆</span>
-          <span>تميز محلي</span><span class="marquee__dot">◆</span>
-          <span>نمو مستدام</span><span class="marquee__dot">◆</span>
-          <span>نتائج قابلة للقياس</span><span class="marquee__dot">◆</span>
-          <span>ابتكار مستمر</span><span class="marquee__dot">◆</span>
-          <span>شراكة حقيقية</span><span class="marquee__dot">◆</span>
-          <span>تميز محلي</span><span class="marquee__dot">◆</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- VISION -->
-    <section class="vision" id="vision">
-      <div class="container">
-        <div class="vision__header">
-          <span class="section-label reveal-up">من نحن</span>
-          <h2 class="vision__title reveal-up" data-delay="0.1">
-            نُعيد تعريف
-            <span class="text-shimmer">مستقبل التسويق</span>
-          </h2>
-        </div>
-
-        <div class="vision__grid">
-          <article class="vision-card reveal-up" data-delay="0.1">
-            <div class="vision-card__num">01</div>
-            <div class="vision-card__glow"></div>
-            <h3>رؤية طموحة</h3>
-            <p>أن نكون القوة الدافعة وراء نجاح المؤسسات السعودية في العصر الرقمي</p>
-            <div class="vision-card__line"></div>
-          </article>
-          <article class="vision-card vision-card--accent reveal-up" data-delay="0.2">
-            <div class="vision-card__num">02</div>
-            <div class="vision-card__glow"></div>
-            <h3>استراتيجية ذكية</h3>
-            <p>خطط مدروسة تجمع بين التحليل العميق والإبداع لتحقيق أهدافك</p>
-            <div class="vision-card__line"></div>
-          </article>
-          <article class="vision-card reveal-up" data-delay="0.3">
-            <div class="vision-card__num">03</div>
-            <div class="vision-card__glow"></div>
-            <h3>تنفيذ متميز</h3>
-            <p>فريق متخصص ينفذ باحترافية ويُتابع كل تفصيلة حتى النجاح</p>
-            <div class="vision-card__line"></div>
-          </article>
-        </div>
-
-        <div class="vision__stats">
-          <div class="stat-item reveal-up" data-delay="0.1">
-            <span class="stat-item__num" data-count="150">0</span>
-            <span class="stat-item__plus">+</span>
-            <span class="stat-item__lbl">عميل سعيد</span>
-          </div>
-          <div class="stat-item reveal-up" data-delay="0.2">
-            <span class="stat-item__num" data-count="300">0</span>
-            <span class="stat-item__plus">+</span>
-            <span class="stat-item__lbl">مشروع ناجح</span>
-          </div>
-          <div class="stat-item reveal-up" data-delay="0.3">
-            <span class="stat-item__num" data-count="8">0</span>
-            <span class="stat-item__plus">+</span>
-            <span class="stat-item__lbl">سنوات خبرة</span>
-          </div>
-          <div class="stat-item reveal-up" data-delay="0.4">
-            <span class="stat-item__num" data-count="15">0</span>
-            <span class="stat-item__lbl">قطاع مختلف</span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- SERVICES - Horizontal Scroll -->
-    <section class="services" id="services">
-      <div class="services__sticky">
-        <div class="container">
-          <span class="section-label reveal-up">خدماتنا</span>
-          <h2 class="services__title reveal-up" data-delay="0.1">حلول متكاملة<br>لكل تحدٍ</h2>
-        </div>
-        <div class="services__track" id="services-track">
-          <article class="service-slide">
-            <div class="service-slide__bg" style="--hue: 145"></div>
-            <div class="service-slide__content">
-              <span class="service-slide__idx">01</span>
-              <h3>التسويق الرقمي</h3>
-              <p>حملات إعلانية ذكية عبر كل المنصات مع تحسين مستمر للعائد</p>
-              <ul>
-                <li>Google & Meta Ads</li>
-                <li>SEO & SEM</li>
-                <li>Social Media</li>
-              </ul>
-            </div>
-          </article>
-          <article class="service-slide">
-            <div class="service-slide__bg" style="--hue: 160"></div>
-            <div class="service-slide__content">
-              <span class="service-slide__idx">02</span>
-              <h3>استراتيجيات الأعمال</h3>
-              <p>خطط نمو مدروسة تتماشى مع رؤية 2030 وأهداف مؤسستك</p>
-              <ul>
-                <li>دراسات السوق</li>
-                <li>خطط التوسع</li>
-                <li>تحليل المنافسين</li>
-              </ul>
-            </div>
-          </article>
-          <article class="service-slide">
-            <div class="service-slide__bg" style="--hue: 45"></div>
-            <div class="service-slide__content">
-              <span class="service-slide__idx">03</span>
-              <h3>العلامة التجارية</h3>
-              <p>هوية بصرية مميزة تُميّزك في السوق وتبني ولاءً دائماً</p>
-              <ul>
-                <li>تصميم الهوية</li>
-                <li>استراتيجية العلامة</li>
-                <li>إدارة السمعة</li>
-              </ul>
-            </div>
-          </article>
-          <article class="service-slide">
-            <div class="service-slide__bg" style="--hue: 200"></div>
-            <div class="service-slide__content">
-              <span class="service-slide__idx">04</span>
-              <h3>التسويق بالمحتوى</h3>
-              <p>محتوى جذاب يُحرّك المشاعر ويُحوّل الزوار إلى عملاء</p>
-              <ul>
-                <li>كتابة إبداعية</li>
-                <li>إنتاج فيديو</li>
-                <li>تصوير احترافي</li>
-              </ul>
-            </div>
-          </article>
-          <article class="service-slide">
-            <div class="service-slide__bg" style="--hue: 280"></div>
-            <div class="service-slide__content">
-              <span class="service-slide__idx">05</span>
-              <h3>الحلول التقنية</h3>
-              <p>أنظمة رقمية متطورة تدعم أهدافك وتُحسّن تجربة العميل</p>
-              <ul>
-                <li>تطوير المواقع</li>
-                <li>أنظمة CRM</li>
-                <li>أتمتة التسويق</li>
-              </ul>
-            </div>
-          </article>
-          <article class="service-slide">
-            <div class="service-slide__bg" style="--hue: 320"></div>
-            <div class="service-slide__content">
-              <span class="service-slide__idx">06</span>
-              <h3>الاستشارات</h3>
-              <p>خبراء متخصصون يرافقونك في كل قرار استراتيجي</p>
-              <ul>
-                <li>استشارات تسويقية</li>
-                <li>تدريب الفرق</li>
-                <li>ورش عمل</li>
-              </ul>
-            </div>
-          </article>
-        </div>
-        <div class="services__progress">
-          <div class="services__progress-bar" id="services-progress"></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- SHOWCASE Bento Grid -->
-    <section class="showcase" id="showcase">
-      <div class="container">
-        <div class="showcase__header">
-          <span class="section-label reveal-up">أعمالنا</span>
-          <h2 class="showcase__title reveal-up" data-delay="0.1">
-            نتائج <span class="text-shimmer">تتحدث</span> عن نفسها
-          </h2>
-        </div>
-
-        <div class="bento">
-          <div class="bento__item bento__item--large reveal-up" data-delay="0.1">
-            <div class="bento__inner">
-              <div class="bento__gradient"></div>
-              <span class="bento__tag">قطاع التجزئة</span>
-              <h3>نمو 340% في المبيعات</h3>
-              <p>حملة تسويقية متكاملة لسلسلة متاجر سعودية</p>
-              <div class="bento__metric">
-                <span class="bento__metric-val">340%</span>
-                <span class="bento__metric-lbl">زيادة المبيعات</span>
-              </div>
-            </div>
-          </div>
-          <div class="bento__item reveal-up" data-delay="0.2">
-            <div class="bento__inner">
-              <div class="bento__gradient" style="--bento-hue: 45"></div>
-              <span class="bento__tag">التقنية</span>
-              <h3>إعادة هوية كاملة</h3>
-              <p>تصميم هوية بصرية لشركة ناشئة</p>
-            </div>
-          </div>
-          <div class="bento__item reveal-up" data-delay="0.25">
-            <div class="bento__inner">
-              <div class="bento__gradient" style="--bento-hue: 200"></div>
-              <span class="bento__tag">العقارات</span>
-              <h3>5M+ وصول</h3>
-              <p>حملة رقمية لمجمع سكني فاخر</p>
-            </div>
-          </div>
-          <div class="bento__item bento__item--wide reveal-up" data-delay="0.3">
-            <div class="bento__inner">
-              <div class="bento__gradient" style="--bento-hue: 280"></div>
-              <span class="bento__tag">القطاع الصحي</span>
-              <h3>تحول رقمي شامل</h3>
-              <p>استراتيجية تسويق رقمي لمستشفى خاص — زيادة 180% في الحجوزات الإلكترونية</p>
-              <div class="bento__bars">
-                <div class="bento__bar" style="--h: 60%"></div>
-                <div class="bento__bar" style="--h: 80%"></div>
-                <div class="bento__bar" style="--h: 45%"></div>
-                <div class="bento__bar" style="--h: 95%"></div>
-                <div class="bento__bar" style="--h: 70%"></div>
-                <div class="bento__bar" style="--h: 100%"></div>
-              </div>
-            </div>
-          </div>
-          <div class="bento__item reveal-up" data-delay="0.35">
-            <div class="bento__inner">
-              <div class="bento__gradient" style="--bento-hue: 320"></div>
-              <span class="bento__tag">المطاعم</span>
-              <h3>+#1 ترند</h3>
-              <p>حملة سوشيال ميديا لسلسلة مطاعم</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- PROCESS -->
-    <section class="process">
-      <div class="container">
-        <span class="section-label reveal-up">كيف نعمل</span>
-        <h2 class="process__title reveal-up" data-delay="0.1">رحلة من الفكرة<br>إلى النجاح</h2>
-
-        <div class="process__timeline">
-          <div class="process__line" id="process-line"></div>
-          <div class="process__step reveal-up" data-delay="0.1">
-            <div class="process__dot"></div>
-            <span class="process__num">01</span>
-            <h3>اكتشاف</h3>
-            <p>نفهم أعمالك بعمق</p>
-          </div>
-          <div class="process__step reveal-up" data-delay="0.2">
-            <div class="process__dot"></div>
-            <span class="process__num">02</span>
-            <h3>تخطيط</h3>
-            <p>نبني استراتيجية مخصصة</p>
-          </div>
-          <div class="process__step reveal-up" data-delay="0.3">
-            <div class="process__dot"></div>
-            <span class="process__num">03</span>
-            <h3>تنفيذ</h3>
-            <p>نُطلق بقوة وإبداع</p>
-          </div>
-          <div class="process__step reveal-up" data-delay="0.4">
-            <div class="process__dot"></div>
-            <span class="process__num">04</span>
-            <h3>تحسين</h3>
-            <p>نقيس ونطور باستمرار</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- CTA / CONTACT -->
-    <section class="contact" id="contact">
-      <div class="contact__orbs">
-        <div class="orb orb--1"></div>
-        <div class="orb orb--2"></div>
-      </div>
-      <div class="container contact__inner">
-        <div class="contact__content reveal-up">
-          <span class="section-label">جاهز للانطلاق؟</span>
-          <h2 class="contact__title">
-            لنصنع شيئاً
-            <span class="text-shimmer">استثنائياً</span>
-            معاً
-          </h2>
-          <p>تواصل معنا اليوم واحصل على استشارة مجانية لمشروعك القادم</p>
-        </div>
-
-        <form class="contact__form reveal-up" data-delay="0.2" id="demo-form">
-          <div class="form-row">
-            <div class="form-field">
-              <input type="text" id="d-name" required placeholder=" ">
-              <label for="d-name">الاسم</label>
-              <span class="form-field__line"></span>
-            </div>
-            <div class="form-field">
-              <input type="email" id="d-email" required placeholder=" " dir="ltr">
-              <label for="d-email">البريد الإلكتروني</label>
-              <span class="form-field__line"></span>
-            </div>
-          </div>
-          <div class="form-field">
-            <input type="text" id="d-company" placeholder=" ">
-            <label for="d-company">اسم الشركة</label>
-            <span class="form-field__line"></span>
-          </div>
-          <div class="form-field">
-            <textarea id="d-message" rows="3" required placeholder=" "></textarea>
-            <label for="d-message">أخبرنا عن مشروعك</label>
-            <span class="form-field__line"></span>
-          </div>
-          <button type="submit" class="btn btn--glow btn--full magnetic" data-strength="0.3">
-            <span class="btn__text">أرسل طلبك</span>
-            <span class="btn__shine"></span>
-          </button>
-        </form>
-      </div>
-    </section>
-  </main>
-
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="container footer__inner">
-      <div class="footer__brand">
-        <span class="nav__brand-name">سعودي <em>تريند</em></span>
-        <p>شريكك في صناعة الاتجاهات</p>
-      </div>
-      <div class="footer__links">
-        <a href="demo2.html" class="footer__link">Demo 2 — البوابة</a>
-        <a href="index.html" class="footer__link">النسخة الكلاسيكية</a>
-        <a href="#" class="footer__link">تويتر</a>
-        <a href="#" class="footer__link">لينكدإن</a>
-        <a href="#" class="footer__link">إنستغرام</a>
-      </div>
-      <p class="footer__copy">&copy; 2026 سعودي تريند</p>
+    <div class="mind__intro">
+      <p class="mind__eyebrow"><span class="pulse"></span> تجربة الغوص العقلي</p>
+      <h1 class="mind__title">نغوص في <span>عقل</span> أصحاب الأعمال والسوق</h1>
+      <p class="mind__sub">اضغط على فصّ من العقل ليفتح… ثم غُص معنا لاستخلاص أفضل النتائج</p>
     </div>
-  </footer>
+
+    <div class="brain" id="brain">
+      <svg class="brain__svg" viewBox="0 0 640 420" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="lobeGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#00e676"/>
+            <stop offset="100%" stop-color="#006c35"/>
+          </linearGradient>
+          <linearGradient id="lobeGrad2" x1="1" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#69f0ae"/>
+            <stop offset="100%" stop-color="#004d26"/>
+          </linearGradient>
+          <filter id="glow"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs>
+
+        <!-- Left lobe: Marketing -->
+        <g class="lobe lobe--market" data-section="market" role="button" tabindex="0">
+          <path d="M300 210 C290 110, 180 70, 110 120 C40 175, 55 290, 140 330 C200 355, 270 310, 300 250 Z" fill="url(#lobeGrad)" opacity=".9"/>
+          <path d="M290 200 C270 140, 200 110, 140 145 C95 172, 100 250, 155 280 C200 300, 260 270, 290 230" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="2"/>
+          <text x="175" y="210" text-anchor="middle" class="lobe__label">التسويق</text>
+          <text x="175" y="235" text-anchor="middle" class="lobe__hint">افتح الفص</text>
+        </g>
+
+        <!-- Right lobe: Automation -->
+        <g class="lobe lobe--auto" data-section="auto" role="button" tabindex="0">
+          <path d="M340 210 C350 110, 460 70, 530 120 C600 175, 585 290, 500 330 C440 355, 370 310, 340 250 Z" fill="url(#lobeGrad2)" opacity=".9"/>
+          <path d="M350 200 C370 140, 440 110, 500 145 C545 172, 540 250, 485 280 C440 300, 380 270, 350 230" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="2"/>
+          <text x="465" y="210" text-anchor="middle" class="lobe__label">الأتمتة</text>
+          <text x="465" y="235" text-anchor="middle" class="lobe__hint">افتح الفص</text>
+        </g>
+
+        <!-- Top/center lobe: Design -->
+        <g class="lobe lobe--design" data-section="design" role="button" tabindex="0">
+          <path d="M320 55 C260 55, 220 100, 220 155 C220 195, 260 225, 320 225 C380 225, 420 195, 420 155 C420 100, 380 55, 320 55 Z" fill="url(#lobeGrad)" filter="url(#glow)" opacity=".95"/>
+          <path d="M320 80 C280 80, 255 115, 255 150 C255 175, 285 195, 320 195 C355 195, 385 175, 385 150 C385 115, 360 80, 320 80" fill="none" stroke="rgba(255,255,255,.3)" stroke-width="2"/>
+          <text x="320" y="145" text-anchor="middle" class="lobe__label">التصميم</text>
+          <text x="320" y="168" text-anchor="middle" class="lobe__hint">والفيديو</text>
+        </g>
+
+        <!-- Synapse center -->
+        <circle class="brain__core" cx="320" cy="230" r="18" fill="#00c853"/>
+        <circle cx="320" cy="230" r="28" fill="none" stroke="#00e676" stroke-width="1.5" opacity=".5">
+          <animate attributeName="r" values="24;34;24" dur="3s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values=".6;.15;.6" dur="3s" repeatCount="indefinite"/>
+        </circle>
+      </svg>
+
+      <p class="brain__caption">اضغط أي فصّ لفتحه والغوص داخله</p>
+    </div>
+  </section>
+
+  <!-- REALMS inside the mind -->
+  <section class="chamber" id="chamber-market" aria-hidden="true">
+    <button class="chamber__back" type="button">← عودة للعقل</button>
+    <div class="chamber__scroll">
+      <div class="chamber__hero">
+        <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=1400&q=80" alt="أفق المدينة">
+        <div class="chamber__hero-veil"></div>
+        <div class="chamber__hero-text">
+          <span>فص التسويق · عقل السوق</span>
+          <h2>نستخلص فرص النمو من عقل الرياض</h2>
+          <p>نغوص في قرارات أصحاب الأعمال وسلوك السوق لنصوغ حملات تحقق أفضل النتائج.</p>
+        </div>
+      </div>
+      <div class="container chamber__grid">
+        <article><img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=700&q=80" alt=""><h3>قراءة السوق</h3><p>تحليل الجمهور والمنافسين برؤية محلية.</p></article>
+        <article><img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=700&q=80" alt=""><h3>حملات ذكية</h3><p>استهداف دقيق وعائد قابل للقياس.</p></article>
+        <article><img src="https://images.unsplash.com/photo-1557804506-669a67965ba0?w=700&q=80" alt=""><h3>قرارات بالبيانات</h3><p>من عقل السوق… إلى خطة نجاح.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="chamber" id="chamber-design" aria-hidden="true">
+    <button class="chamber__back" type="button">← عودة للعقل</button>
+    <div class="chamber__scroll">
+      <div class="chamber__hero">
+        <img src="https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=1400&q=80" alt="أفق حضري">
+        <div class="chamber__hero-veil"></div>
+        <div class="chamber__hero-text">
+          <span>فص التصميم · هوية الأعمال</span>
+          <h2>نُترجم طموح السوق إلى صورة تُبهر</h2>
+          <p>من سماء الرياض إلى شاشات العالم — هوية وفيديو وموشن يستخرجون جوهر علامتك.</p>
+        </div>
+      </div>
+      <div class="container chamber__grid">
+        <article><img src="https://images.unsplash.com/photo-1561070791-2526d30994b5?w=700&q=80" alt=""><h3>هوية بصرية</h3><p>تصميم يعكس عقل علامتك وطموحها.</p></article>
+        <article><img src="https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=700&q=80" alt=""><h3>فيديو وموشن</h3><p>قصص متحركة تلمس قرار المشتري.</p></article>
+        <article><img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=700&q=80" alt=""><h3>مواقع ومتاجر</h3><p>تجربة رقمية بنفس منطق السوق.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="chamber" id="chamber-auto" aria-hidden="true">
+    <button class="chamber__back" type="button">← عودة للعقل</button>
+    <div class="chamber__scroll">
+      <div class="chamber__hero">
+        <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=1400&q=80" alt="Modern city business">
+        <div class="chamber__hero-veil"></div>
+        <div class="chamber__hero-text">
+          <span>فص الأتمتة · عقل العمليات</span>
+          <h2>نُبرمِج ما يدور في عقل المنشأة</h2>
+          <p>أتمتة التسويق والمبيعات والأنظمة حتى يعمل عقلك التشغيلي بلا توقف.</p>
+        </div>
+      </div>
+      <div class="container chamber__grid">
+        <article><img src="https://images.unsplash.com/photo-1518186285589-2f7649de83e0?w=700&q=80" alt=""><h3>CRM ذكي</h3><p>علاقات العملاء في منظومة واحدة.</p></article>
+        <article><img src="https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=700&q=80" alt=""><h3>أتمتة التسويق</h3><p>رحلات تتفاعل مع سلوك العميل.</p></article>
+        <article><img src="https://images.unsplash.com/photo-1504639725590-34d0984388bd?w=700&q=80" alt=""><h3>تكامل الأنظمة</h3><p>ربط الأدوات لاستخلاص النجاح أسرع.</p></article>
+      </div>
+    </div>
+  </section>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
   <script src="js/demo.js"></script>
 </body>
 </html>

@@ -1,428 +1,209 @@
-/* Saudi Trend Demo — Motion Engine */
-gsap.registerPlugin(ScrollTrigger);
-if (typeof ScrollToPlugin !== 'undefined') {
-  gsap.registerPlugin(ScrollToPlugin);
-}
+/* Demo 1 — Brain Dive Engine */
+(() => {
+  const preloader = document.getElementById('preloader');
+  const fill = document.getElementById('preloader-fill');
+  const mind = document.getElementById('mind');
+  const dive = document.getElementById('dive');
+  const lobes = [...document.querySelectorAll('.lobe')];
+  const cursor = document.getElementById('cursor');
+  const canvas = document.getElementById('particles-canvas');
+  const ctx = canvas.getContext('2d');
 
-// ===== PRELOADER =====
-const preloader = document.getElementById('preloader');
-const progressBar = document.getElementById('preloader-progress');
-let loadProgress = 0;
+  let active = null;
+  let busy = false;
 
-const loadInterval = setInterval(() => {
-  loadProgress += Math.random() * 15 + 5;
-  if (loadProgress >= 100) {
-    loadProgress = 100;
-    clearInterval(loadInterval);
-    progressBar.style.width = '100%';
-    setTimeout(() => {
-      preloader.classList.add('done');
-      initAnimations();
-    }, 400);
-  } else {
-    progressBar.style.width = loadProgress + '%';
-  }
-}, 100);
-
-// ===== CUSTOM CURSOR =====
-const cursor = document.getElementById('cursor');
-const follower = document.getElementById('cursor-follower');
-let mouseX = 0, mouseY = 0;
-let followerX = 0, followerY = 0;
-
-if (window.matchMedia('(min-width: 769px)').matches) {
-  document.addEventListener('mousemove', (e) => {
-    mouseX = e.clientX;
-    mouseY = e.clientY;
-    cursor.style.left = mouseX + 'px';
-    cursor.style.top = mouseY + 'px';
-  });
-
-  function animateFollower() {
-    followerX += (mouseX - followerX) * 0.12;
-    followerY += (mouseY - followerY) * 0.12;
-    follower.style.left = followerX + 'px';
-    follower.style.top = followerY + 'px';
-    requestAnimationFrame(animateFollower);
-  }
-  animateFollower();
-
-  const hoverTargets = 'a, button, .magnetic, .service-slide, .bento__item, .vision-card, input, textarea';
-  document.querySelectorAll(hoverTargets).forEach(el => {
-    el.addEventListener('mouseenter', () => {
-      cursor.classList.add('hovering');
-      follower.classList.add('hovering');
-    });
-    el.addEventListener('mouseleave', () => {
-      cursor.classList.remove('hovering');
-      follower.classList.remove('hovering');
-    });
-  });
-}
-
-// ===== MAGNETIC ELEMENTS =====
-document.querySelectorAll('.magnetic').forEach(el => {
-  const strength = parseFloat(el.dataset.strength) || 0.3;
-
-  el.addEventListener('mousemove', (e) => {
-    const rect = el.getBoundingClientRect();
-    const x = e.clientX - rect.left - rect.width / 2;
-    const y = e.clientY - rect.top - rect.height / 2;
-    gsap.to(el, {
-      x: x * strength,
-      y: y * strength,
-      duration: 0.4,
-      ease: 'power2.out'
-    });
-  });
-
-  el.addEventListener('mouseleave', () => {
-    gsap.to(el, { x: 0, y: 0, duration: 0.7, ease: 'elastic.out(1, 0.4)' });
-  });
-});
-
-// ===== PARTICLES =====
-const canvas = document.getElementById('particles-canvas');
-const ctx = canvas.getContext('2d');
-let particles = [];
-
-function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-}
-
-function createParticles() {
-  particles = [];
-  const count = Math.min(80, Math.floor(window.innerWidth / 20));
-  for (let i = 0; i < count; i++) {
-    particles.push({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      size: Math.random() * 2 + 0.5,
-      speedX: (Math.random() - 0.5) * 0.3,
-      speedY: (Math.random() - 0.5) * 0.3,
-      opacity: Math.random() * 0.5 + 0.1
-    });
-  }
-}
-
-function drawParticles() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  particles.forEach((p, i) => {
-    p.x += p.speedX;
-    p.y += p.speedY;
-
-    if (p.x < 0) p.x = canvas.width;
-    if (p.x > canvas.width) p.x = 0;
-    if (p.y < 0) p.y = canvas.height;
-    if (p.y > canvas.height) p.y = 0;
-
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(0, 200, 83, ${p.opacity})`;
-    ctx.fill();
-
-    particles.slice(i + 1).forEach(p2 => {
-      const dx = p.x - p2.x;
-      const dy = p.y - p2.y;
-      const dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist < 120) {
-        ctx.beginPath();
-        ctx.moveTo(p.x, p.y);
-        ctx.lineTo(p2.x, p2.y);
-        ctx.strokeStyle = `rgba(0, 200, 83, ${0.08 * (1 - dist / 120)})`;
-        ctx.lineWidth = 0.5;
-        ctx.stroke();
-      }
-    });
-  });
-
-  requestAnimationFrame(drawParticles);
-}
-
-resizeCanvas();
-createParticles();
-drawParticles();
-window.addEventListener('resize', () => { resizeCanvas(); createParticles(); });
-
-// ===== NAVIGATION =====
-const nav = document.getElementById('nav');
-const navBurger = document.getElementById('nav-burger');
-const mobileMenu = document.getElementById('mobile-menu');
-
-window.addEventListener('scroll', () => {
-  nav.classList.toggle('scrolled', window.scrollY > 60);
-});
-
-navBurger.addEventListener('click', () => {
-  navBurger.classList.toggle('active');
-  mobileMenu.classList.toggle('open');
-  document.body.classList.toggle('menu-open');
-});
-
-document.querySelectorAll('.mobile-link, .nav__link, .nav__cta').forEach(link => {
-  link.addEventListener('click', (e) => {
-    const href = link.getAttribute('href');
-    if (href && href.startsWith('#')) {
-      e.preventDefault();
-      const target = document.querySelector(href);
-      if (target) {
-        gsap.to(window, { scrollTo: { y: target, offsetY: 80 }, duration: 1.2, ease: 'power3.inOut' });
-      }
-      navBurger.classList.remove('active');
-      mobileMenu.classList.remove('open');
-      document.body.classList.remove('menu-open');
+  // Preloader
+  let p = 0;
+  const timer = setInterval(() => {
+    p = Math.min(100, p + Math.random() * 12 + 4);
+    fill.style.width = p + '%';
+    if (p >= 100) {
+      clearInterval(timer);
+      setTimeout(() => {
+        preloader.classList.add('done');
+        intro();
+      }, 400);
     }
-  });
-});
+  }, 90);
 
-// ===== MAIN ANIMATIONS =====
-function initAnimations() {
-  // Hero reveals
-  gsap.utils.toArray('.reveal-up').forEach(el => {
-    const delay = parseFloat(el.dataset.delay) || 0;
-    gsap.to(el, {
-      opacity: 1,
-      y: 0,
-      duration: 1.2,
-      delay: delay,
-      ease: 'power4.out'
+  // Cursor
+  if (window.matchMedia('(min-width: 769px)').matches && cursor) {
+    document.addEventListener('mousemove', (e) => {
+      cursor.style.left = e.clientX + 'px';
+      cursor.style.top = e.clientY + 'px';
     });
-  });
-
-  // Hero title word stagger
-  gsap.from('.hero__word', {
-    y: 120,
-    rotateX: -40,
-    opacity: 0,
-    duration: 1.4,
-    stagger: 0.08,
-    ease: 'power4.out',
-    delay: 0.3
-  });
-
-  // Float cards parallax
-  document.querySelectorAll('.float-card').forEach(card => {
-    const speed = parseFloat(card.dataset.speed) || 0.03;
-    gsap.to(card, {
-      y: -80 * speed * 100,
-      ease: 'none',
-      scrollTrigger: {
-        trigger: '.hero',
-        start: 'top top',
-        end: 'bottom top',
-        scrub: true
-      }
+    document.querySelectorAll('a, button, .lobe, .chamber__back').forEach(el => {
+      el.addEventListener('mouseenter', () => cursor.classList.add('is-hover'));
+      el.addEventListener('mouseleave', () => cursor.classList.remove('is-hover'));
     });
-  });
+  }
 
-  // Scroll reveal for all sections
-  gsap.utils.toArray('.vision .reveal-up, .showcase .reveal-up, .process .reveal-up, .contact .reveal-up').forEach(el => {
-    const delay = parseFloat(el.dataset.delay) || 0;
-    gsap.fromTo(el,
-      { opacity: 0, y: 60 },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 1,
-        delay: delay,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: el,
-          start: 'top 85%',
-          toggleActions: 'play none none reverse'
+  // Particles
+  let particles = [];
+  function resize() {
+    canvas.width = innerWidth;
+    canvas.height = innerHeight;
+  }
+  function spawn() {
+    particles = [];
+    const n = Math.min(55, Math.floor(innerWidth / 24));
+    for (let i = 0; i < n; i++) {
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        r: Math.random() * 1.8 + 0.3,
+        vx: (Math.random() - 0.5) * 0.25,
+        vy: (Math.random() - 0.5) * 0.25,
+        a: Math.random() * 0.4 + 0.1
+      });
+    }
+  }
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach((pt, i) => {
+      pt.x += pt.vx; pt.y += pt.vy;
+      if (pt.x < 0) pt.x = canvas.width;
+      if (pt.x > canvas.width) pt.x = 0;
+      if (pt.y < 0) pt.y = canvas.height;
+      if (pt.y > canvas.height) pt.y = 0;
+      ctx.beginPath();
+      ctx.arc(pt.x, pt.y, pt.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(0,200,83,${pt.a})`;
+      ctx.fill();
+      for (let j = i + 1; j < particles.length; j++) {
+        const q = particles[j];
+        const d = Math.hypot(pt.x - q.x, pt.y - q.y);
+        if (d < 110) {
+          ctx.beginPath();
+          ctx.moveTo(pt.x, pt.y);
+          ctx.lineTo(q.x, q.y);
+          ctx.strokeStyle = `rgba(0,200,83,${0.08 * (1 - d / 110)})`;
+          ctx.stroke();
         }
       }
-    );
-  });
-
-  // Vision cards tilt on hover
-  document.querySelectorAll('.vision-card').forEach(card => {
-    card.addEventListener('mousemove', (e) => {
-      const rect = card.getBoundingClientRect();
-      const x = (e.clientX - rect.left) / rect.width - 0.5;
-      const y = (e.clientY - rect.top) / rect.height - 0.5;
-      gsap.to(card, {
-        rotateY: x * 8,
-        rotateX: -y * 8,
-        duration: 0.4,
-        ease: 'power2.out',
-        transformPerspective: 800
-      });
     });
-    card.addEventListener('mouseleave', () => {
-      gsap.to(card, { rotateY: 0, rotateX: 0, duration: 0.6, ease: 'elastic.out(1, 0.5)' });
-    });
-  });
+    requestAnimationFrame(draw);
+  }
+  resize(); spawn(); draw();
+  addEventListener('resize', () => { resize(); spawn(); });
 
-  // Stats counter
-  document.querySelectorAll('.stat-item__num').forEach(num => {
-    const target = parseInt(num.dataset.count, 10);
-    ScrollTrigger.create({
-      trigger: num,
-      start: 'top 80%',
-      onEnter: () => {
-        gsap.to({ val: 0 }, {
-          val: target,
-          duration: 2,
-          ease: 'power2.out',
-          onUpdate: function () {
-            num.textContent = Math.floor(this.targets()[0].val);
-          }
+  function intro() {
+    gsap.from('.mind__logo, .mind__links a', { y: -16, opacity: 0, stagger: 0.08, duration: 0.8 });
+    gsap.from('.mind__eyebrow, .mind__title, .mind__sub', { y: 28, opacity: 0, stagger: 0.12, duration: 1, delay: 0.15 });
+    gsap.from('.lobe', { scale: 0.7, opacity: 0, transformOrigin: '320px 210px', stagger: 0.15, duration: 1.1, delay: 0.35, ease: 'power3.out' });
+    gsap.from('.brain__caption', { opacity: 0, duration: 0.8, delay: 1.1 });
+  }
+
+  function openChamber(id, lobeEl) {
+    if (busy || active) return;
+    busy = true;
+    lobeEl.classList.add('is-opening');
+    mind.classList.add('is-diving');
+    document.body.classList.add('locked');
+
+    const chamber = document.getElementById('chamber-' + id);
+    const imgs = [...dive.querySelectorAll('.dive__img')];
+    const caption = dive.querySelector('.dive__caption');
+    const tunnel = dive.querySelector('.dive__tunnel');
+
+    const safety = setTimeout(() => enterChamber(id, lobeEl), 7000);
+
+    gsap.set(dive, { opacity: 0, visibility: 'hidden' });
+    gsap.set(imgs, { opacity: 0, scale: 1.4 });
+    gsap.set(caption, { opacity: 0, y: 40 });
+    gsap.set(tunnel, { scale: 1.5, opacity: 1 });
+
+    const tl = gsap.timeline({
+      onComplete: () => {
+        clearTimeout(safety);
+        enterChamber(id, lobeEl);
+      }
+    });
+
+    tl.to({}, { duration: 0.35 })
+      .add(() => {
+        dive.classList.add('active');
+        dive.setAttribute('aria-hidden', 'false');
+        gsap.set(dive, { visibility: 'visible' });
+      })
+      .to(dive, { opacity: 1, duration: 0.5 })
+      .to(mind, { opacity: 0, duration: 0.45 }, '<')
+      .to(tunnel, { scale: 0.35, duration: 1.6, ease: 'power2.in' }, '-=0.1')
+      .to(imgs[0], { opacity: 1, scale: 1, duration: 1.1, ease: 'power2.out' }, '-=1.1')
+      .to(imgs[0], { opacity: 0, scale: 1.15, duration: 0.6 }, '+=0.15')
+      .to(imgs[1], { opacity: 1, scale: 1, duration: 0.9, ease: 'power2.out' }, '-=0.35')
+      .to(imgs[1], { opacity: 0, scale: 1.12, duration: 0.55 }, '+=0.1')
+      .to(imgs[2], { opacity: 1, scale: 1, duration: 0.9, ease: 'power2.out' }, '-=0.3')
+      .to(caption, { opacity: 1, y: 0, duration: 0.9, ease: 'power3.out' }, '-=0.7')
+      .to({}, { duration: 0.9 })
+      .to([caption, imgs[2], dive], { opacity: 0, duration: 0.55 });
+  }
+
+  function enterChamber(id, lobeEl) {
+    const chamber = document.getElementById('chamber-' + id);
+    if (!chamber) {
+      busy = false;
+      return;
+    }
+
+    active = id;
+    mind.classList.add('hidden');
+    mind.classList.remove('is-diving');
+    gsap.set(mind, { opacity: 0 });
+
+    dive.classList.remove('active');
+    dive.setAttribute('aria-hidden', 'true');
+    gsap.set(dive, { opacity: 0, visibility: 'hidden' });
+
+    chamber.classList.add('active');
+    chamber.setAttribute('aria-hidden', 'false');
+    gsap.set(chamber, { opacity: 1, visibility: 'visible' });
+
+    const scroller = chamber.querySelector('.chamber__scroll');
+    if (scroller) scroller.scrollTop = 0;
+
+    gsap.from(chamber.querySelectorAll('.chamber__hero-text > *, .chamber__grid article'), {
+      y: 30, opacity: 0, stagger: 0.1, duration: 0.9, ease: 'power3.out', delay: 0.15
+    });
+
+    if (lobeEl) lobeEl.classList.remove('is-opening');
+    busy = false;
+  }
+
+  function closeChamber() {
+    if (!active || busy) return;
+    const chamber = document.getElementById('chamber-' + active);
+    if (!chamber) return;
+
+    gsap.to(chamber, {
+      opacity: 0, duration: 0.45,
+      onComplete: () => {
+        chamber.classList.remove('active');
+        chamber.setAttribute('aria-hidden', 'true');
+        mind.classList.remove('hidden');
+        document.body.classList.remove('locked');
+        gsap.set(mind, { opacity: 1, clearProps: 'transform' });
+        gsap.fromTo('.lobe', { opacity: 0.4, scale: 0.95 }, {
+          opacity: 1, scale: 1, stagger: 0.08, duration: 0.7, ease: 'power3.out'
         });
-      },
-      once: true
-    });
-  });
-
-  // Services horizontal scroll progress
-  const servicesTrack = document.getElementById('services-track');
-  const servicesProgress = document.getElementById('services-progress');
-
-  if (servicesTrack && servicesProgress) {
-    servicesTrack.addEventListener('scroll', () => {
-      const scrollLeft = servicesTrack.scrollLeft;
-      const maxScroll = servicesTrack.scrollWidth - servicesTrack.clientWidth;
-      const progress = maxScroll > 0 ? (scrollLeft / maxScroll) * 100 : 0;
-      servicesProgress.style.width = progress + '%';
+        active = null;
+      }
     });
   }
 
-  // Service slides entrance
-  gsap.from('.service-slide', {
-    x: 100,
-    opacity: 0,
-    duration: 0.8,
-    stagger: 0.1,
-    ease: 'power3.out',
-    scrollTrigger: {
-      trigger: '.services',
-      start: 'top 70%'
-    }
-  });
-
-  // Bento grid items
-  document.querySelectorAll('.bento__item').forEach(item => {
-    ScrollTrigger.create({
-      trigger: item,
-      start: 'top 85%',
-      onEnter: () => item.classList.add('visible'),
-      once: true
-    });
-
-    item.addEventListener('mousemove', (e) => {
-      const rect = item.getBoundingClientRect();
-      const x = (e.clientX - rect.left) / rect.width - 0.5;
-      const y = (e.clientY - rect.top) / rect.height - 0.5;
-      gsap.to(item.querySelector('.bento__inner'), {
-        rotateY: x * 5,
-        rotateX: -y * 5,
-        duration: 0.3,
-        ease: 'power2.out',
-        transformPerspective: 600
-      });
-    });
-    item.addEventListener('mouseleave', () => {
-      gsap.to(item.querySelector('.bento__inner'), {
-        rotateY: 0, rotateX: 0, duration: 0.5, ease: 'elastic.out(1, 0.5)'
-      });
+  lobes.forEach(lobe => {
+    const go = () => openChamber(lobe.dataset.section, lobe);
+    lobe.addEventListener('click', go);
+    lobe.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); }
     });
   });
 
-  // Process timeline line
-  ScrollTrigger.create({
-    trigger: '.process__timeline',
-    start: 'top 70%',
-    onEnter: () => document.getElementById('process-line').classList.add('animated'),
-    once: true
+  document.querySelectorAll('.chamber__back').forEach(btn => {
+    btn.addEventListener('click', closeChamber);
   });
 
-  // Process steps stagger
-  gsap.from('.process__step', {
-    y: 40,
-    opacity: 0,
-    duration: 0.8,
-    stagger: 0.15,
-    ease: 'power3.out',
-    scrollTrigger: {
-      trigger: '.process__timeline',
-      start: 'top 75%'
-    }
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && active) closeChamber();
   });
-
-  // Contact form fields
-  gsap.from('.contact__form', {
-    x: 60,
-    opacity: 0,
-    duration: 1.2,
-    ease: 'power3.out',
-    scrollTrigger: {
-      trigger: '.contact',
-      start: 'top 70%'
-    }
-  });
-
-  // Parallax orbs
-  gsap.utils.toArray('.orb').forEach((orb, i) => {
-    gsap.to(orb, {
-      y: (i + 1) * -60,
-      ease: 'none',
-      scrollTrigger: {
-        trigger: orb.closest('section') || document.body,
-        start: 'top bottom',
-        end: 'bottom top',
-        scrub: 1
-      }
-    });
-  });
-
-  // Marquee speed on scroll
-  gsap.to('.marquee__track', {
-    xPercent: -10,
-    ease: 'none',
-    scrollTrigger: {
-      trigger: '.marquee-section',
-      start: 'top bottom',
-      end: 'bottom top',
-      scrub: 1
-    }
-  });
-}
-
-// ===== FORM =====
-document.getElementById('demo-form').addEventListener('submit', (e) => {
-  e.preventDefault();
-  const btn = e.target.querySelector('button');
-  const text = btn.querySelector('.btn__text');
-
-  gsap.to(btn, { scale: 0.95, duration: 0.1, yoyo: true, repeat: 1 });
-  text.textContent = 'جاري الإرسال...';
-
-  setTimeout(() => {
-    text.textContent = 'تم الإرسال ✓';
-    gsap.fromTo(btn, { boxShadow: '0 0 0px rgba(0,200,83,0)' }, {
-      boxShadow: '0 0 60px rgba(0,200,83,0.5)',
-      duration: 0.6
-    });
-    setTimeout(() => {
-      e.target.reset();
-      text.textContent = 'أرسل طلبك';
-      gsap.to(btn, { boxShadow: '0 0 40px rgba(0,200,83,0.4)', duration: 0.4 });
-    }, 2500);
-  }, 1500);
-});
-
-// Smooth scroll for hero buttons
-document.querySelectorAll('.btn--ghost, .btn--glow').forEach(btn => {
-  btn.addEventListener('click', (e) => {
-    const href = btn.getAttribute('href');
-    if (href && href.startsWith('#')) {
-      e.preventDefault();
-      const target = document.querySelector(href);
-      if (target) {
-        gsap.to(window, { scrollTo: { y: target, offsetY: 80 }, duration: 1.2, ease: 'power3.inOut' });
-      }
-    }
-  });
-});
+})();

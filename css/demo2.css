@@ -365,6 +365,38 @@ html[data-lang="en"] .lang-switch__en { color: var(--green-mid); }
   font-size: .95rem; color: var(--muted); max-width: 480px; margin: 0 auto;
 }
 
+.gate-arch {
+  display: flex; align-items: center; justify-content: center; gap: 14px;
+  max-width: 420px; margin: 6px auto 4px; position: relative; z-index: 5;
+}
+.gate-arch__line {
+  flex: 1; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  opacity: .55;
+}
+.gate-arch__diamond {
+  width: 10px; height: 10px;
+  border: 1.5px solid var(--gold);
+  transform: rotate(45deg);
+  box-shadow: 0 0 12px rgba(212,175,55,.45);
+}
+
+.portal__arch-top {
+  position: absolute; top: 0; left: 10%; right: 10%; height: 18px; z-index: 5;
+  border: 1.5px solid rgba(212,175,55,.35);
+  border-bottom: none; border-radius: 0 0 40% 40% / 0 0 100% 100%;
+  pointer-events: none;
+  opacity: .7;
+}
+.portal--center .portal__arch-top {
+  border-color: rgba(212,175,55,.7);
+  box-shadow: 0 0 20px rgba(212,175,55,.2);
+}
+
+.portal__cta {
+  letter-spacing: .02em;
+}
+
 /* Portals pulled UP — fill the viewport */
 .portals {
   flex: 1;
