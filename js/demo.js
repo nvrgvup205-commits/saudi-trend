@@ -321,7 +321,7 @@
     // (span splitting was reversing visual Arabic word order to LTR)
     if (hookEl) {
       hookEl.setAttribute('dir', 'rtl');
-      hookEl.textContent = 'نبرمج نموّك قبل أن يعلنه السوق — تسويق يفهم · أتمتة تنفّذ · برمجيات تسبق';
+      hookEl.textContent = 'لا نلحق السوق — نفرض قرار النمو قبل الجميع';
     }
 
     gsap.from('.mind__logo, .mind__links a, .mind__links button', {
