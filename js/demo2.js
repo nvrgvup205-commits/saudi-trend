@@ -1,4 +1,4 @@
-/* سعودي تريند · Demo 2 — Luxury Portal Engine (slow + bilingual + flips) */
+/* سعودي تريند · Demo 2 — Luxury Portal Engine */
 (() => {
   const preloader = document.getElementById('preloader');
   const fill = document.getElementById('preloader-fill');
@@ -14,6 +14,7 @@
   const ctx = canvas.getContext('2d');
 
   let activeRealm = null;
+  let openTl = null;
   let lang = localStorage.getItem('st-lang') || 'ar';
   let mx = 0, my = 0, lastDot = 0;
 
@@ -34,7 +35,6 @@
       el.placeholder = el.getAttribute(lang === 'ar' ? 'data-ar-placeholder' : 'data-en-placeholder') || '';
     });
 
-    // Select options
     document.querySelectorAll('select option[data-ar]').forEach(opt => {
       opt.textContent = opt.getAttribute('data-' + lang);
     });
@@ -44,33 +44,34 @@
 
   langBtn.addEventListener('click', () => {
     applyLang(lang === 'ar' ? 'en' : 'ar');
-    gsap.fromTo(langBtn, { scale: 0.92 }, { scale: 1, duration: 0.6, ease: 'power3.out' });
+    gsap.fromTo(langBtn, { scale: 0.92 }, { scale: 1, duration: 0.5, ease: 'power3.out' });
   });
 
-  // ===== Preloader (slower) =====
+  // ===== Preloader =====
   let p = 0;
   const loadTimer = setInterval(() => {
-    p = Math.min(100, p + Math.random() * 8 + 2);
+    p = Math.min(100, p + Math.random() * 10 + 3);
     fill.style.width = p + '%';
     if (p >= 100) {
       clearInterval(loadTimer);
       setTimeout(() => {
         preloader.classList.add('done');
         introGate();
-      }, 700);
+      }, 500);
     }
-  }, 120);
+  }, 100);
 
-  // ===== Signature cursor (golden arrow + sparkle dots) =====
+  // ===== Cursor =====
   const isDesktop = window.matchMedia('(min-width: 769px)').matches;
   if (isDesktop && cursor) {
     document.addEventListener('mousemove', (e) => {
-      mx = e.clientX; my = e.clientY;
+      mx = e.clientX;
+      my = e.clientY;
       cursor.style.left = mx + 'px';
       cursor.style.top = my + 'px';
 
       const now = performance.now();
-      if (now - lastDot > 45 && cursorDots) {
+      if (now - lastDot > 50 && cursorDots) {
         lastDot = now;
         const d = document.createElement('i');
         d.style.left = mx + 'px';
@@ -83,14 +84,13 @@
     document.addEventListener('mousedown', () => cursor.classList.add('is-click'));
     document.addEventListener('mouseup', () => cursor.classList.remove('is-click'));
 
-    const hoverSel = 'a, button, .portal, .flip-card, .btn-glow, .gallery__item, input, select, textarea, .lang-switch';
-    document.querySelectorAll(hoverSel).forEach(el => {
+    document.querySelectorAll('a, button, .portal, .flip-card, .btn-glow, .gallery__item, input, select, textarea, .lang-switch').forEach(el => {
       el.addEventListener('mouseenter', () => cursor.classList.add('is-hover'));
       el.addEventListener('mouseleave', () => cursor.classList.remove('is-hover'));
     });
   }
 
-  // Magnetic (gentler)
+  // Magnetic
   document.querySelectorAll('.magnetic').forEach(el => {
     const s = parseFloat(el.dataset.s) || 0.2;
     el.addEventListener('mousemove', (e) => {
@@ -98,15 +98,15 @@
       gsap.to(el, {
         x: (e.clientX - r.left - r.width / 2) * s,
         y: (e.clientY - r.top - r.height / 2) * s,
-        duration: 0.7, ease: 'power3.out'
+        duration: 0.6, ease: 'power3.out'
       });
     });
     el.addEventListener('mouseleave', () => {
-      gsap.to(el, { x: 0, y: 0, duration: 1.1, ease: 'elastic.out(1, 0.45)' });
+      gsap.to(el, { x: 0, y: 0, duration: 1, ease: 'elastic.out(1, 0.45)' });
     });
   });
 
-  // ===== Soft gold/green particles =====
+  // Particles
   let particles = [];
   function resize() {
     canvas.width = innerWidth;
@@ -114,41 +114,39 @@
   }
   function spawn() {
     particles = [];
-    const n = Math.min(45, Math.floor(innerWidth / 28));
+    const n = Math.min(40, Math.floor(innerWidth / 30));
     for (let i = 0; i < n; i++) {
       particles.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        r: Math.random() * 1.8 + 0.3,
-        vx: (Math.random() - 0.5) * 0.18,
-        vy: (Math.random() - 0.5) * 0.18,
-        a: Math.random() * 0.35 + 0.08,
+        r: Math.random() * 1.6 + 0.3,
+        vx: (Math.random() - 0.5) * 0.16,
+        vy: (Math.random() - 0.5) * 0.16,
+        a: Math.random() * 0.3 + 0.08,
         gold: Math.random() > 0.65
       });
     }
   }
   function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    particles.forEach((p, i) => {
-      p.x += p.vx; p.y += p.vy;
-      if (p.x < 0) p.x = canvas.width;
-      if (p.x > canvas.width) p.x = 0;
-      if (p.y < 0) p.y = canvas.height;
-      if (p.y > canvas.height) p.y = 0;
+    particles.forEach((pt, i) => {
+      pt.x += pt.vx; pt.y += pt.vy;
+      if (pt.x < 0) pt.x = canvas.width;
+      if (pt.x > canvas.width) pt.x = 0;
+      if (pt.y < 0) pt.y = canvas.height;
+      if (pt.y > canvas.height) pt.y = 0;
       ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fillStyle = p.gold
-        ? `rgba(212,175,55,${p.a})`
-        : `rgba(13,122,84,${p.a})`;
+      ctx.arc(pt.x, pt.y, pt.r, 0, Math.PI * 2);
+      ctx.fillStyle = pt.gold ? `rgba(212,175,55,${pt.a})` : `rgba(13,122,84,${pt.a})`;
       ctx.fill();
       for (let j = i + 1; j < particles.length; j++) {
         const q = particles[j];
-        const d = Math.hypot(p.x - q.x, p.y - q.y);
+        const d = Math.hypot(pt.x - q.x, pt.y - q.y);
         if (d < 100) {
           ctx.beginPath();
-          ctx.moveTo(p.x, p.y);
+          ctx.moveTo(pt.x, pt.y);
           ctx.lineTo(q.x, q.y);
-          ctx.strokeStyle = `rgba(212,175,55,${0.07 * (1 - d / 100)})`;
+          ctx.strokeStyle = `rgba(212,175,55,${0.06 * (1 - d / 100)})`;
           ctx.lineWidth = 0.5;
           ctx.stroke();
         }
@@ -159,116 +157,133 @@
   resize(); spawn(); draw();
   addEventListener('resize', () => { resize(); spawn(); });
 
-  // ===== Slow intro =====
+  // Intro
   function introGate() {
-    // Clear CSS reveal state so fromTo can land on visible
     gsap.set('.gate .reveal-text', { clearProps: 'all' });
-
     const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
-    tl.fromTo('.brand-mark--nav', { y: -24, opacity: 0 }, { y: 0, opacity: 1, duration: 1.2 })
-      .fromTo('.gate__actions > *', { y: -16, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.12, duration: 1 }, '-=0.8')
-      .fromTo('.gate__eyebrow', { y: 28, opacity: 0 }, { y: 0, opacity: 1, duration: 1.1 }, '-=0.6')
-      .fromTo('.gate__title .line > span', { y: 70, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.18, duration: 1.3 }, '-=0.7')
-      .fromTo('.gate__sub', { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 1 }, '-=0.9')
-      .fromTo('.portal', {
-        y: 60, opacity: 0, scale: 0.9
-      }, {
-        y: 0, opacity: 1, scale: 1,
-        stagger: 0.18, duration: 1.35, transformPerspective: 900
-      }, '-=0.75')
-      .fromTo('.gate__hint', { opacity: 0 }, { opacity: 1, duration: 0.9 }, '-=0.55');
-
-    portals.forEach((portal, i) => {
-      gsap.to(portal.querySelector('.portal__frame'), {
-        y: i % 2 === 0 ? -6 : 6,
-        duration: 4 + i * 0.4,
-        yoyo: true,
-        repeat: -1,
-        ease: 'sine.inOut',
-        delay: i * 0.4
-      });
-    });
+    tl.fromTo('.brand-mark--nav', { y: -20, opacity: 0 }, { y: 0, opacity: 1, duration: 1 })
+      .fromTo('.gate__actions > *', { y: -12, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.1, duration: 0.8 }, '-=0.6')
+      .fromTo('.gate__eyebrow', { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.9 }, '-=0.5')
+      .fromTo('.gate__title .line > span', { y: 50, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.15, duration: 1.1 }, '-=0.6')
+      .fromTo('.gate__sub', { y: 16, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8 }, '-=0.7')
+      .fromTo('.portal', { y: 50, opacity: 0, scale: 0.92 }, {
+        y: 0, opacity: 1, scale: 1, stagger: 0.15, duration: 1.1
+      }, '-=0.6')
+      .fromTo('.gate__hint', { opacity: 0 }, { opacity: 1, duration: 0.7 }, '-=0.4');
   }
 
-  // ===== Portal open / close (slower) =====
-  portals.forEach(portal => {
-    portal.addEventListener('click', () => {
-      if (activeRealm) return;
-      openRealm(portal.dataset.section, portal);
-    });
-  });
+  // ===== Enter realm (always reaches here) =====
+  function enterRealm(id, portalEl) {
+    const realm = document.getElementById('realm-' + id);
+    if (!realm) {
+      activeRealm = null;
+      document.body.classList.remove('locked', 'in-realm');
+      return;
+    }
+
+    activeRealm = id;
+    document.body.classList.add('locked', 'in-realm');
+
+    gate.classList.add('hidden');
+    gsap.set(gate, { opacity: 0, pointerEvents: 'none' });
+
+    realm.classList.add('active');
+    realm.setAttribute('aria-hidden', 'false');
+    gsap.set(realm, { opacity: 1, scale: 1, visibility: 'visible', pointerEvents: 'auto' });
+
+    const scroller = realm.querySelector('.realm__scroll');
+    if (scroller) scroller.scrollTop = 0;
+    realm.querySelectorAll('.flip-card.is-flipped').forEach(c => c.classList.remove('is-flipped'));
+
+    try { animateRealmContent(realm); } catch (err) { console.warn(err); }
+
+    if (portalEl) portalEl.classList.remove('opening');
+    portals.forEach(p => gsap.set(p, { opacity: 1, scale: 1, clearProps: 'transform' }));
+
+    if (skyflight) {
+      skyflight.classList.remove('active');
+      skyflight.setAttribute('aria-hidden', 'true');
+      gsap.set(skyflight, { opacity: 0, visibility: 'hidden' });
+    }
+    if (flash) gsap.set(flash, { opacity: 0 });
+  }
 
   function openRealm(id, portalEl) {
     const realm = document.getElementById('realm-' + id);
     if (!realm) return;
-    activeRealm = id;
+    if (openTl && openTl.isActive()) return;
+
     portalEl.classList.add('opening');
     document.body.classList.add('locked', 'in-realm');
 
     portals.forEach(p => {
-      if (p !== portalEl) gsap.to(p, { opacity: 0.2, scale: 0.94, duration: 0.8, ease: 'power2.out' });
+      if (p !== portalEl) gsap.to(p, { opacity: 0.3, scale: 0.96, duration: 0.5 });
     });
 
-    // Prepare skyflight bilingual tag
+    // Fallback: open without skyflight
+    if (!skyflight) {
+      enterRealm(id, portalEl);
+      return;
+    }
+
+    const brand = skyflight.querySelector('.skyflight__brand');
+    const clouds = [...skyflight.querySelectorAll('.cloud')];
     const tag = skyflight.querySelector('.skyflight__tag');
     if (tag) tag.textContent = tag.getAttribute('data-' + lang) || tag.textContent;
 
-    const brand = skyflight.querySelector('.skyflight__brand');
-    const clouds = skyflight.querySelectorAll('.cloud');
-
-    gsap.set(skyflight, { opacity: 0 });
+    const frame = portalEl.querySelector('.portal__frame');
+    gsap.killTweensOf([skyflight, brand, ...clouds, frame]);
+    gsap.set(clouds, { x: 0, y: 0 });
     gsap.set(brand, { opacity: 0, y: 80, scale: 0.55 });
-    gsap.set(clouds, { x: 0, clearProps: false });
+    gsap.set(skyflight, { opacity: 0, visibility: 'hidden' });
 
-    const tl = gsap.timeline({
+    // Safety timeout — always open even if animation stalls
+    const safety = setTimeout(() => {
+      if (!document.getElementById('realm-' + id).classList.contains('active')) {
+        if (openTl) openTl.kill();
+        enterRealm(id, portalEl);
+      }
+    }, 8000);
+
+    openTl = gsap.timeline({
       onComplete: () => {
-        gate.classList.add('hidden');
-        realm.classList.add('active');
-        realm.setAttribute('aria-hidden', 'false');
-        gsap.set(realm, { opacity: 1, scale: 1 });
-        realm.querySelector('.realm__scroll').scrollTop = 0;
-        realm.querySelectorAll('.flip-card.is-flipped').forEach(c => c.classList.remove('is-flipped'));
-        animateRealmContent(realm);
-        portalEl.classList.remove('opening');
-        gsap.set(portals, { opacity: 1, scale: 1, clearProps: 'transform' });
-        skyflight.classList.remove('active');
-        skyflight.setAttribute('aria-hidden', 'true');
-        gsap.set(skyflight, { opacity: 0 });
-        gsap.set(flash, { opacity: 0 });
+        clearTimeout(safety);
+        enterRealm(id, portalEl);
       }
     });
 
-    tl.to(portalEl.querySelector('.portal__frame'), { scale: 1.12, duration: 0.7, ease: 'power2.inOut' })
+    openTl
+      .to(frame, { scale: 1.06, duration: 0.45, ease: 'power2.inOut' })
       .add(() => {
         skyflight.classList.add('active');
         skyflight.setAttribute('aria-hidden', 'false');
+        gsap.set(skyflight, { visibility: 'visible', display: 'block' });
       })
-      .to(skyflight, { opacity: 1, duration: 0.85, ease: 'power2.inOut' }, '-=0.15')
-      .to(gate, { opacity: 0, duration: 0.6 }, '-=0.7')
-      // Fly through clouds
+      .to(skyflight, { opacity: 1, duration: 0.6, ease: 'power2.out' })
+      .to(gate, { opacity: 0, duration: 0.4 }, '<0.1')
       .to(clouds, {
-        y: (i) => -window.innerHeight * (0.45 + i * 0.08),
-        x: (i) => (i % 2 === 0 ? 120 : -140),
-        duration: 2.8,
-        ease: 'power1.inOut',
-        stagger: 0.05
-      }, '-=0.4')
-      .to('.skyflight__sun', { y: -40, scale: 1.15, duration: 2.4, ease: 'sine.inOut' }, '-=2.6')
-      // Brand flies in above the clouds
-      .to(brand, {
-        opacity: 1, y: 0, scale: 1,
-        duration: 1.6,
-        ease: 'power3.out'
-      }, '-=2.1')
-      .to(brand, { scale: 1.08, duration: 0.9, ease: 'sine.inOut', yoyo: true, repeat: 1 }, '-=0.4')
-      // Descend into realm
-      .to(brand, { y: -60, opacity: 0, scale: 1.35, duration: 1.1, ease: 'power2.in' })
-      .to(skyflight, { opacity: 0, duration: 0.7, ease: 'power2.inOut' }, '-=0.35');
+        y: -500,
+        duration: 2,
+        stagger: 0.06,
+        ease: 'power1.inOut'
+      }, '-=0.15')
+      .to('.skyflight__sun', { y: -24, scale: 1.1, duration: 1.8, ease: 'sine.inOut' }, '-=1.9')
+      .to(brand, { opacity: 1, y: 0, scale: 1, duration: 1, ease: 'power3.out' }, '-=1.3')
+      .to({}, { duration: 0.55 }) // hold brand in sky
+      .to(brand, { y: -40, opacity: 0, scale: 1.2, duration: 0.7, ease: 'power2.in' })
+      .to(skyflight, { opacity: 0, duration: 0.45 }, '-=0.2');
   }
 
   function closeRealm() {
     if (!activeRealm) return;
-    const realm = document.getElementById('realm-' + activeRealm);
+    if (openTl && openTl.isActive()) openTl.kill();
+
+    const id = activeRealm;
+    const realm = document.getElementById('realm-' + id);
+    if (!realm) {
+      activeRealm = null;
+      return;
+    }
 
     gsap.timeline({
       onComplete: () => {
@@ -276,25 +291,40 @@
         realm.setAttribute('aria-hidden', 'true');
         gate.classList.remove('hidden');
         document.body.classList.remove('locked', 'in-realm');
-        gsap.set(gate, { opacity: 1, scale: 1, clearProps: 'all' });
-        gsap.set(realm, { clearProps: 'opacity,scale' });
+        gsap.set(gate, { opacity: 1, clearProps: 'all' });
+        gsap.set(realm, { clearProps: 'opacity,scale,visibility,pointerEvents' });
         activeRealm = null;
       }
     })
-    .to(flash, { opacity: 1, duration: 0.4 })
-    .to(realm, { opacity: 0, scale: 0.97, duration: 0.5 }, '-=0.1')
+    .to(flash || realm, { opacity: flash ? 1 : 0, duration: 0.3 })
+    .to(realm, { opacity: 0, duration: 0.4 }, '-=0.05')
     .add(() => {
       realm.classList.remove('active');
       gate.classList.remove('hidden');
-      gsap.set(gate, { opacity: 0 });
+      gsap.set(gate, { opacity: 0, pointerEvents: 'auto' });
     })
-    .to(flash, { opacity: 0, duration: 0.7 })
-    .to(gate, { opacity: 1, duration: 0.85, ease: 'power3.out' }, '-=0.4')
-    .fromTo('.portal', { y: 24, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.12, duration: 0.9, ease: 'power3.out' }, '-=0.5');
+    .to(flash || {}, { opacity: 0, duration: 0.4 })
+    .to(gate, { opacity: 1, duration: 0.7, ease: 'power3.out' }, '-=0.25')
+    .fromTo('.portal', { y: 16, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.08, duration: 0.7 }, '-=0.4');
   }
 
+  // Bind portal clicks
+  portals.forEach(portal => {
+    portal.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (activeRealm) return;
+      if (openTl && openTl.isActive()) return;
+      const id = portal.getAttribute('data-section');
+      if (!id) return;
+      openRealm(id, portal);
+    });
+  });
+
   document.querySelectorAll('.realm__back').forEach(btn => {
-    btn.addEventListener('click', closeRealm);
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      closeRealm();
+    });
   });
 
   document.addEventListener('keydown', (e) => {
@@ -304,99 +334,57 @@
     }
   });
 
-  // ===== Flip cards (magical click) =====
+  // Flip cards
   function bindFlips(scope) {
     scope.querySelectorAll('.flip-card').forEach(card => {
       if (card.dataset.bound) return;
       card.dataset.bound = '1';
-
       const flip = () => {
         const was = card.classList.contains('is-flipped');
-        // close others in same grid
         card.closest('.flip-grid')?.querySelectorAll('.flip-card.is-flipped').forEach(c => {
           if (c !== card) c.classList.remove('is-flipped');
         });
         card.classList.toggle('is-flipped', !was);
-
-        // sparkle punch
-        gsap.fromTo(card, { scale: 0.96 }, {
-          scale: 1, duration: 0.9, ease: 'elastic.out(1, 0.55)'
-        });
+        gsap.fromTo(card, { scale: 0.97 }, { scale: 1, duration: 0.7, ease: 'elastic.out(1, 0.55)' });
       };
-
-      card.addEventListener('click', (e) => {
-        e.stopPropagation();
-        flip();
-      });
+      card.addEventListener('click', (e) => { e.stopPropagation(); flip(); });
       card.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          flip();
-        }
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); flip(); }
       });
     });
   }
   bindFlips(document);
 
-  // ===== Realm text & image entrances (IntersectionObserver + GSAP) =====
   function animateRealmContent(realm) {
-    applyLang(lang); // refresh texts inside realm
-
+    applyLang(lang);
     const scrollRoot = realm.querySelector('.realm__scroll');
     const reveals = [...realm.querySelectorAll('.reveal-text')];
+    gsap.set(reveals, { opacity: 0, y: 36 });
 
-    // reset
-    gsap.set(reveals, { opacity: 0, y: 40 });
-
-    // hero cascade
     gsap.to(realm.querySelectorAll('.realm__logo, .realm__label, .realm__title, .realm__desc'), {
-      opacity: 1, y: 0, stagger: 0.18, duration: 1.3, ease: 'power3.out', delay: 0.25
+      opacity: 1, y: 0, stagger: 0.15, duration: 1.1, ease: 'power3.out', delay: 0.15
     });
 
     const io = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (!entry.isIntersecting) return;
-        const el = entry.target;
-        gsap.to(el, {
-          opacity: 1, y: 0,
-          duration: 1.25,
-          ease: 'power3.out',
-          delay: Number(el.dataset.delay || 0)
+        gsap.to(entry.target, {
+          opacity: 1, y: 0, duration: 1.1, ease: 'power3.out',
+          delay: Number(entry.target.dataset.delay || 0)
         });
-        io.unobserve(el);
+        io.unobserve(entry.target);
       });
-    }, { root: scrollRoot, threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    }, { root: scrollRoot, threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
 
     reveals.forEach((el, i) => {
-      // skip those already animated in hero if needed
-      el.dataset.delay = (i % 4) * 0.08;
+      el.dataset.delay = (i % 4) * 0.06;
       io.observe(el);
     });
 
-    // gallery image drift
-    realm.querySelectorAll('.gallery__item img, .split__visual img').forEach((img, i) => {
-      gsap.fromTo(img,
-        { scale: 1.12, opacity: 0.6 },
-        {
-          scale: 1, opacity: 1, duration: 2, ease: 'power2.out', delay: 0.3 + i * 0.1,
-          scrollTrigger: undefined
-        }
-      );
-    });
-
     bindFlips(realm);
-
-    // mild parallax
-    const onScroll = () => {
-      const st = scrollRoot.scrollTop;
-      realm.querySelectorAll('.gallery__item, .split__visual').forEach((el, i) => {
-        el.style.transform = `translateY(${st * (0.02 + i * 0.005)}px)`;
-      });
-    };
-    scrollRoot.addEventListener('scroll', onScroll, { passive: true });
   }
 
-  // ===== Modal =====
+  // Modal
   function openModal() {
     modal.classList.add('open');
     modal.setAttribute('aria-hidden', 'false');
@@ -408,10 +396,7 @@
   }
 
   document.querySelectorAll('.open-contact').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.preventDefault();
-      openModal();
-    });
+    btn.addEventListener('click', (e) => { e.preventDefault(); openModal(); });
   });
   modal.querySelector('.modal__backdrop').addEventListener('click', closeModal);
   modal.querySelector('.modal__close').addEventListener('click', closeModal);
@@ -425,23 +410,11 @@
     btn.textContent = sending;
     setTimeout(() => {
       btn.textContent = done;
-      gsap.fromTo(btn, { scale: 0.96 }, { scale: 1, duration: 0.8, ease: 'elastic.out(1, 0.5)' });
       setTimeout(() => {
         e.target.reset();
         btn.textContent = orig;
         closeModal();
-      }, 1800);
-    }, 1200);
-  });
-
-  // Portal glow slow hover
-  portals.forEach(portal => {
-    const glow = portal.querySelector('.portal__glow');
-    portal.addEventListener('mouseenter', () => {
-      gsap.to(glow, { opacity: 1, scale: 1.15, duration: 1.1, ease: 'power2.out' });
-    });
-    portal.addEventListener('mouseleave', () => {
-      gsap.to(glow, { opacity: 0.4, scale: 1, duration: 1.2, ease: 'power2.out' });
-    });
+      }, 1500);
+    }, 900);
   });
 })();
