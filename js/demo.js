@@ -65,34 +65,12 @@
   const mindCanvas = document.getElementById('mind-field') || canvas;
   const mctx = mindCanvas.getContext('2d');
 
-  const GLYPHS = [
-    // تسويق
-    { text: 'حملات', kind: 'market' },
-    { text: 'SEO', kind: 'market' },
-    { text: 'نمو', kind: 'market' },
-    { text: 'تحويل', kind: 'market' },
-    { text: 'محتوى', kind: 'market' },
-    { text: 'علامة', kind: 'market' },
-    { text: 'قمع', kind: 'market' },
-    { text: 'وصول', kind: 'market' },
-    // تصميم وفيديو
-    { text: 'هوية', kind: 'design' },
-    { text: 'موشن', kind: 'design' },
-    { text: 'فيديو', kind: 'design' },
-    { text: 'براند', kind: 'design' },
-    { text: 'إخراج', kind: 'design' },
-    { text: 'بصري', kind: 'design' },
-    { text: 'ستوري', kind: 'design' },
-    // أتمتة وبرمجيات
-    { text: 'أتمتة', kind: 'auto' },
-    { text: 'CRM', kind: 'auto' },
-    { text: 'API', kind: 'auto' },
-    { text: 'نظام', kind: 'auto' },
-    { text: 'تكامل', kind: 'auto' },
-    { text: 'ذكاء', kind: 'auto' },
-    { text: 'مسار', kind: 'auto' },
-    { text: 'لوحة', kind: 'auto' },
-  ];
+  /* كلمات اختصاص — موزّعة حول فصوص الدماغ الثلاثة */
+  const DOMAIN_WORDS = {
+    market: ['استراتيجية', 'حملات', 'نمو', 'محتوى', 'SEO', 'علامة', 'تحليل', 'حضور'],
+    design: ['هوية', 'موشن', 'فيديو', 'إخراج', 'بصري', 'تصميم', 'قصة', 'إبداع'],
+    auto:   ['أتمتة', 'CRM', 'نظام', 'تكامل', 'ذكاء', 'API', 'كفاءة', 'تشغيل'],
+  };
 
   const MindField = (() => {
     let W = 0, H = 0, dpr = 1, raf = 0, t0 = 0;
@@ -121,6 +99,17 @@
       return n * Math.PI * 2;
     }
 
+    /** Brain-aligned hubs: design top · market left · auto right */
+    function domainHubs() {
+      const cx = W * 0.5;
+      const cy = H * 0.52;
+      return {
+        design: { cx: cx,              cy: Math.max(H * 0.16, cy - H * 0.32), r0: Math.min(W, H) * 0.22 },
+        market: { cx: cx - W * 0.28,   cy: cy + H * 0.02,                     r0: Math.min(W, H) * 0.24 },
+        auto:   { cx: cx + W * 0.28,   cy: cy + H * 0.02,                     r0: Math.min(W, H) * 0.24 },
+      };
+    }
+
     function resize() {
       dpr = Math.min(window.devicePixelRatio || 1, 1.6);
       W = window.innerWidth; H = window.innerHeight;
@@ -144,23 +133,49 @@
           kind: Math.random() > 0.55 ? 'market' : (Math.random() > 0.5 ? 'auto' : 'code')
         });
       }
+
+      // Programmatic constellation: each word orbits its lobe arc
       glyphs = [];
-      const nGlyphs = Math.min(16, Math.max(12, Math.floor(W / 110)));
-      for (let i = 0; i < nGlyphs; i++) {
-        const src = GLYPHS[i % GLYPHS.length];
-        glyphs.push({
-          text: src.text,
-          kind: src.kind,
-          x: Math.random() * W,
-          y: Math.random() * H,
-          vx: (Math.random() - 0.5) * 0.14,
-          vy: -0.08 - Math.random() * 0.16,
-          rot: (Math.random() - 0.5) * 0.18,
-          a: 0.38 + Math.random() * 0.28,
-          size: 22 + Math.random() * 18,
-          pulse: Math.random() * Math.PI * 2
+      const hubs = domainHubs();
+      const kinds = ['market', 'design', 'auto'];
+      // Arc windows keep words outside the dense brain core / hook text
+      const arcs = {
+        design: { a0: -Math.PI * 0.92, a1: -Math.PI * 0.08 },   // top crescent
+        market: { a0: Math.PI * 0.55,  a1: Math.PI * 1.35 },    // left sweep
+        auto:   { a0: -Math.PI * 0.35, a1: Math.PI * 0.45 },    // right sweep
+      };
+
+      kinds.forEach((kind) => {
+        const words = DOMAIN_WORDS[kind];
+        const hub = hubs[kind];
+        const arc = arcs[kind];
+        const n = words.length;
+        words.forEach((text, i) => {
+          // golden-ratio stagger so layers don't stack
+          const tArc = (i + 0.5) / n;
+          const angle = arc.a0 + (arc.a1 - arc.a0) * tArc;
+          const ring = 0.72 + ((i * 0.618) % 1) * 0.55; // 0.72..1.27 × r0
+          const radius = hub.r0 * ring;
+          const sizeTier = i % 3;
+          glyphs.push({
+            text,
+            kind,
+            hub: kind,
+            angle,
+            radius,
+            baseRadius: radius,
+            spin: (kind === 'auto' ? 1 : -1) * (0.045 + (i % 4) * 0.012),
+            bob: 0.35 + (i % 5) * 0.08,
+            pulse: i * 0.7,
+            rot: (kind === 'design' ? -0.08 : kind === 'market' ? 0.1 : -0.06) + (i % 2 ? 0.04 : -0.03),
+            a: 0.42 + (sizeTier === 0 ? 0.22 : sizeTier === 1 ? 0.14 : 0.08),
+            size: sizeTier === 0 ? 34 : sizeTier === 1 ? 26 : 20,
+            x: hub.cx + Math.cos(angle) * radius,
+            y: hub.cy + Math.sin(angle) * radius,
+          });
         });
-      }
+      });
+
       rivers = [];
       for (let i = 0; i < 5; i++) {
         rivers.push({
@@ -252,24 +267,40 @@
     }
 
     function drawGlyphs(t) {
-      glyphs.forEach(g => {
-        g.x += g.vx;
-        g.y += g.vy;
-        if (g.y < -40) { g.y = H + 28; g.x = Math.random() * W; }
-        if (g.x < -80) g.x = W + 40;
-        if (g.x > W + 80) g.x = -40;
+      const hubs = domainHubs();
 
-        const pulse = 0.88 + Math.sin(t * 1.4 + g.pulse) * 0.12;
-        const alpha = Math.min(0.72, g.a * pulse);
+      // soft constellation guides (one per domain) — quiet orbits
+      ['market', 'design', 'auto'].forEach((kind) => {
+        const hub = hubs[kind];
+        mctx.beginPath();
+        mctx.arc(hub.cx, hub.cy, hub.r0 * 0.95, 0, Math.PI * 2);
+        mctx.strokeStyle = kindColor(kind, 0.06);
+        mctx.lineWidth = 1;
+        mctx.stroke();
+      });
+
+      glyphs.forEach((g) => {
+        const hub = hubs[g.hub];
+        const ang = g.angle + t * g.spin;
+        const rad = g.baseRadius + Math.sin(t * g.bob + g.pulse) * 10;
+        g.x = hub.cx + Math.cos(ang) * rad;
+        g.y = hub.cy + Math.sin(ang) * rad;
+
+        // keep away from extreme edges
+        g.x = Math.max(48, Math.min(W - 48, g.x));
+        g.y = Math.max(36, Math.min(H - 36, g.y));
+
+        const pulse = 0.9 + Math.sin(t * 1.5 + g.pulse) * 0.1;
+        const alpha = Math.min(0.78, g.a * pulse);
 
         mctx.save();
         mctx.translate(g.x, g.y);
-        mctx.rotate(g.rot);
+        mctx.rotate(g.rot + Math.sin(t * 0.35 + g.pulse) * 0.03);
         mctx.font = `700 ${Math.round(g.size)}px "IBM Plex Sans Arabic", Cairo, Tajawal, sans-serif`;
         mctx.textAlign = 'center';
         mctx.textBaseline = 'middle';
-        mctx.shadowColor = kindColor(g.kind, 0.45);
-        mctx.shadowBlur = 14;
+        mctx.shadowColor = kindColor(g.kind, 0.5);
+        mctx.shadowBlur = 16;
         mctx.fillStyle = kindColor(g.kind, alpha);
         mctx.fillText(g.text, 0, 0);
         mctx.restore();
