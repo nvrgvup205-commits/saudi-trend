@@ -116,6 +116,7 @@ body, body * { cursor: none !important; }
 .mind__intro {
   text-align: center; padding: 6px 20px 4px; position: relative; z-index: 3;
   flex-shrink: 0;
+  direction: rtl;
 }
 .mind__title {
   font-size: clamp(1.25rem, 3.6vw, 2.35rem);
@@ -126,7 +127,7 @@ body, body * { cursor: none !important; }
   text-shadow: 0 0 30px var(--green-glow);
 }
 
-/* Strong hook — joined Arabic words + fluid COLOR (no background-clip) */
+/* Strong hook — single RTL text run (correct Arabic reading order) */
 .mind__hook {
   max-width: 900px; margin: 0 auto;
   font-family: 'IBM Plex Sans Arabic', 'Cairo', sans-serif;
@@ -134,38 +135,18 @@ body, body * { cursor: none !important; }
   font-weight: 700;
   line-height: 2;
   min-height: 2.4em;
-  text-wrap: balance;
-  word-break: keep-all;
-  overflow-wrap: normal;
+  direction: rtl !important;
+  unicode-bidi: isolate;
+  text-align: center;
   letter-spacing: 0 !important;
-  direction: rtl;
-  unicode-bidi: plaintext;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
   font-feature-settings: "liga" 1, "calt" 1;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
-}
-.mind__hook .hw {
-  /* inline-block for fall animation — full word string keeps Arabic joining */
-  display: inline-block;
-  white-space: nowrap;
-  margin-inline: 0.2em;
-  letter-spacing: 0 !important;
-  /* REAL text color — background-clip was breaking Arabic glyph joining */
   color: #7CFFB2;
-  -webkit-text-fill-color: currentColor;
-  background: none;
-  -webkit-background-clip: initial;
-  background-clip: initial;
   animation: geniusHue 4.8s ease-in-out infinite;
-  animation-delay: calc(var(--i, 0) * -0.35s);
-  will-change: transform, color;
   text-shadow: 0 0 18px rgba(0,200,83,.25);
-  filter: none;
-}
-.mind__hook .hw.is-punct {
-  margin-inline: 0.1em;
-  color: #d4af37;
-  animation: none;
 }
 @keyframes geniusHue {
   0%   { color: #7CFFB2; text-shadow: 0 0 16px rgba(0,230,118,.3); }

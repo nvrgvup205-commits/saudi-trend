@@ -315,66 +315,31 @@
   }
   MindField.start();
 
-  function splitHookWords(el) {
-    if (!el) return [];
-    const text = (el.getAttribute('aria-label') || el.textContent || '').trim()
-      .replace(/\u0640/g, ''); // strip tatweel if any
-    el.textContent = ''; // clear without leaving orphan nodes
-    el.setAttribute('dir', 'rtl');
-    const parts = text.split(/(\s+|·|—|-)/).filter(p => p.length);
-    let i = 0;
-    const frag = document.createDocumentFragment();
-    parts.forEach((part) => {
-      if (/^\s+$/.test(part)) {
-        frag.appendChild(document.createTextNode(' '));
-        return;
-      }
-      const span = document.createElement('span');
-      const isPunct = part === '·' || part === '—' || part === '-';
-      span.className = 'hw' + (isPunct ? ' is-punct' : '');
-      span.style.setProperty('--i', String(i++));
-      span.dir = 'rtl';
-      // textContent keeps a single Arabic run → proper joining inside the word
-      span.textContent = part;
-      frag.appendChild(span);
-    });
-    el.appendChild(frag);
-    return [...el.querySelectorAll('.hw')];
-  }
-
   function intro() {
     const hookEl = document.getElementById('mind-hook');
-    const words = splitHookWords(hookEl);
+    // Keep as ONE continuous RTL text node — never split into spans
+    // (span splitting was reversing visual Arabic word order to LTR)
+    if (hookEl) {
+      hookEl.setAttribute('dir', 'rtl');
+      hookEl.textContent = 'نبرمج نموّك قبل أن يعلنه السوق — تسويق يفهم · أتمتة تنفّذ · برمجيات تسبق';
+    }
 
     gsap.from('.mind__logo, .mind__links a, .mind__links button', {
       y: -16, opacity: 0, stagger: 0.07, duration: 0.75
     });
     gsap.from('.mind__title', { y: 22, opacity: 0, duration: 0.9, delay: 0.08 });
 
-    if (words.length) {
-      const drop = Math.min(90, window.innerHeight * 0.1);
-      gsap.set(words, { y: -drop, opacity: 0, force3D: true });
-      gsap.to(words, {
-        y: 0, opacity: 1, force3D: true,
-        stagger: 0.08,
-        duration: 0.72,
-        ease: (t) => t * t,
-        delay: 0.2,
-        onStart: () => { if (window.SaudiSound) SaudiSound.wordDrop(); },
-        onComplete: () => { if (window.SaudiSound) SaudiSound.success(); }
-      });
-      words.forEach((w, i) => {
-        gsap.fromTo(w,
-          { scaleY: 1 },
-          {
-            keyframes: [
-              { scaleY: 0.82, scaleX: 1.08, duration: 0.08 },
-              { scaleY: 1, scaleX: 1, duration: 0.45, ease: 'bounce.out' }
-            ],
-            delay: 0.2 + i * 0.08 + 0.55
-          }
-        );
-      });
+    if (hookEl) {
+      const drop = Math.min(70, window.innerHeight * 0.08);
+      gsap.fromTo(hookEl,
+        { y: -drop, opacity: 0 },
+        {
+          y: 0, opacity: 1, duration: 0.85, delay: 0.22,
+          ease: (t) => t * t,
+          onStart: () => { if (window.SaudiSound) SaudiSound.wordDrop(); },
+          onComplete: () => { if (window.SaudiSound) SaudiSound.success(); }
+        }
+      );
     }
 
     gsap.from('.lobe', {
