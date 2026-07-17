@@ -119,19 +119,22 @@
     { passive: true }
   );
 
-  /* ── Eye: scroll-dock into header + look ── */
+  /* ── Eye: magical dive → resurface in header ── */
   const eye = document.getElementById("site-eye");
   const ball = document.getElementById("eye-ball");
   const eyeSlot = document.getElementById("eye-slot");
   const eyeAnchor = document.getElementById("eye-anchor");
+  const eyeRipple = document.getElementById("eye-ripple");
   const header = document.querySelector(".site-header");
   const hero = document.querySelector(".hero");
   const hasHeroEye = document.body.classList.contains("has-hero-eye") && !!hero;
   const MAX_LOOK = 0.32;
+  const DIVE_END = 0.48;
 
   const clamp = (n, a, b) => Math.min(b, Math.max(a, n));
   const lerp = (a, b, t) => a + (b - a) * t;
-  const easeInOut = (t) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2);
+  const easeIn = (t) => t * t;
+  const easeOut = (t) => 1 - Math.pow(1 - t, 3);
 
   function heroStartRect() {
     if (eyeAnchor) {
@@ -157,39 +160,96 @@
     return { left: r.left, top: r.top, width: r.width, height: r.height };
   }
 
-  function applyEyeBox(box, docked) {
+  function setEyeVisual({ opacity, blur, sink, scale, diving, surfacing, docked }) {
+    if (!eye) return;
+    eye.style.setProperty("--eye-opacity", String(opacity));
+    eye.style.setProperty("--eye-blur", `${blur}px`);
+    eye.style.setProperty("--eye-sink", `${sink}px`);
+    eye.style.setProperty("--eye-scale", String(scale));
+    eye.classList.toggle("is-diving", !!diving);
+    eye.classList.toggle("is-surfacing", !!surfacing);
+    eye.classList.toggle("is-docked", !!docked);
+    header?.classList.toggle("is-eye-docked", !!docked);
+  }
+
+  function placeRipple(x, y, on) {
+    if (!eyeRipple) return;
+    eyeRipple.style.left = `${x}px`;
+    eyeRipple.style.top = `${y}px`;
+    eyeRipple.classList.toggle("is-on", !!on);
+  }
+
+  function applyEyeBox(box) {
     if (!eye) return;
     eye.style.left = `${box.left}px`;
     eye.style.top = `${box.top}px`;
     eye.style.width = `${box.width}px`;
     eye.style.height = `${box.height}px`;
-    eye.classList.toggle("is-docked", docked);
-    header?.classList.toggle("is-eye-docked", docked);
   }
 
   function updateEyeDock() {
     if (!eye || !eyeSlot) return;
 
     if (!hasHeroEye) {
-      applyEyeBox(slotRect(), true);
+      applyEyeBox(slotRect());
+      setEyeVisual({ opacity: 1, blur: 0, sink: 0, scale: 1, diving: false, surfacing: false, docked: true });
+      placeRipple(0, 0, false);
       return;
     }
 
     const heroRect = hero.getBoundingClientRect();
-    const range = Math.max(hero.offsetHeight * 0.55, window.innerHeight * 0.35);
+    const range = Math.max(hero.offsetHeight * 0.62, window.innerHeight * 0.4);
     const scrolled = clamp(-heroRect.top, 0, range);
-    const t = easeInOut(scrolled / range);
+    const t = scrolled / range;
     const from = heroStartRect();
     const to = slotRect();
-    applyEyeBox(
-      {
-        left: lerp(from.left, to.left, t),
-        top: lerp(from.top, to.top, t),
-        width: lerp(from.width, to.width, t),
-        height: lerp(from.height, to.height, t),
-      },
-      t > 0.9
-    );
+
+    if (t <= DIVE_END) {
+      // Sink & dissolve like diving into water
+      const dive = easeIn(t / DIVE_END);
+      const width = lerp(from.width, from.width * 0.35, dive);
+      const height = lerp(from.height, from.height * 0.35, dive);
+      applyEyeBox({
+        left: from.left + (from.width - width) / 2,
+        top: from.top,
+        width,
+        height,
+      });
+      setEyeVisual({
+        opacity: lerp(1, 0, dive),
+        blur: lerp(0, 14, dive),
+        sink: lerp(0, Math.min(110, from.height * 0.85), dive),
+        scale: lerp(1, 0.55, dive),
+        diving: dive > 0.12,
+        surfacing: false,
+        docked: false,
+      });
+      placeRipple(
+        from.left + from.width / 2,
+        from.top + from.height * 0.72 + dive * 36,
+        dive > 0.18 && dive < 0.98
+      );
+      return;
+    }
+
+    // Resurface gradually in the header
+    const rise = easeOut((t - DIVE_END) / (1 - DIVE_END));
+    applyEyeBox({
+      left: to.left,
+      top: to.top,
+      width: to.width,
+      height: to.height,
+    });
+    setEyeVisual({
+      opacity: rise,
+      blur: lerp(10, 0, rise),
+      sink: lerp(18, 0, rise),
+      scale: lerp(0.7, 1, rise),
+      diving: false,
+      surfacing: rise < 0.98,
+      docked: rise > 0.88,
+    });
+    placeRipple(to.left + to.width / 2, to.top + to.height / 2, rise > 0.05 && rise < 0.55);
   }
 
   /* Gentle idle look on mobile when no touch */
