@@ -8,10 +8,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700;800&family=Noto+Kufi+Arabic:wght@500;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/crew.css?v=3">
+  <link rel="stylesheet" href="../css/crew.css?v=4">
   <link rel="stylesheet" href="../css/service.css?v=1">
 </head>
-<body class="has-custom-cursor">
+<body class="has-custom-cursor eye-docked">
   <div class="cursor" id="cursor" aria-hidden="true">
     <div class="cursor__glow"></div>
     <div class="cursor__ring"></div>
@@ -28,6 +28,7 @@
           <span class="logo__tag">Marketing & Advertising Agency</span>
         </span>
       </a>
+      <div class="header-eye-slot" id="eye-slot" aria-hidden="true"></div>
       <div class="header-actions">
         <button class="menu-toggle" id="menu-toggle" aria-label="فتح القائمة">
           <span></span><span></span><span></span>
@@ -37,6 +38,25 @@
       </div>
     </div>
   </header>
+
+      <div class="eye" id="site-eye" aria-hidden="true">
+        <svg class="eye__defs" width="0" height="0" aria-hidden="true">
+          <defs>
+            <clipPath id="eye-almond" clipPathUnits="objectBoundingBox">
+              <path d="M0.02,0.5 C0.18,0.08 0.35,0.02 0.5,0.02 C0.65,0.02 0.82,0.08 0.98,0.5 C0.82,0.92 0.65,0.98 0.5,0.98 C0.35,0.98 0.18,0.92 0.02,0.5 Z"/>
+            </clipPath>
+          </defs>
+        </svg>
+        <div class="eye__sclera">
+          <div class="eye__ball" id="eye-ball">
+            <div class="eye__iris"></div>
+            <div class="eye__pupil"></div>
+            <div class="eye__shine"></div>
+          </div>
+          <div class="eye__lid eye__lid--top"></div>
+          <div class="eye__lid eye__lid--bottom"></div>
+        </div>
+      </div>
 
   <main>
     <section class="service-hero">
@@ -159,6 +179,6 @@
   </div>
 
   <button class="back-top" id="back-top" aria-label="العودة للأعلى">↑</button>
-  <script src="../js/crew.js?v=3"></script>
+  <script src="../js/crew.js?v=4"></script>
 </body>
 </html>

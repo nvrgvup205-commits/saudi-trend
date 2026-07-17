@@ -87,10 +87,71 @@
     trailCanvas?.remove();
   }
 
-  /* ── Eye follows mouse ── */
-  const eye = document.getElementById("hero-eye");
+  /* ── Eye: scroll-dock into header + follow mouse ── */
+  const eye = document.getElementById("site-eye");
   const ball = document.getElementById("eye-ball");
+  const eyeSlot = document.getElementById("eye-slot");
+  const header = document.querySelector(".site-header");
+  const hero = document.querySelector(".hero");
+  const hasHeroEye = document.body.classList.contains("has-hero-eye") && !!hero;
   const MAX_LOOK = 0.32;
+
+  const clamp = (n, a, b) => Math.min(b, Math.max(a, n));
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const easeInOut = (t) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2);
+
+  function heroStartRect() {
+    const heroRect = hero.getBoundingClientRect();
+    const ww = window.innerWidth;
+    const isMobile = ww <= 720;
+    const width = isMobile ? Math.min(ww * 0.72, 280) : Math.min(ww * 0.22, 400);
+    const height = width / 2.15;
+    const left = isMobile ? (ww - width) / 2 : Math.max(ww * 0.06, 20);
+    const top = isMobile
+      ? heroRect.top + heroRect.height * 0.58
+      : heroRect.top + heroRect.height - height - heroRect.height * 0.12;
+    return { left, top, width, height };
+  }
+
+  function slotRect() {
+    const r = eyeSlot.getBoundingClientRect();
+    return { left: r.left, top: r.top, width: r.width, height: r.height };
+  }
+
+  function applyEyeBox(box, docked) {
+    if (!eye) return;
+    eye.style.left = `${box.left}px`;
+    eye.style.top = `${box.top}px`;
+    eye.style.width = `${box.width}px`;
+    eye.style.height = `${box.height}px`;
+    eye.classList.toggle("is-docked", docked);
+    header?.classList.toggle("is-eye-docked", docked);
+  }
+
+  function updateEyeDock() {
+    if (!eye || !eyeSlot) return;
+
+    if (!hasHeroEye) {
+      applyEyeBox(slotRect(), true);
+      return;
+    }
+
+    const heroRect = hero.getBoundingClientRect();
+    const scrollable = Math.max(hero.offsetHeight * 0.75, window.innerHeight * 0.45);
+    const scrolled = clamp(-heroRect.top, 0, scrollable);
+    const t = easeInOut(scrolled / scrollable);
+    const from = heroStartRect();
+    const to = slotRect();
+    applyEyeBox(
+      {
+        left: lerp(from.left, to.left, t),
+        top: lerp(from.top, to.top, t),
+        width: lerp(from.width, to.width, t),
+        height: lerp(from.height, to.height, t),
+      },
+      t > 0.92
+    );
+  }
 
   function tick() {
     if (prefersFine && cursor) {
@@ -121,27 +182,32 @@
       }
     }
 
+    updateEyeDock();
+
     if (eye && ball) {
       const rect = eye.getBoundingClientRect();
-      const inView = rect.bottom > 0 && rect.top < window.innerHeight;
-      if (inView) {
+      if (rect.width > 0) {
         const cx = rect.left + rect.width / 2;
         const cy = rect.top + rect.height / 2;
-        let dx = (mx - cx) / (rect.width / 2);
-        let dy = (my - cy) / (rect.height / 2);
+        let dx = (mx - cx) / (rect.width / 2 || 1);
+        let dy = (my - cy) / (rect.height / 2 || 1);
         const len = Math.hypot(dx, dy) || 1;
         if (len > 1) {
           dx /= len;
           dy /= len;
         }
-        const tx = dx * MAX_LOOK * rect.width;
-        const ty = dy * MAX_LOOK * rect.height;
+        const look = eye.classList.contains("is-docked") ? 0.22 : MAX_LOOK;
+        const tx = dx * look * rect.width;
+        const ty = dy * look * rect.height;
         ball.style.transform = `translate(calc(-50% + ${tx}px), calc(-50% + ${ty}px))`;
       }
     }
 
     requestAnimationFrame(tick);
   }
+
+  updateEyeDock();
+  window.addEventListener("resize", updateEyeDock);
   requestAnimationFrame(tick);
 
   /* ── Flip cards ── */
