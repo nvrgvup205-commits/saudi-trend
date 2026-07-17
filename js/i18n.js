@@ -1,0 +1,722 @@
+(() => {
+  const dict = {
+    ar: {
+      "meta.description":
+        "سعودي ترند — وكالة تسويق وحلول رقمية: هوية، مواقع، إعلانات، أنظمة، أتمتة وموشن جرافيك",
+      "meta.title": "سعودي ترند | Marketing & Advertising Agency",
+      "brand.name": "سعودي ترند",
+      "brand.nameHtml": 'سعودي <span>ترند</span>',
+      "nav.works": "أعمالنا",
+      "nav.start": "ابدأ معنا الآن",
+      "nav.open": "فتح القائمة",
+      "nav.close": "إغلاق",
+      "nav.home": "الرئيسية",
+      "nav.about": "عن الشركة",
+      "nav.services": "خدماتنا",
+      "nav.blog": "مدونة",
+      "nav.contact": "اتصل بنا",
+      "nav.talk": "لنتحدث",
+      "nav.explore": "استكشف الصفحات",
+      "nav.systems": "الأنظمة",
+      "nav.automation": "الأتمتة",
+      "nav.marketing": "تسويق شامل",
+      "nav.allServices": "كل الخدمات",
+      "lang.ar": "عربي",
+      "lang.en": "English",
+      "hero.welcome": "مرحباً بكم في",
+      "hero.excel": "نبدع في",
+      "skill.1": "تصميم الهوية التجارية",
+      "skill.2": "برمجة المواقع والمتاجر الإلكترونية",
+      "skill.3": "تهيئة محركات البحث (SEO)",
+      "skill.4": "تصميم الفيديو والموشن جرافيك",
+      "skill.5": "إدارة الحملات الإعلانية",
+      "featured.label": "خدمات مميزة",
+      "featured.dots": "تنقل الشرائح",
+      "featured.01.title": "التسويق الإلكتروني",
+      "featured.01.desc":
+        "نصنع استراتيجيات تسويق رقمي تزيد وصول علامتك، وتبني حضورًا قويًا على المنصات، وتحوّل الاهتمام إلى عملاء حقيقيين بخطط قابلة للقياس.",
+      "featured.02.title": "التصميم والمونتاج والموشن جرافيك",
+      "featured.02.desc":
+        "نعزز عالمك المرئي بأبعاد جديدة من خلال تصميم الفيديو والموشن جرافيك. تتحرك كل فكرة وتتحدث كل رؤية في تصاميمنا الإبداعية، مما يجعل من محتواك رحلة بصرية لا تُنسى.",
+      "featured.03.title": "تصميم وبرمجة المواقع والمتاجر الإلكترونية",
+      "featured.03.desc":
+        "نبني مواقع ومتاجر سريعة، متوافقة مع الجوال، ومرتبطة ببوابات الدفع — بتجربة استخدام واضحة تعكس هوية علامتك وتحفّز التحويل.",
+      "featured.cta": "طلب الخدمة",
+      "services.title": "خدماتنا",
+      "services.sub": "تسويق • هوية • برمجة • أنظمة • أتمتة • حلول أعمال — اضغط أي كارت للتفاصيل",
+      "services.cta": "اطلب باقة مخصصة ←",
+      "services.more": "تفاصيل أكثر",
+      "svc.ads.title": "إدارة الحملات الإعلانية",
+      "svc.ads.kicker": "تسويق رقمي",
+      "svc.ads.strong": "حملات مدفوعة تصل للعميل الصح",
+      "svc.ads.1": "تخطيط الاستراتيجية والقنوات (ميتا، جوجل، سناب، تيك توك)",
+      "svc.ads.2": "بناء الجمهور والاستهداف وإعادة الاستهداف",
+      "svc.ads.3": "كتابة إعلانات وتصميم كرييتف يوقف التمرير",
+      "svc.ads.4": "إدارة الميزانية وتحسين التكلفة يوميًا",
+      "svc.ads.5": "تقارير أداء واضحة: وصول، نقرات، وتحويلات",
+      "svc.web.title": "برمجة المواقع والمتاجر",
+      "svc.web.kicker": "تطوير ويب",
+      "svc.web.strong": "مواقع ومتاجر سريعة وجاهزة للبيع",
+      "svc.web.1": "مواقع تعريفية وشركات بهوية احترافية",
+      "svc.web.2": "متاجر إلكترونية مع بوابات دفع وشحن",
+      "svc.web.3": "لوحات إدارة وربط مع أنظمة داخلية",
+      "svc.web.4": "تجربة جوال ممتازة وسرعة عالية",
+      "svc.web.5": "صيانة، حماية، ونسخ احتياطي مستمر",
+      "svc.systems.title": "بناء الأنظمة البرمجية",
+      "svc.systems.kicker": "أنظمة مخصصة",
+      "svc.systems.strong": "أنظمة تدير شغلك من مكان واحد",
+      "svc.systems.1": "أنظمة إدارة عمليات، حجوزات، ومخزون",
+      "svc.systems.2": "لوحات تحكم للموظفين والإدارة",
+      "svc.systems.3": "صلاحيات وتقارير ومتابعة لحظية",
+      "svc.systems.4": "ربط مع واتساب، بريد، ودفع إلكتروني",
+      "svc.systems.5": "قابل للتوسع حسب نمو نشاطك",
+      "svc.automation.title": "حلول الأتمتة لكل المجالات",
+      "svc.automation.kicker": "أتمتة",
+      "svc.automation.strong": "أقل شغل يدوي… أكثر نتائج",
+      "svc.automation.1": "أتمتة الردود، التذكير، والمتابعة مع العملاء",
+      "svc.automation.2": "ربط النماذج بالمبيعات والمحاسبة",
+      "svc.automation.3": "سير عمل تلقائي بين التطبيقات (CRM / Sheets / WhatsApp)",
+      "svc.automation.4": "تقارير تُرسل لوحدها للإدارة",
+      "svc.automation.5": "حلول تناسب التجزئة، الخدمات، التعليم، والعيادات",
+      "svc.seo.title": "تهيئة محركات البحث SEO",
+      "svc.seo.kicker": "نمو عضوي",
+      "svc.seo.strong": "ظهور أقوى في جوجل بدون إعلان دائم",
+      "svc.seo.1": "بحث كلمات وتحليل منافسين",
+      "svc.seo.2": "تحسين تقني للسرعة والفهرسة",
+      "svc.seo.3": "محتوى يحجز الترتيب على المدى الطويل",
+      "svc.seo.4": "تحسين صفحات الخدمات والمدونة",
+      "svc.seo.5": "تقارير شهرية لمواقع الكلمات والزيارات",
+      "svc.branding.title": "تصميم الهوية التجارية",
+      "svc.branding.kicker": "براندنج",
+      "svc.branding.strong": "هوية تُميّزك من أول نظرة",
+      "svc.branding.1": "شعار ونظام ألوان وخطوط مترابط",
+      "svc.branding.2": "دليل هوية للاستخدام اليومي",
+      "svc.branding.3": "تطبيقات: سوشيال، مطبوعات، عروض",
+      "svc.branding.4": "توحيد الشكل عبر كل نقاط التواصل",
+      "svc.branding.5": "إعادة بناء هوية أو إطلاق علامة جديدة",
+      "svc.video.title": "الفيديو والموشن جرافيك",
+      "svc.video.kicker": "محتوى مرئي",
+      "svc.video.strong": "محتوى يتحرّك… ويبيع",
+      "svc.video.1": "إعلانات فيديو وموشن للمنصات",
+      "svc.video.2": "ريلز وستوريز بصيغة قصيرة مؤثرة",
+      "svc.video.3": "إنفوجرافيك متحرك وشروحات منتجات",
+      "svc.video.4": "سكريبت + مونتاج + صوت وهوية بصرية",
+      "svc.video.5": "نسخ متعددة لكل منصة وحجم شاشة",
+      "svc.social.title": "إدارة السوشيال ميديا",
+      "svc.social.kicker": "سوشيال",
+      "svc.social.strong": "حضور يومي بهوية واحدة",
+      "svc.social.1": "خطة محتوى شهرية حسب أهدافك",
+      "svc.social.2": "تصميم منشورات وريلز متناسقة",
+      "svc.social.3": "نشر وجدولة ومتابعة التفاعل",
+      "svc.social.4": "الرد على الرسائل والتعليقات باحتراف",
+      "svc.social.5": "تحليل نمو المتابعين والتفاعل",
+      "svc.business.title": "تطوير الأعمال والحلول",
+      "svc.business.kicker": "حلول شركات",
+      "svc.business.strong": "من الفكرة إلى تشغيل يدرّ إيراد",
+      "svc.business.1": "تشخيص الوضع الحالي وفرص النمو",
+      "svc.business.2": "بناء عرض القيمة ومسار العميل",
+      "svc.business.3": "ربط التسويق بالمبيعات والعمليات",
+      "svc.business.4": "حلول للشركات الناشئة والمتوسطة",
+      "svc.business.5": "استشارات تنفيذية قابلة للقياس",
+      "svc.marketing.title": "حلول تسويق شاملة للشركات",
+      "svc.marketing.kicker": "شريك نمو",
+      "svc.marketing.strong": "كل خدمات التسويق تحت سقف واحد",
+      "svc.marketing.1": "استراتيجية تسويق متكاملة ربع سنوية",
+      "svc.marketing.2": "هوية + محتوى + إعلانات + موقع",
+      "svc.marketing.3": "أتمتة المتابعة وتأهيل العملاء",
+      "svc.marketing.4": "قياس ROI وتحسين مستمر",
+      "svc.marketing.5": "فريق واحد ينسّق كل القنوات",
+      "portfolio.title": "أعمالنا",
+      "portfolio.filterAll": "جميع الأعمال",
+      "portfolio.filterBranding": "الهويات التجارية",
+      "portfolio.filterWeb": "المواقع والمتاجر الإلكترونية",
+      "portfolio.filterVideo": "الفيديو والموشن جرافيك",
+      "portfolio.ask": "إذا كان لديك أي أسئلة في ذهنك، فما عليك سوى النقر هنا",
+      "portfolio.cta": "صفحة الخدمة",
+      "work.video.title": "فيديو إعلاني وتحويل مسار",
+      "work.video.kicker": "موشن جرافيك",
+      "work.video.strong": "قصة بصرية تحوّل المشاهد لعميل",
+      "work.video.desc": "سكريبت + مونتاج + موشن بإيقاع يناسب السوشيال والإعلانات المدفوعة.",
+      "work.medical.title": "منصة خدمات طبية",
+      "work.medical.kicker": "مواقع ومتاجر",
+      "work.medical.strong": "واجهة طبية موثوقة وسريعة",
+      "work.medical.desc": "حجز مواعيد، عرض خدمات، وتجربة استخدام واضحة للمرضى والعيادات.",
+      "work.digital.title": "التسويق والتسويق الرقمي",
+      "work.digital.kicker": "حملات إعلانية",
+      "work.digital.strong": "استهداف دقيق ونمو قابل للقياس",
+      "work.digital.desc": "خطط محتوى وإعلانات مدفوعة ترفع الوصول وتحسّن تكلفة التحويل.",
+      "work.social.title": "فلاتر وحملات سوشيال",
+      "work.social.kicker": "سوشيال ميديا",
+      "work.social.strong": "محتوى يوقف التمرير",
+      "work.social.desc": "ريلز وفلاتر وتصاميم يومية بهوية موحّدة عبر المنصات.",
+      "work.auto.title": "متجر خدمات السيارات",
+      "work.auto.kicker": "متاجر إلكترونية",
+      "work.auto.strong": "حجز وصيانة بسهولة",
+      "work.auto.desc": "كتالوج خدمات، مواعيد، ودفع إلكتروني بتجربة جوال سلسة.",
+      "work.travel.title": "شركة سفر وسياحة",
+      "work.travel.kicker": "هوية تجارية",
+      "work.travel.strong": "هوية تُلهم الرحلة",
+      "work.travel.desc": "شعار، ألوان، وتطبيقات بصرية لحملات السفر والحجوزات.",
+      "blog.1.title": "أهمية المتاجر الإلكترونية لنشاطك التجاري",
+      "blog.1.kicker": "مقال",
+      "blog.1.strong": "متجرك يعمل 24/7",
+      "blog.1.desc": "لماذا المتجر الإلكتروني يزيد المبيعات ويوسّع السوق بدون فرع جديد.",
+      "blog.1.cta": "اقرأ عبر خدمة المتاجر",
+      "blog.2.title": "كيف يساعدك التسويق الرقمي في نمو نشاطك؟",
+      "blog.2.kicker": "مقال",
+      "blog.2.strong": "نمو مبني على أرقام",
+      "blog.2.desc": "قنوات، محتوى، وإعلانات تتكلم مع جمهورك في الوقت المناسب.",
+      "blog.2.cta": "خدمة الحملات",
+      "blog.3.title": "كيف يساعدك التصميم في نمو نشاطك؟",
+      "blog.3.kicker": "مقال",
+      "blog.3.strong": "التصميم يبيع قبل الكلام",
+      "blog.3.desc": "هوية واضحة تبني ثقة أسرع وتحسّن تجربة العميل في كل نقطة تواصل.",
+      "blog.3.cta": "خدمة الهوية",
+      "cta.title": "هل تريد التحدث إلينا؟",
+      "cta.btn": "بدأ المحادثة ↗",
+      "footer.blurb":
+        "شريكك في التسويق والهوية الرقمية وبرمجة المواقع والأنظمة والأتمتة وحلول الشركات — برؤية خليجية وتنفيذ احترافي.",
+      "footer.links": "روابط مفيدة",
+      "footer.services": "بعض الخدمات",
+      "footer.contact": "تواصل معنا",
+      "footer.phone": "رقم الهاتف: 0536542044 — 0532444356",
+      "footer.email": "البريد: sauditrendsa1@gmail.com",
+      "footer.address": "عنواننا: حي اليرموك، الرياض، المملكة العربية السعودية",
+      "footer.classic": "النسخة الكلاسيكية",
+      "footer.copy": "حقوق النشر والنسخ © 2026 سعودي ترند. كل الحقوق محفوظة",
+      "footer.top": "العودة للأعلى",
+      "page.eyebrow": "خدماتنا",
+      "page.request": "اطلب الخدمة",
+      "page.all": "كل الخدمات",
+      "page.other": "خدمات أخرى",
+      "page.point1": "المحور الأول",
+      "page.point2": "المحور الثاني",
+      "page.point3": "المحور الثالث",
+    },
+    en: {
+      "meta.description":
+        "Saudi Trend — marketing & digital solutions: branding, websites, ads, systems, automation & motion graphics",
+      "meta.title": "Saudi Trend | Marketing & Advertising Agency",
+      "brand.name": "Saudi Trend",
+      "brand.nameHtml": 'Saudi <span>Trend</span>',
+      "nav.works": "Our Work",
+      "nav.start": "Start with us",
+      "nav.open": "Open menu",
+      "nav.close": "Close",
+      "nav.home": "Home",
+      "nav.about": "About",
+      "nav.services": "Services",
+      "nav.blog": "Blog",
+      "nav.contact": "Contact",
+      "nav.talk": "Let's talk",
+      "nav.explore": "Explore pages",
+      "nav.systems": "Systems",
+      "nav.automation": "Automation",
+      "nav.marketing": "Full marketing",
+      "nav.allServices": "All services",
+      "lang.ar": "عربي",
+      "lang.en": "English",
+      "hero.welcome": "Welcome to",
+      "hero.excel": "We excel in",
+      "skill.1": "Brand identity design",
+      "skill.2": "Websites & e-commerce",
+      "skill.3": "Search engine optimization (SEO)",
+      "skill.4": "Video & motion graphics",
+      "skill.5": "Ad campaign management",
+      "featured.label": "Featured services",
+      "featured.dots": "Slide navigation",
+      "featured.01.title": "Digital marketing",
+      "featured.01.desc":
+        "We build digital strategies that expand your reach, strengthen your presence across platforms, and turn attention into real customers with measurable plans.",
+      "featured.02.title": "Design, editing & motion graphics",
+      "featured.02.desc":
+        "We elevate your visuals through video and motion design. Every idea moves and every vision speaks — turning your content into an unforgettable visual journey.",
+      "featured.03.title": "Website & e-commerce design & development",
+      "featured.03.desc":
+        "We build fast, mobile-first websites and stores with payment integrations and a clear UX that reflects your brand and drives conversion.",
+      "featured.cta": "Request service",
+      "services.title": "Our Services",
+      "services.sub": "Marketing • Branding • Dev • Systems • Automation • Business — tap a card for details",
+      "services.cta": "Request a custom package ←",
+      "services.more": "Learn more",
+      "svc.ads.title": "Ad campaign management",
+      "svc.ads.kicker": "Digital marketing",
+      "svc.ads.strong": "Paid campaigns that reach the right customer",
+      "svc.ads.1": "Strategy & channels (Meta, Google, Snap, TikTok)",
+      "svc.ads.2": "Audience building, targeting & retargeting",
+      "svc.ads.3": "Ad copy & creative that stops the scroll",
+      "svc.ads.4": "Budget management & daily cost optimization",
+      "svc.ads.5": "Clear reports: reach, clicks & conversions",
+      "svc.web.title": "Websites & e-commerce",
+      "svc.web.kicker": "Web development",
+      "svc.web.strong": "Fast sites & stores ready to sell",
+      "svc.web.1": "Corporate & landing sites with pro branding",
+      "svc.web.2": "Online stores with payments & shipping",
+      "svc.web.3": "Admin panels & internal system integrations",
+      "svc.web.4": "Excellent mobile UX and high performance",
+      "svc.web.5": "Maintenance, security & continuous backups",
+      "svc.systems.title": "Custom software systems",
+      "svc.systems.kicker": "Custom systems",
+      "svc.systems.strong": "Systems that run your operations in one place",
+      "svc.systems.1": "Ops, booking & inventory systems",
+      "svc.systems.2": "Dashboards for staff and management",
+      "svc.systems.3": "Permissions, reports & live tracking",
+      "svc.systems.4": "WhatsApp, email & payment integrations",
+      "svc.systems.5": "Scalable as your business grows",
+      "svc.automation.title": "Automation for every industry",
+      "svc.automation.kicker": "Automation",
+      "svc.automation.strong": "Less manual work… more results",
+      "svc.automation.1": "Automate replies, reminders & follow-ups",
+      "svc.automation.2": "Connect forms to sales & accounting",
+      "svc.automation.3": "Workflows across CRM / Sheets / WhatsApp",
+      "svc.automation.4": "Reports that send themselves to leadership",
+      "svc.automation.5": "Fits retail, services, education & clinics",
+      "svc.seo.title": "Search engine optimization (SEO)",
+      "svc.seo.kicker": "Organic growth",
+      "svc.seo.strong": "Stronger Google visibility without constant ads",
+      "svc.seo.1": "Keyword research & competitor analysis",
+      "svc.seo.2": "Technical SEO for speed & indexing",
+      "svc.seo.3": "Content built for long-term rankings",
+      "svc.seo.4": "Service pages & blog optimization",
+      "svc.seo.5": "Monthly ranking & traffic reports",
+      "svc.branding.title": "Brand identity design",
+      "svc.branding.kicker": "Branding",
+      "svc.branding.strong": "An identity that stands out at first glance",
+      "svc.branding.1": "Logo, colors & typography system",
+      "svc.branding.2": "Brand guidelines for daily use",
+      "svc.branding.3": "Applications: social, print, decks",
+      "svc.branding.4": "Consistent look across every touchpoint",
+      "svc.branding.5": "Rebrand or launch a new mark",
+      "svc.video.title": "Video & motion graphics",
+      "svc.video.kicker": "Visual content",
+      "svc.video.strong": "Content that moves… and sells",
+      "svc.video.1": "Video ads & motion for platforms",
+      "svc.video.2": "Short-form reels & stories",
+      "svc.video.3": "Animated explainers & product stories",
+      "svc.video.4": "Script + edit + sound + visual identity",
+      "svc.video.5": "Multiple cuts per platform and size",
+      "svc.social.title": "Social media management",
+      "svc.social.kicker": "Social",
+      "svc.social.strong": "Daily presence with one identity",
+      "svc.social.1": "Monthly content plan tied to goals",
+      "svc.social.2": "Cohesive posts & reels design",
+      "svc.social.3": "Publishing, scheduling & engagement",
+      "svc.social.4": "Professional replies to DMs & comments",
+      "svc.social.5": "Growth & engagement analytics",
+      "svc.business.title": "Business development & solutions",
+      "svc.business.kicker": "Business solutions",
+      "svc.business.strong": "From idea to revenue-ready operations",
+      "svc.business.1": "Diagnose current state & growth opportunities",
+      "svc.business.2": "Value proposition & customer journey",
+      "svc.business.3": "Connect marketing to sales & operations",
+      "svc.business.4": "Solutions for startups & SMEs",
+      "svc.business.5": "Actionable, measurable consulting",
+      "svc.marketing.title": "Full-funnel marketing for companies",
+      "svc.marketing.kicker": "Growth partner",
+      "svc.marketing.strong": "All marketing services under one roof",
+      "svc.marketing.1": "Integrated quarterly marketing strategy",
+      "svc.marketing.2": "Brand + content + ads + website",
+      "svc.marketing.3": "Follow-up automation & lead nurturing",
+      "svc.marketing.4": "ROI tracking & continuous optimization",
+      "svc.marketing.5": "One team orchestrating every channel",
+      "portfolio.title": "Our Work",
+      "portfolio.filterAll": "All work",
+      "portfolio.filterBranding": "Brand identities",
+      "portfolio.filterWeb": "Websites & e-commerce",
+      "portfolio.filterVideo": "Video & motion graphics",
+      "portfolio.ask": "Have a question in mind? Just click here",
+      "portfolio.cta": "Service page",
+      "work.video.title": "Ad video & conversion funnel",
+      "work.video.kicker": "Motion graphics",
+      "work.video.strong": "A visual story that turns viewers into customers",
+      "work.video.desc": "Script + edit + motion paced for social and paid ads.",
+      "work.medical.title": "Medical services platform",
+      "work.medical.kicker": "Web & stores",
+      "work.medical.strong": "A trusted, fast medical interface",
+      "work.medical.desc": "Appointments, services, and clear UX for patients and clinics.",
+      "work.digital.title": "Marketing & digital marketing",
+      "work.digital.kicker": "Ad campaigns",
+      "work.digital.strong": "Precise targeting and measurable growth",
+      "work.digital.desc": "Content plans and paid ads that lift reach and lower CPA.",
+      "work.social.title": "Filters & social campaigns",
+      "work.social.kicker": "Social media",
+      "work.social.strong": "Content that stops the scroll",
+      "work.social.desc": "Reels, filters, and daily creatives with one brand system.",
+      "work.auto.title": "Auto services store",
+      "work.auto.kicker": "E-commerce",
+      "work.auto.strong": "Booking & maintenance made easy",
+      "work.auto.desc": "Service catalog, appointments, and mobile-friendly checkout.",
+      "work.travel.title": "Travel & tourism brand",
+      "work.travel.kicker": "Brand identity",
+      "work.travel.strong": "An identity that inspires the journey",
+      "work.travel.desc": "Logo, colors, and visual applications for travel campaigns.",
+      "blog.1.title": "Why e-commerce matters for your business",
+      "blog.1.kicker": "Article",
+      "blog.1.strong": "Your store works 24/7",
+      "blog.1.desc": "How an online store grows sales and expands markets without a new branch.",
+      "blog.1.cta": "Read via web services",
+      "blog.2.title": "How digital marketing grows your business",
+      "blog.2.kicker": "Article",
+      "blog.2.strong": "Growth built on numbers",
+      "blog.2.desc": "Channels, content, and ads that speak to your audience at the right time.",
+      "blog.2.cta": "Campaigns service",
+      "blog.3.title": "How design grows your business",
+      "blog.3.kicker": "Article",
+      "blog.3.strong": "Design sells before the pitch",
+      "blog.3.desc": "A clear identity builds trust faster and improves every customer touchpoint.",
+      "blog.3.cta": "Branding service",
+      "cta.title": "Want to talk to us?",
+      "cta.btn": "Start chat ↗",
+      "footer.blurb":
+        "Your partner in marketing, digital identity, websites, systems, automation, and business solutions — Gulf vision, professional execution.",
+      "footer.links": "Useful links",
+      "footer.services": "Some services",
+      "footer.contact": "Contact us",
+      "footer.phone": "Phone: 0536542044 — 0532444356",
+      "footer.email": "Email: sauditrendsa1@gmail.com",
+      "footer.address": "Address: Al-Yarmouk, Riyadh, Saudi Arabia",
+      "footer.classic": "Classic version",
+      "footer.copy": "Copyright © 2026 Saudi Trend. All rights reserved",
+      "footer.top": "Back to top",
+      "page.eyebrow": "Our services",
+      "page.request": "Request service",
+      "page.all": "All services",
+      "page.other": "Other services",
+      "page.point1": "Focus area one",
+      "page.point2": "Focus area two",
+      "page.point3": "Focus area three",
+    },
+  };
+
+  // Per-service page copy
+  const pages = {
+    ads: {
+      ar: {
+        title: "إدارة الحملات الإعلانية",
+        desc: "نخطط ونشغّل حملات إعلانية مستهدفة على المنصات الرقمية لرفع الوصول وتحسين تكلفة التحويل — بمحتوى واضح وقياس مستمر.",
+        p1t: "استراتيجية القنوات",
+        p1d: "اختيار المنصة والجمهور والرسالة بما يناسب هدف الحملة.",
+        p2t: "إدارة الميزانية",
+        p2d: "توزيع ذكي للمبلغ مع تحسين يومي حسب الأداء.",
+        p3t: "تقارير واضحة",
+        p3d: "مؤشرات وصول، نقرات، وتكلفة تحويل بلغة بسيطة.",
+      },
+      en: {
+        title: "Ad campaign management",
+        desc: "We plan and run targeted paid campaigns to grow reach and improve conversion cost — with clear creative and continuous measurement.",
+        p1t: "Channel strategy",
+        p1d: "Pick the right platform, audience, and message for the goal.",
+        p2t: "Budget management",
+        p2d: "Smart allocation with daily optimization by performance.",
+        p3t: "Clear reporting",
+        p3d: "Reach, clicks, and CPA explained in plain language.",
+      },
+    },
+    web: {
+      ar: {
+        title: "برمجة المواقع والمتاجر الإلكترونية",
+        desc: "نبني مواقع ومتاجر سريعة ومتوافقة مع الجوال، بهوية علامتك وربط ببوابات الدفع وتجربة استخدام تحفّز التحويل.",
+        p1t: "تصميم وتجربة مستخدم",
+        p1d: "واجهات واضحة على الموبايل وسطح المكتب.",
+        p2t: "متاجر ودفع إلكتروني",
+        p2d: "كتالوج، سلة، وبوابات دفع جاهزة للعمل.",
+        p3t: "أداء وأمان",
+        p3d: "سرعة تحميل، حماية أساسية، وهيكل قابل للتوسع.",
+      },
+      en: {
+        title: "Websites & e-commerce development",
+        desc: "We build fast, mobile-first websites and stores with your brand, payment gateways, and a UX that drives conversion.",
+        p1t: "Design & UX",
+        p1d: "Clear interfaces on mobile and desktop.",
+        p2t: "Stores & payments",
+        p2d: "Catalog, cart, and payment gateways ready to run.",
+        p3t: "Performance & security",
+        p3d: "Speed, baseline protection, and a scalable structure.",
+      },
+    },
+    systems: {
+      ar: {
+        title: "بناء الأنظمة البرمجية",
+        desc: "نصمّم ونطوّر أنظمة مخصصة لإدارة عملياتك: حجوزات، مخزون، موظفين، عملاء، وتقارير — بلوحة تحكم واضحة وقابلة للتوسع.",
+        p1t: "تحليل الاحتياج",
+        p1d: "نفهم سير عملك ونحوّله إلى نظام رقمي منظم.",
+        p2t: "تطوير مخصص",
+        p2d: "شاشات، صلاحيات، وتقارير تناسب فريقك.",
+        p3t: "تشغيل ودعم",
+        p3d: "تدريب، ربط تكاملات، ومتابعة بعد الإطلاق.",
+      },
+      en: {
+        title: "Custom software systems",
+        desc: "We design and build custom systems for operations: bookings, inventory, staff, customers, and reports — with a clear, scalable dashboard.",
+        p1t: "Needs analysis",
+        p1d: "We map your workflow into a structured digital system.",
+        p2t: "Custom development",
+        p2d: "Screens, permissions, and reports that fit your team.",
+        p3t: "Launch & support",
+        p3d: "Training, integrations, and post-launch follow-up.",
+      },
+    },
+    automation: {
+      ar: {
+        title: "حلول الأتمتة لجميع المجالات",
+        desc: "نؤتمت المهام المتكررة عبر ربط أنظمتك وتطبيقاتك — من المتابعة مع العملاء حتى التقارير — لتوفير وقت وتكلفة في أي مجال.",
+        p1t: "سير عمل تلقائي",
+        p1d: "من النموذج إلى البيع بدون تدخل يدوي.",
+        p2t: "تكامل القنوات",
+        p2d: "واتساب، بريد، CRM، وجداول بيانات في مسار واحد.",
+        p3t: "لكل القطاعات",
+        p3d: "تجزئة، خدمات، تعليم، عيادات، وعقارات.",
+      },
+      en: {
+        title: "Automation solutions for every industry",
+        desc: "We automate repetitive work by connecting your tools — from customer follow-up to reporting — saving time and cost in any field.",
+        p1t: "Automated workflows",
+        p1d: "From form to sale with minimal manual steps.",
+        p2t: "Channel integrations",
+        p2d: "WhatsApp, email, CRM, and sheets in one flow.",
+        p3t: "Cross-industry",
+        p3d: "Retail, services, education, clinics, and real estate.",
+      },
+    },
+    seo: {
+      ar: {
+        title: "تهيئة محركات البحث (SEO)",
+        desc: "نرفع ظهور علامتك في نتائج البحث عبر تحسين تقني ومحتوى وربط داخلي يبني زيارات عضوية مستدامة.",
+        p1t: "تحليل الكلمات",
+        p1d: "اختيار عبارات يبحث عنها عملاؤك فعلًا.",
+        p2t: "تحسين الصفحات",
+        p2d: "عناوين، وصف، وسرعة وهيكل محتوى.",
+        p3t: "نمو عضوي",
+        p3d: "خطة محتوى وربط داخلي تدعم الترتيب طويل الأمد.",
+      },
+      en: {
+        title: "Search engine optimization (SEO)",
+        desc: "We grow your organic visibility with technical SEO, content, and internal linking that builds sustainable traffic.",
+        p1t: "Keyword analysis",
+        p1d: "Choose phrases your customers actually search.",
+        p2t: "On-page optimization",
+        p2d: "Titles, descriptions, speed, and content structure.",
+        p3t: "Organic growth",
+        p3d: "Content and linking plans for long-term rankings.",
+      },
+    },
+    branding: {
+      ar: {
+        title: "تصميم الهوية التجارية",
+        desc: "نبني هوية بصرية متماسكة من الشعار إلى دليل الاستخدام، لتعكس قيم علامتك وتتميّز في السوق.",
+        p1t: "شعار ونظام بصري",
+        p1d: "علامة واضحة مع ألوان وخطوط مترابطة.",
+        p2t: "تطبيقات الهوية",
+        p2d: "بطاقات، سوشيال، وعروض تقديمية.",
+        p3t: "دليل استخدام",
+        p3d: "قواعد بسيطة تحافظ على تناسق العلامة.",
+      },
+      en: {
+        title: "Brand identity design",
+        desc: "We build a cohesive visual identity from logo to guidelines — reflecting your values and standing out in the market.",
+        p1t: "Logo & visual system",
+        p1d: "A clear mark with connected colors and type.",
+        p2t: "Brand applications",
+        p2d: "Cards, social kits, and presentation decks.",
+        p3t: "Usage guide",
+        p3d: "Simple rules that keep the brand consistent.",
+      },
+    },
+    video: {
+      ar: {
+        title: "تصميم الفيديو والموشن جرافيك",
+        desc: "نحوّل فكرتك إلى قصة بصرية متحركة — سكريبت، مونتاج، وموشن يناسب الإعلانات والسوشيال.",
+        p1t: "سكريبت وإيقاع",
+        p1d: "رسالة قصيرة تصل في الثواني الأولى.",
+        p2t: "موشن وهوية",
+        p2d: "حركة متناسقة مع ألوان وخطوط علامتك.",
+        p3t: "صيغ متعددة",
+        p3d: "مخرجات للريلز، اليوتيوب، والإعلانات المدفوعة.",
+      },
+      en: {
+        title: "Video & motion graphics",
+        desc: "We turn your idea into a moving visual story — script, edit, and motion made for ads and social.",
+        p1t: "Script & pacing",
+        p1d: "A short message that lands in the first seconds.",
+        p2t: "Motion & brand",
+        p2d: "Motion aligned with your colors and typography.",
+        p3t: "Multi-format",
+        p3d: "Outputs for reels, YouTube, and paid ads.",
+      },
+    },
+    social: {
+      ar: {
+        title: "إدارة السوشيال ميديا",
+        desc: "ندير حساباتك بمنهجية: خطة محتوى، تصميم، نشر، تفاعل، وتحليل — بهوية ثابتة ونتائج قابلة للقياس.",
+        p1t: "محتوى يومي",
+        p1d: "أفكار وتصاميم تناسب جمهورك.",
+        p2t: "إدارة المجتمع",
+        p2d: "ردود احترافية وبناء تفاعل حقيقي.",
+        p3t: "تقارير نمو",
+        p3d: "متابعة المتابعين، الوصول، وأفضل المنشورات.",
+      },
+      en: {
+        title: "Social media management",
+        desc: "We manage your accounts end-to-end: content plan, design, publishing, engagement, and analytics — with one identity and measurable results.",
+        p1t: "Daily content",
+        p1d: "Ideas and creatives that fit your audience.",
+        p2t: "Community management",
+        p2d: "Professional replies and real engagement.",
+        p3t: "Growth reports",
+        p3d: "Track followers, reach, and top posts.",
+      },
+    },
+    business: {
+      ar: {
+        title: "تطوير الأعمال",
+        desc: "نساعد نشاطك على النمو عبر وضوح العرض، تحسين مسار العميل، وربط التسويق بالنتائج التجارية.",
+        p1t: "تشخيص الفرص",
+        p1d: "فهم السوق والعرض ونقاط القوة.",
+        p2t: "مسار العميل",
+        p2d: "تحسين خطوات التواصل حتى إتمام البيع.",
+        p3t: "خطط تنفيذ",
+        p3d: "أولويات واضحة قابلة للقياس والمتابعة.",
+      },
+      en: {
+        title: "Business development",
+        desc: "We help your business grow through clearer offers, better customer journeys, and marketing tied to commercial results.",
+        p1t: "Opportunity diagnosis",
+        p1d: "Understand market, offer, and strengths.",
+        p2t: "Customer journey",
+        p2d: "Improve every step through to the sale.",
+        p3t: "Execution plans",
+        p3d: "Clear priorities you can measure and track.",
+      },
+    },
+    marketing: {
+      ar: {
+        title: "حلول تسويق شاملة للشركات",
+        desc: "شريك نمو واحد يجمع الاستراتيجية والهوية والمحتوى والإعلانات والموقع والأتمتة — حتى تتحرك كل القنوات بنفس الهدف.",
+        p1t: "استراتيجية ربع سنوية",
+        p1d: "أولويات واضحة مرتبطة بالمبيعات.",
+        p2t: "تنفيذ متكامل",
+        p2d: "هوية، محتوى، إعلانات، وموقع تحت إدارة واحدة.",
+        p3t: "قياس وتحسين",
+        p3d: "لوحة مؤشرات وROI ومتابعة مستمرة.",
+      },
+      en: {
+        title: "Full-funnel marketing for companies",
+        desc: "One growth partner combining strategy, brand, content, ads, website, and automation — so every channel moves toward the same goal.",
+        p1t: "Quarterly strategy",
+        p1d: "Clear priorities tied to revenue.",
+        p2t: "Integrated execution",
+        p2d: "Brand, content, ads, and site under one team.",
+        p3t: "Measure & improve",
+        p3d: "KPI dashboards, ROI, and continuous optimization.",
+      },
+    },
+  };
+
+  const STORAGE_KEY = "st-lang";
+
+  function getLang() {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved === "ar" || saved === "en") return saved;
+    return "ar";
+  }
+
+  function t(lang, key) {
+    return (dict[lang] && dict[lang][key]) || dict.ar[key] || key;
+  }
+
+  function applyPageCopy(lang) {
+    const page = document.body.dataset.page;
+    if (!page || !pages[page]) return;
+    const copy = pages[page][lang] || pages[page].ar;
+    const map = {
+      "page.title": copy.title,
+      "page.desc": copy.desc,
+      "page.p1t": copy.p1t,
+      "page.p1d": copy.p1d,
+      "page.p2t": copy.p2t,
+      "page.p2d": copy.p2d,
+      "page.p3t": copy.p3t,
+      "page.p3d": copy.p3d,
+    };
+    Object.entries(map).forEach(([key, value]) => {
+      document.querySelectorAll(`[data-i18n="${key}"]`).forEach((el) => {
+        el.textContent = value;
+      });
+    });
+    document.title = `${copy.title} | Saudi Trend`;
+  }
+
+  function apply(lang) {
+    const html = document.documentElement;
+    html.lang = lang;
+    html.dir = lang === "ar" ? "rtl" : "ltr";
+    document.body.classList.toggle("is-en", lang === "en");
+    document.body.classList.toggle("is-ar", lang === "ar");
+
+    document.querySelectorAll("[data-i18n]").forEach((el) => {
+      const key = el.getAttribute("data-i18n");
+      if (!key || key.startsWith("page.")) return;
+      const val = t(lang, key);
+      if (el.hasAttribute("data-i18n-html")) el.innerHTML = val;
+      else el.textContent = val;
+    });
+
+    document.querySelectorAll("[data-i18n-aria]").forEach((el) => {
+      const key = el.getAttribute("data-i18n-aria");
+      el.setAttribute("aria-label", t(lang, key));
+    });
+
+    document.querySelectorAll("[data-i18n-alt]").forEach((el) => {
+      const key = el.getAttribute("data-i18n-alt");
+      el.setAttribute("alt", t(lang, key));
+    });
+
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) metaDesc.setAttribute("content", t(lang, "meta.description"));
+
+    if (!document.body.dataset.page) {
+      document.title = t(lang, "meta.title");
+    }
+
+    applyPageCopy(lang);
+
+    document.querySelectorAll(".lang-switch__btn").forEach((btn) => {
+      btn.classList.toggle("is-active", btn.dataset.lang === lang);
+      btn.setAttribute("aria-pressed", btn.dataset.lang === lang ? "true" : "false");
+    });
+
+    localStorage.setItem(STORAGE_KEY, lang);
+    window.dispatchEvent(new CustomEvent("st:langchange", { detail: { lang } }));
+  }
+
+  function mountSwitcher() {
+    const actions = document.querySelector(".header-actions");
+    if (!actions || document.querySelector(".lang-switch")) return;
+    const wrap = document.createElement("div");
+    wrap.className = "lang-switch";
+    wrap.setAttribute("role", "group");
+    wrap.setAttribute("aria-label", "Language");
+    wrap.innerHTML = `
+      <button type="button" class="lang-switch__btn" data-lang="ar" data-i18n="lang.ar">عربي</button>
+      <button type="button" class="lang-switch__btn" data-lang="en" data-i18n="lang.en">English</button>
+    `;
+    actions.insertBefore(wrap, actions.firstChild);
+    wrap.querySelectorAll(".lang-switch__btn").forEach((btn) => {
+      btn.addEventListener("click", () => apply(btn.dataset.lang));
+    });
+  }
+
+  window.ST_I18N = {
+    dict,
+    pages,
+    t,
+    getLang,
+    apply,
+    skills(lang) {
+      return [1, 2, 3, 4, 5].map((n) => t(lang, `skill.${n}`));
+    },
+  };
+
+  mountSwitcher();
+  apply(getLang());
+})();

@@ -2,25 +2,36 @@
   const prefersFine = window.matchMedia("(pointer: fine)").matches;
   const isMobileMQ = window.matchMedia("(max-width: 720px)");
 
-  /* ── Skills rotator ── */
-  const skills = [
-    "تصميم الهوية التجارية",
-    "برمجة المواقع والمتاجر الإلكترونية",
-    "تهيئة محركات البحث (SEO)",
-    "تصميم الفيديو والموشن جرافيك",
-    "إدارة الحملات الإعلانية",
-  ];
+  /* ── Skills rotator (bilingual) ── */
   const skillEl = document.getElementById("hero-skill");
   let skillIndex = 0;
+  const skillsFor = () =>
+    window.ST_I18N
+      ? window.ST_I18N.skills(window.ST_I18N.getLang())
+      : [
+          "تصميم الهوية التجارية",
+          "برمجة المواقع والمتاجر الإلكترونية",
+          "تهيئة محركات البحث (SEO)",
+          "تصميم الفيديو والموشن جرافيك",
+          "إدارة الحملات الإعلانية",
+        ];
   if (skillEl) {
+    const paintSkill = () => {
+      const skills = skillsFor();
+      skillEl.textContent = skills[skillIndex % skills.length];
+    };
     setInterval(() => {
       skillEl.classList.add("is-fading");
       setTimeout(() => {
-        skillIndex = (skillIndex + 1) % skills.length;
-        skillEl.textContent = skills[skillIndex];
+        skillIndex = (skillIndex + 1) % skillsFor().length;
+        paintSkill();
         skillEl.classList.remove("is-fading");
       }, 220);
     }, 2600);
+    window.addEventListener("st:langchange", () => {
+      skillIndex = 0;
+      paintSkill();
+    });
   }
 
   /* ── Magic cursor + particle trail (desktop) ── */

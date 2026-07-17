@@ -266,6 +266,85 @@ button {
   gap: 0.65rem;
 }
 
+.lang-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+  padding: 0.2rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.lang-switch__btn {
+  min-height: 32px;
+  padding: 0.25rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--muted);
+  transition: 0.2s ease;
+}
+
+.lang-switch__btn.is-active {
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.95), rgba(77, 182, 160, 0.95));
+  color: #061510;
+}
+
+.lang-switch__btn:hover:not(.is-active) {
+  color: var(--white);
+}
+
+/* English / LTR adjustments */
+html[dir="ltr"] .hero__content {
+  transform: rotate(3deg);
+}
+
+html[dir="ltr"] .hero__skill {
+  right: auto;
+  left: max(5%, 1.2rem);
+  text-align: left;
+}
+
+html[dir="ltr"] .sticker {
+  transform: rotate(4deg);
+}
+
+html[dir="ltr"] .sticker::after {
+  right: auto;
+  left: 28%;
+  transform: rotate(-18deg);
+}
+
+html[dir="ltr"] .service-flip__list {
+  padding: 0 0 0 1.1rem;
+}
+
+html[dir="ltr"] .blog-card__caption {
+  text-align: left;
+}
+
+html[dir="ltr"] .nav-overlay__decor {
+  transform: none;
+  writing-mode: vertical-lr;
+}
+
+@media (max-width: 720px) {
+  html[dir="ltr"] .hero__content {
+    transform: none;
+  }
+
+  html[dir="ltr"] .hero__skill {
+    left: auto;
+    text-align: center;
+  }
+
+  .lang-switch__btn {
+    padding: 0.22rem 0.55rem;
+    font-size: 0.72rem;
+  }
+}
+
 .menu-toggle {
   width: 44px;
   height: 44px;
