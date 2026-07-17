@@ -8,13 +8,15 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700;800&family=Noto+Kufi+Arabic:wght@500;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/crew.css?v=2">
+  <link rel="stylesheet" href="css/crew.css?v=3">
 </head>
 <body class="has-custom-cursor">
   <div class="cursor" id="cursor" aria-hidden="true">
+    <div class="cursor__glow"></div>
     <div class="cursor__ring"></div>
     <div class="cursor__dot"></div>
   </div>
+  <canvas class="cursor-trail" id="cursor-trail" aria-hidden="true"></canvas>
 
   <header class="site-header" id="top">
     <div class="container site-header__inner">
@@ -194,41 +196,106 @@
         </div>
 
         <div class="portfolio__grid">
-          <article class="work-card" data-category="branding">
-            <div class="work-card__media ph media-a" aria-hidden="true">✦</div>
-            <div class="work-card__shade"></div>
-            <div class="work-card__meta"><span>↗</span><span>التسويق</span></div>
-            <h3 class="work-card__title">حملة هوية وتسويق رقمي</h3>
+          <article class="flip-card work-card" tabindex="0" role="button" data-category="video" aria-label="فيديو إعلاني وتحويل مسار">
+            <span class="flip-card__inner">
+              <span class="flip-card__face flip-card__front">
+                <img class="flip-card__img" src="https://images.unsplash.com/photo-1611162616305-c69b3fa7fbe0?auto=format&fit=crop&w=900&q=80" alt="" loading="lazy">
+                <span class="flip-card__shade"></span>
+                <span class="flip-card__title">فيديو إعلاني وتحويل مسار</span>
+                <span class="flip-card__hint">↗</span>
+              </span>
+              <span class="flip-card__face flip-card__back">
+                <span class="flip-card__back-kicker">موشن جرافيك</span>
+                <strong>قصة بصرية تحوّل المشاهد لعميل</strong>
+                <p>سكريبت + مونتاج + موشن بإيقاع يناسب السوشيال والإعلانات المدفوعة.</p>
+                <a class="flip-card__cta" href="services/video.html">صفحة الخدمة</a>
+              </span>
+            </span>
           </article>
-          <article class="work-card" data-category="web">
-            <div class="work-card__media ph media-b" aria-hidden="true">◈</div>
-            <div class="work-card__shade"></div>
-            <div class="work-card__meta"><span>↗</span><span>المواقع</span></div>
-            <h3 class="work-card__title">منصة خدمات طبية</h3>
+
+          <article class="flip-card work-card" tabindex="0" role="button" data-category="web" aria-label="منصة خدمات طبية">
+            <span class="flip-card__inner">
+              <span class="flip-card__face flip-card__front">
+                <img class="flip-card__img" src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=900&q=80" alt="" loading="lazy">
+                <span class="flip-card__shade"></span>
+                <span class="flip-card__title">منصة خدمات طبية</span>
+                <span class="flip-card__hint">↗</span>
+              </span>
+              <span class="flip-card__face flip-card__back">
+                <span class="flip-card__back-kicker">مواقع ومتاجر</span>
+                <strong>واجهة طبية موثوقة وسريعة</strong>
+                <p>حجز مواعيد، عرض خدمات، وتجربة استخدام واضحة للمرضى والعيادات.</p>
+                <a class="flip-card__cta" href="services/web.html">صفحة الخدمة</a>
+              </span>
+            </span>
           </article>
-          <article class="work-card" data-category="video">
-            <div class="work-card__media ph media-c" aria-hidden="true">◎</div>
-            <div class="work-card__shade"></div>
-            <div class="work-card__meta"><span>↗</span><span>موشن</span></div>
-            <h3 class="work-card__title">فيديو إعلاني وتحويل مسار</h3>
+
+          <article class="flip-card work-card" tabindex="0" role="button" data-category="branding" aria-label="التسويق والتسويق الرقمي">
+            <span class="flip-card__inner">
+              <span class="flip-card__face flip-card__front">
+                <img class="flip-card__img" src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=900&q=80" alt="" loading="lazy">
+                <span class="flip-card__shade"></span>
+                <span class="flip-card__title">التسويق والتسويق الرقمي</span>
+                <span class="flip-card__hint">↗</span>
+              </span>
+              <span class="flip-card__face flip-card__back">
+                <span class="flip-card__back-kicker">حملات إعلانية</span>
+                <strong>استهداف دقيق ونمو قابل للقياس</strong>
+                <p>خطط محتوى وإعلانات مدفوعة ترفع الوصول وتحسّن تكلفة التحويل.</p>
+                <a class="flip-card__cta" href="services/ads.html">صفحة الخدمة</a>
+              </span>
+            </span>
           </article>
-          <article class="work-card" data-category="branding">
-            <div class="work-card__media ph media-d" aria-hidden="true">✧</div>
-            <div class="work-card__shade"></div>
-            <div class="work-card__meta"><span>↗</span><span>هوية</span></div>
-            <h3 class="work-card__title">هوية سفر وسياحة</h3>
+
+          <article class="flip-card work-card" tabindex="0" role="button" data-category="video" aria-label="فلاتر وحملات سوشيال">
+            <span class="flip-card__inner">
+              <span class="flip-card__face flip-card__front">
+                <img class="flip-card__img" src="https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=900&q=80" alt="" loading="lazy">
+                <span class="flip-card__shade"></span>
+                <span class="flip-card__title">فلاتر وحملات سوشيال</span>
+                <span class="flip-card__hint">↗</span>
+              </span>
+              <span class="flip-card__face flip-card__back">
+                <span class="flip-card__back-kicker">سوشيال ميديا</span>
+                <strong>محتوى يوقف التمرير</strong>
+                <p>ريلز وفلاتر وتصاميم يومية بهوية موحّدة عبر المنصات.</p>
+                <a class="flip-card__cta" href="services/video.html">صفحة الخدمة</a>
+              </span>
+            </span>
           </article>
-          <article class="work-card" data-category="web">
-            <div class="work-card__media ph media-e" aria-hidden="true">⬡</div>
-            <div class="work-card__shade"></div>
-            <div class="work-card__meta"><span>↗</span><span>متجر</span></div>
-            <h3 class="work-card__title">متجر خدمات السيارات</h3>
+
+          <article class="flip-card work-card" tabindex="0" role="button" data-category="web" aria-label="متجر خدمات السيارات">
+            <span class="flip-card__inner">
+              <span class="flip-card__face flip-card__front">
+                <img class="flip-card__img" src="https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?auto=format&fit=crop&w=900&q=80" alt="" loading="lazy">
+                <span class="flip-card__shade"></span>
+                <span class="flip-card__title">متجر خدمات السيارات</span>
+                <span class="flip-card__hint">↗</span>
+              </span>
+              <span class="flip-card__face flip-card__back">
+                <span class="flip-card__back-kicker">متاجر إلكترونية</span>
+                <strong>حجز وصيانة بسهولة</strong>
+                <p>كتالوج خدمات، مواعيد، ودفع إلكتروني بتجربة جوال سلسة.</p>
+                <a class="flip-card__cta" href="services/web.html">صفحة الخدمة</a>
+              </span>
+            </span>
           </article>
-          <article class="work-card" data-category="video">
-            <div class="work-card__media ph media-f" aria-hidden="true">▹</div>
-            <div class="work-card__shade"></div>
-            <div class="work-card__meta"><span>↗</span><span>موشن</span></div>
-            <h3 class="work-card__title">ريلز وحملات سوشيال</h3>
+
+          <article class="flip-card work-card" tabindex="0" role="button" data-category="branding" aria-label="شركة سفر وسياحة">
+            <span class="flip-card__inner">
+              <span class="flip-card__face flip-card__front">
+                <img class="flip-card__img" src="https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=900&q=80" alt="" loading="lazy">
+                <span class="flip-card__shade"></span>
+                <span class="flip-card__title">شركة سفر وسياحة</span>
+                <span class="flip-card__hint">↗</span>
+              </span>
+              <span class="flip-card__face flip-card__back">
+                <span class="flip-card__back-kicker">هوية تجارية</span>
+                <strong>هوية تُلهم الرحلة</strong>
+                <p>شعار، ألوان، وتطبيقات بصرية لحملات السفر والحجوزات.</p>
+                <a class="flip-card__cta" href="services/branding.html">صفحة الخدمة</a>
+              </span>
+            </span>
           </article>
         </div>
 
@@ -242,23 +309,47 @@
     <section class="blog" id="blog">
       <div class="container">
         <div class="blog__grid">
-          <article class="blog-card">
-            <div class="blog-card__media" aria-hidden="true"><svg viewBox="0 0 48 48" width="42" height="42" fill="none"><path d="M10 14h4l4 20h18l4-14H18" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/><circle cx="22" cy="40" r="2.5" fill="currentColor"/><circle cx="34" cy="40" r="2.5" fill="currentColor"/></svg></div>
-            <div class="blog-card__body">
-              <h3>أهمية المتاجر الإلكترونية لنشاطك التجاري</h3>
-            </div>
+          <article class="flip-card blog-card" tabindex="0" role="button" aria-label="أهمية المتاجر الإلكترونية لنشاطك التجاري">
+            <span class="flip-card__inner">
+              <span class="flip-card__face flip-card__front blog-card__front">
+                <img class="flip-card__img" src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=900&q=80" alt="" loading="lazy">
+                <span class="blog-card__caption">أهمية المتاجر الإلكترونية لنشاطك التجاري</span>
+              </span>
+              <span class="flip-card__face flip-card__back">
+                <span class="flip-card__back-kicker">مقال</span>
+                <strong>متجرك يعمل 24/7</strong>
+                <p>لماذا المتجر الإلكتروني يزيد المبيعات ويوسّع السوق بدون فرع جديد.</p>
+                <a class="flip-card__cta" href="services/web.html">اقرأ عبر خدمة المتاجر</a>
+              </span>
+            </span>
           </article>
-          <article class="blog-card">
-            <div class="blog-card__media" aria-hidden="true"><svg viewBox="0 0 48 48" width="42" height="42" fill="none"><path d="M8 36V12M8 36h32" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><path d="M14 28l8-8 6 5 10-12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-            <div class="blog-card__body">
-              <h3>كيف يساعدك التسويق الرقمي في نمو نشاطك؟</h3>
-            </div>
+          <article class="flip-card blog-card" tabindex="0" role="button" aria-label="كيف يساعدك التسويق الرقمي في نمو نشاطك؟">
+            <span class="flip-card__inner">
+              <span class="flip-card__face flip-card__front blog-card__front">
+                <img class="flip-card__img" src="https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?auto=format&fit=crop&w=900&q=80" alt="" loading="lazy">
+                <span class="blog-card__caption">كيف يساعدك التسويق الرقمي في نمو نشاطك؟</span>
+              </span>
+              <span class="flip-card__face flip-card__back">
+                <span class="flip-card__back-kicker">مقال</span>
+                <strong>نمو مبني على أرقام</strong>
+                <p>قنوات، محتوى، وإعلانات تتكلم مع جمهورك في الوقت المناسب.</p>
+                <a class="flip-card__cta" href="services/ads.html">خدمة الحملات</a>
+              </span>
+            </span>
           </article>
-          <article class="blog-card">
-            <div class="blog-card__media" aria-hidden="true"><svg viewBox="0 0 48 48" width="42" height="42" fill="none"><circle cx="24" cy="24" r="14" stroke="currentColor" stroke-width="2.5"/><circle cx="24" cy="24" r="7" stroke="currentColor" stroke-width="2.5"/><circle cx="24" cy="24" r="2.5" fill="currentColor"/></svg></div>
-            <div class="blog-card__body">
-              <h3>كيف يساعدك التصميم في نمو نشاطك؟</h3>
-            </div>
+          <article class="flip-card blog-card" tabindex="0" role="button" aria-label="كيف يساعدك التصميم في نمو نشاطك؟">
+            <span class="flip-card__inner">
+              <span class="flip-card__face flip-card__front blog-card__front">
+                <img class="flip-card__img" src="https://images.unsplash.com/photo-1561070791-2526d30994b5?auto=format&fit=crop&w=900&q=80" alt="" loading="lazy">
+                <span class="blog-card__caption">كيف يساعدك التصميم في نمو نشاطك؟</span>
+              </span>
+              <span class="flip-card__face flip-card__back">
+                <span class="flip-card__back-kicker">مقال</span>
+                <strong>التصميم يبيع قبل الكلام</strong>
+                <p>هوية واضحة تبني ثقة أسرع وتحسّن تجربة العميل في كل نقطة تواصل.</p>
+                <a class="flip-card__cta" href="services/branding.html">خدمة الهوية</a>
+              </span>
+            </span>
           </article>
         </div>
       </div>
@@ -310,12 +401,12 @@
       <div class="footer-col">
         <h4>بعض الخدمات</h4>
         <ul>
-          <li>إدارة الحملات الإعلانية</li>
-          <li>برمجة المواقع والمتاجر الإلكترونية</li>
-          <li>تهيئة محركات البحث</li>
-          <li>تصميم الفيديو والموشن جرافيك</li>
-          <li>تصميم الهوية التجارية</li>
-          <li>تطوير الأعمال</li>
+          <li><a href="services/ads.html">إدارة الحملات الإعلانية</a></li>
+          <li><a href="services/web.html">برمجة المواقع والمتاجر الإلكترونية</a></li>
+          <li><a href="services/seo.html">تهيئة محركات البحث</a></li>
+          <li><a href="services/video.html">تصميم الفيديو والموشن جرافيك</a></li>
+          <li><a href="services/branding.html">تصميم الهوية التجارية</a></li>
+          <li><a href="services/business.html">تطوير الأعمال</a></li>
         </ul>
       </div>
 
@@ -347,6 +438,8 @@
         <li><a href="#home">الرئيسية</a></li>
         <li><a href="#featured">عن الشركة</a></li>
         <li><a href="#services">خدماتنا</a></li>
+        <li><a href="services/ads.html">الحملات الإعلانية</a></li>
+        <li><a href="services/web.html">برمجة المواقع</a></li>
         <li><a href="#portfolio">أعمالنا</a></li>
         <li><a href="#blog">مدونة</a></li>
         <li><a href="#contact">اتصل بنا</a></li>
@@ -363,6 +456,6 @@
 
   <button class="back-top" id="back-top" aria-label="العودة للأعلى">↑</button>
 
-  <script src="js/crew.js?v=2"></script>
+  <script src="js/crew.js?v=3"></script>
 </body>
 </html>

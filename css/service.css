@@ -1,0 +1,102 @@
+.service-hero {
+  padding: 4.5rem 0 3rem;
+  background:
+    radial-gradient(ellipse at 70% 20%, rgba(77, 182, 160, 0.22), transparent 50%),
+    radial-gradient(ellipse at 20% 80%, rgba(212, 175, 55, 0.12), transparent 45%),
+    #050a0a;
+}
+
+.service-hero__grid {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 2rem;
+  align-items: center;
+}
+
+.service-hero__eyebrow {
+  display: inline-block;
+  padding: 0.3rem 0.85rem;
+  border-radius: 999px;
+  background: rgba(77, 182, 160, 0.18);
+  color: var(--teal-soft);
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.service-hero h1 {
+  margin: 0 0 1rem;
+  font-size: clamp(1.9rem, 4vw, 3rem);
+  line-height: 1.35;
+}
+
+.service-hero p {
+  margin: 0 0 1.5rem;
+  color: var(--muted);
+  max-width: 36rem;
+}
+
+.service-hero__media {
+  border-radius: 22px;
+  overflow: hidden;
+  border: 1px solid rgba(77, 182, 160, 0.35);
+  min-height: 280px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4);
+}
+
+.service-hero__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  min-height: 280px;
+}
+
+.service-body {
+  padding: 1rem 0 4rem;
+}
+
+.service-points {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.service-point {
+  background: rgba(12, 40, 34, 0.7);
+  border: 1px solid rgba(77, 182, 160, 0.3);
+  border-radius: 16px;
+  padding: 1.2rem;
+}
+
+.service-point h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1.05rem;
+}
+
+.service-point p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.service-more {
+  margin-top: 2.5rem;
+}
+
+.service-more h2 {
+  margin: 0 0 1rem;
+  font-size: 1.4rem;
+}
+
+.service-more__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+@media (max-width: 900px) {
+  .service-hero__grid,
+  .service-points {
+    grid-template-columns: 1fr;
+  }
+}
