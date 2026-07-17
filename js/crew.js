@@ -316,6 +316,11 @@
   updateEyeDock();
   window.addEventListener("resize", updateEyeDock);
   window.addEventListener("orientationchange", () => setTimeout(updateEyeDock, 120));
+  window.addEventListener("st:langchange", () => {
+    // Recalculate eye/skill geometry after RTL ↔ LTR swap
+    requestAnimationFrame(updateEyeDock);
+    setTimeout(updateEyeDock, 80);
+  });
   requestAnimationFrame(tick);
 
   /* ── Flip cards ── */
