@@ -1,5 +1,6 @@
 (() => {
   const prefersFine = window.matchMedia("(pointer: fine)").matches;
+  const isMobileMQ = window.matchMedia("(max-width: 720px)");
 
   /* ── Skills rotator ── */
   const skills = [
@@ -22,7 +23,7 @@
     }, 2600);
   }
 
-  /* ── Magic cursor + particle trail ── */
+  /* ── Magic cursor + particle trail (desktop) ── */
   const cursor = document.getElementById("cursor");
   const cursorRing = cursor?.querySelector(".cursor__ring");
   const trailCanvas = document.getElementById("cursor-trail");
@@ -87,10 +88,31 @@
     trailCanvas?.remove();
   }
 
-  /* ── Eye: scroll-dock into header + follow mouse ── */
+  /* Touch: eye looks toward tap / finger */
+  window.addEventListener(
+    "touchmove",
+    (e) => {
+      if (!e.touches[0]) return;
+      mx = e.touches[0].clientX;
+      my = e.touches[0].clientY;
+    },
+    { passive: true }
+  );
+  window.addEventListener(
+    "touchstart",
+    (e) => {
+      if (!e.touches[0]) return;
+      mx = e.touches[0].clientX;
+      my = e.touches[0].clientY;
+    },
+    { passive: true }
+  );
+
+  /* ── Eye: scroll-dock into header + look ── */
   const eye = document.getElementById("site-eye");
   const ball = document.getElementById("eye-ball");
   const eyeSlot = document.getElementById("eye-slot");
+  const eyeAnchor = document.getElementById("eye-anchor");
   const header = document.querySelector(".site-header");
   const hero = document.querySelector(".hero");
   const hasHeroEye = document.body.classList.contains("has-hero-eye") && !!hero;
@@ -101,14 +123,20 @@
   const easeInOut = (t) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2);
 
   function heroStartRect() {
+    if (eyeAnchor) {
+      const r = eyeAnchor.getBoundingClientRect();
+      if (r.width > 8 && r.height > 8) {
+        return { left: r.left, top: r.top, width: r.width, height: r.height };
+      }
+    }
     const heroRect = hero.getBoundingClientRect();
     const ww = window.innerWidth;
-    const isMobile = ww <= 720;
-    const width = isMobile ? Math.min(ww * 0.72, 280) : Math.min(ww * 0.22, 400);
+    const isMobile = isMobileMQ.matches;
+    const width = isMobile ? Math.min(ww * 0.78, 300) : Math.min(ww * 0.22, 400);
     const height = width / 2.15;
     const left = isMobile ? (ww - width) / 2 : Math.max(ww * 0.06, 20);
     const top = isMobile
-      ? heroRect.top + heroRect.height * 0.58
+      ? heroRect.top + heroRect.height * 0.42
       : heroRect.top + heroRect.height - height - heroRect.height * 0.12;
     return { left, top, width, height };
   }
@@ -137,9 +165,9 @@
     }
 
     const heroRect = hero.getBoundingClientRect();
-    const scrollable = Math.max(hero.offsetHeight * 0.75, window.innerHeight * 0.45);
-    const scrolled = clamp(-heroRect.top, 0, scrollable);
-    const t = easeInOut(scrolled / scrollable);
+    const range = Math.max(hero.offsetHeight * 0.55, window.innerHeight * 0.35);
+    const scrolled = clamp(-heroRect.top, 0, range);
+    const t = easeInOut(scrolled / range);
     const from = heroStartRect();
     const to = slotRect();
     applyEyeBox(
@@ -149,11 +177,14 @@
         width: lerp(from.width, to.width, t),
         height: lerp(from.height, to.height, t),
       },
-      t > 0.92
+      t > 0.9
     );
   }
 
-  function tick() {
+  /* Gentle idle look on mobile when no touch */
+  let idlePhase = 0;
+
+  function tick(now = performance.now()) {
     if (prefersFine && cursor) {
       cursor.style.transform = `translate(${mx}px, ${my}px)`;
       rx += (mx - rx) * 0.16;
@@ -180,6 +211,11 @@
           ctx.fill();
         }
       }
+    } else if (!prefersFine && eye && !eye.classList.contains("is-docked")) {
+      idlePhase = now * 0.001;
+      const rect = eye.getBoundingClientRect();
+      mx = rect.left + rect.width / 2 + Math.sin(idlePhase) * rect.width * 0.55;
+      my = rect.top + rect.height / 2 + Math.cos(idlePhase * 0.8) * rect.height * 0.35;
     }
 
     updateEyeDock();
@@ -196,7 +232,7 @@
           dx /= len;
           dy /= len;
         }
-        const look = eye.classList.contains("is-docked") ? 0.22 : MAX_LOOK;
+        const look = eye.classList.contains("is-docked") ? 0.2 : MAX_LOOK;
         const tx = dx * look * rect.width;
         const ty = dy * look * rect.height;
         ball.style.transform = `translate(calc(-50% + ${tx}px), calc(-50% + ${ty}px))`;
@@ -208,6 +244,7 @@
 
   updateEyeDock();
   window.addEventListener("resize", updateEyeDock);
+  window.addEventListener("orientationchange", () => setTimeout(updateEyeDock, 120));
   requestAnimationFrame(tick);
 
   /* ── Flip cards ── */
@@ -237,6 +274,29 @@
 
   dots.forEach((dot, i) => dot.addEventListener("click", () => showSlide(i)));
   if (slides.length) setInterval(() => showSlide(slideIndex + 1), 5500);
+
+  // swipe featured on mobile
+  const featured = document.querySelector(".featured");
+  if (featured && slides.length) {
+    let startX = 0;
+    featured.addEventListener(
+      "touchstart",
+      (e) => {
+        startX = e.touches[0].clientX;
+      },
+      { passive: true }
+    );
+    featured.addEventListener(
+      "touchend",
+      (e) => {
+        const dx = e.changedTouches[0].clientX - startX;
+        if (Math.abs(dx) < 40) return;
+        // RTL: swipe right -> previous, left -> next visually feels natural
+        showSlide(slideIndex + (dx > 0 ? -1 : 1));
+      },
+      { passive: true }
+    );
+  }
 
   /* ── Portfolio filters ── */
   const filterBtns = [...document.querySelectorAll(".filter-btn")];
@@ -273,7 +333,7 @@
   const backTop = document.getElementById("back-top");
   window.addEventListener("scroll", () => {
     backTop?.classList.toggle("is-visible", window.scrollY > 500);
-  });
+  }, { passive: true });
   backTop?.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
 
   /* ── Reveal on scroll ── */
@@ -285,9 +345,9 @@
           if (entry.isIntersecting) {
             entry.target.style.transition = "0.55s ease";
             entry.target.style.opacity = "1";
-            entry.target.style.transform = entry.target.classList.contains("blog-card")
-              ? ""
-              : "none";
+            if (!entry.target.classList.contains("blog-card")) {
+              entry.target.style.transform = "none";
+            }
             io.unobserve(entry.target);
           }
         });

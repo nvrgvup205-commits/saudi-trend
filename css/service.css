@@ -100,3 +100,36 @@
     grid-template-columns: 1fr;
   }
 }
+
+@media (max-width: 720px) {
+  .service-hero {
+    padding: 2rem 0 1.5rem;
+  }
+
+  .service-hero h1 {
+    font-size: 1.7rem;
+  }
+
+  .service-hero__media {
+    min-height: 200px;
+    border-radius: 18px;
+  }
+
+  .service-hero__media img {
+    min-height: 200px;
+  }
+
+  .service-point {
+    padding: 1.05rem;
+  }
+
+  .service-more__links {
+    gap: 0.5rem;
+  }
+
+  .service-more__links .btn {
+    font-size: 0.85rem;
+    min-height: 40px;
+    padding: 0.5rem 0.85rem;
+  }
+}
