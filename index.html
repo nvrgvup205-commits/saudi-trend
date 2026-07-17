@@ -3,475 +3,339 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="سعودي تريند - شريكك الاستراتيجي في التسويق وتقديم الحلول والخدمات للشركات والمؤسسات">
-  <title>سعودي تريند | التسويق والحلول الذكية</title>
+  <meta name="description" content="سعودي ترند — وكالة تسويق وحلول رقمية: هوية، مواقع، إعلانات، SEO، وموشن جرافيك">
+  <title>سعودي ترند | Marketing & Advertising Agency</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Noto+Kufi+Arabic:wght@500;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=tech1">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700;800&family=Noto+Kufi+Arabic:wght@500;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/crew.css?v=1">
 </head>
-<body class="classic-page tech-page">
-  <!-- Signature cursor — same as Demo 2 -->
-  <div class="cursor" id="cursor" aria-hidden="true">
-    <svg class="cursor__svg" viewBox="0 0 48 48" fill="none">
-      <path class="cursor__blade" d="M8 6L42 22L26 26L22 42L8 6Z" fill="url(#clCurGrad)" stroke="#0a5c40" stroke-width="1.2" stroke-linejoin="round"/>
-      <circle class="cursor__ring" cx="22" cy="22" r="7" stroke="#d4af37" stroke-width="1.4" stroke-dasharray="4 3"/>
-      <circle cx="22" cy="22" r="2.2" fill="#d4af37"/>
-      <defs>
-        <linearGradient id="clCurGrad" x1="8" y1="6" x2="42" y2="42">
-          <stop stop-color="#f0e0a0"/><stop offset=".55" stop-color="#d4af37"/><stop offset="1" stop-color="#0d7a54"/>
-        </linearGradient>
-      </defs>
-    </svg>
-  </div>
-  <div class="cursor-dots" id="cursor-dots" aria-hidden="true"></div>
-  <canvas id="classic-aurora" class="classic-aurora" aria-hidden="true"></canvas>
-
-  <!-- Navigation -->
-  <header class="header" id="header">
-    <nav class="nav container">
-      <a href="#" class="nav__logo">
-        <span class="nav__logo-seal" aria-hidden="true"></span>
-        <span class="nav__logo-text">سعودي <strong>تريند</strong></span>
+<body>
+  <header class="site-header" id="top">
+    <div class="container site-header__inner">
+      <a class="logo" href="#top" aria-label="سعودي ترند">
+        <img class="logo__mark" src="assets/saudi-trend-logo.png" alt="شعار سعودي ترند">
+        <span class="logo__text">
+          <span class="logo__name">سعودي <span>ترند</span></span>
+          <span class="logo__tag">Marketing & Advertising Agency</span>
+        </span>
       </a>
-      <button class="nav__toggle" id="nav-toggle" aria-label="فتح القائمة">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
-      <ul class="nav__menu" id="nav-menu">
-        <li><a href="#home" class="nav__link active">الرئيسية</a></li>
-        <li><a href="#about" class="nav__link">من نحن</a></li>
-        <li><a href="#services" class="nav__link">خدماتنا</a></li>
-        <li><a href="#why-us" class="nav__link">لماذا نحن</a></li>
-        <li><a href="demo2.html" class="nav__link nav__link--demo">✦ Demo 2 — البوابة</a></li>
-        <li><a href="demo.html" class="nav__link">Demo 1</a></li>
-        <li><a href="#contact" class="nav__link nav__link--cta">تواصل معنا</a></li>
-      </ul>
-    </nav>
+      <div class="header-actions">
+        <button class="menu-toggle" id="menu-toggle" aria-label="فتح القائمة">
+          <span></span><span></span><span></span>
+        </button>
+        <a class="btn btn--works" href="#portfolio">أعمالنا</a>
+        <a class="btn btn--solid" href="#contact">ابدأ معنا الآن</a>
+      </div>
+    </div>
   </header>
 
   <main>
-    <!-- Hero Section — classical full-bleed -->
+    <!-- Hero -->
     <section class="hero" id="home">
-      <div class="hero__media" aria-hidden="true">
-        <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=2000&q=90" alt="" fetchpriority="high">
-        <div class="hero__veil"></div>
-        <div class="hero__grain"></div>
-      </div>
-      <div class="hero__lexicon" id="hero-lexicon" aria-hidden="true"></div>
-      <div class="container hero__container">
-        <div class="hero__content">
-          <p class="hero__eyebrow"><span class="hero__code">sys</span> وكالة أنظمة النمو الذكية</p>
-          <p class="hero__brand">سعودي <em>تريند</em></p>
-          <div class="hero__rule" aria-hidden="true"></div>
-          <h1 class="hero__title">نبني قرار النمو… ونُبرمجه ليسبق السوق</h1>
-          <p class="hero__description">شريك التسويق والأتمتة والبرمجيات للمؤسسات السعودية — بهدوء الواثقين وقوة من يصنع الاتجاه.</p>
-          <div class="hero__buttons">
-            <a href="#contact" class="btn btn--primary magnetic">ابدأ مشروعك</a>
-            <a href="#domains" class="btn btn--outline magnetic">استكشف المجالات</a>
-          </div>
-        </div>
-      </div>
-      <a href="#domains" class="hero__scroll" aria-label="أسفل">↓</a>
-    </section>
+      <div class="hero__grid" aria-hidden="true"></div>
+      <div class="hero__arcs" aria-hidden="true"></div>
+      <div class="hero__line" aria-hidden="true"></div>
 
-    <!-- Domains — genius imagery per field -->
-    <section class="domains" id="domains">
-      <div class="domains__intro container">
-        <span class="section__tag reveal">مجالاتنا</span>
-        <h2 class="section__title reveal">ثلاثة عوالم… بمنطق تشغيل واحد</h2>
+      <div class="hero__content">
+        <p class="hero__eyebrow">مرحباً بكم في</p>
+        <h1 class="hero__title">saudi trend</h1>
       </div>
-      <article class="domain domain--market">
-        <div class="domain__media">
-          <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=2000&q=90" alt="التسويق — استراتيجية ونبض السوق">
-          <div class="domain__veil"></div>
-        </div>
-        <div class="domain__copy">
-          <span>01</span>
-          <h3>التسويق</h3>
-          <p>قراءة السوق السعودي وصياغة حملات تبني قرار الشراء قبل المنافس.</p>
-        </div>
-      </article>
-      <article class="domain domain--design">
-        <div class="domain__media">
-          <img src="https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=2000&q=90" alt="التصميم والفيديو — استوديو إخراج وحركة">
-          <div class="domain__veil"></div>
-        </div>
-        <div class="domain__copy">
-          <span>02</span>
-          <h3>التصميم والفيديو</h3>
-          <p>هوية بصرية وموشن يُظهران جوهر العلامة بأناقة خليجية راقية.</p>
-        </div>
-      </article>
-      <article class="domain domain--auto">
-        <div class="domain__media">
-          <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=2000&q=90" alt="الأتمتة — خوادم وذكاء تشغيلي">
-          <div class="domain__veil"></div>
-        </div>
-        <div class="domain__copy">
-          <span>03</span>
-          <h3>الأتمتة والبرمجيات</h3>
-          <p>أنظمة تربط التسويق بالمبيعات والدعم — لتعمل منشأتك بلا انقطاع.</p>
-        </div>
-      </article>
-    </section>
 
-    <!-- About Section -->
-    <section class="about section" id="about">
-      <div class="container">
-        <div class="section__header">
-          <span class="section__tag">من نحن</span>
-          <h2 class="section__title">نبني مستقبل أعمالك بثقة</h2>
-          <p class="section__subtitle">
-            نؤمن بأن كل مؤسسة تستحق شريكاً يفهم تحدياتها ويطلق إمكاناتها الحقيقية
-          </p>
-        </div>
-        <div class="about__grid">
-          <div class="about__card">
-            <div class="about__icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-              </svg>
-            </div>
-            <h3>رؤيتنا</h3>
-            <p>أن نكون الشريك الأول للمؤسسات السعودية في تحقيق التميز التسويقي والتشغيلي عبر حلول مبتكرة تواكب التحول الرقمي.</p>
-          </div>
-          <div class="about__card">
-            <div class="about__icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
-                <polyline points="22 4 12 14.01 9 11.01"/>
-              </svg>
-            </div>
-            <h3>مهمتنا</h3>
-            <p>تقديم حلول تسويقية واستشارية متكاملة تُمكّن الشركات من النمو المستدام وبناء علاقات دائمة مع جمهورها المستهدف.</p>
-          </div>
-          <div class="about__card">
-            <div class="about__icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
-                <circle cx="9" cy="7" r="4"/>
-                <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
-              </svg>
-            </div>
-            <h3>قيمنا</h3>
-            <p>الشفافية، الابتكار، والالتزام بالنتائج. نعمل كفريق واحد مع عملائنا لتحقيق أهدافهم بأعلى معايير الجودة.</p>
-          </div>
-        </div>
+      <img class="hero__eye" src="assets/eye.svg" alt="" aria-hidden="true">
+
+      <div class="hero__skill">
+        <span class="hero__skill-label">نبدع في</span>
+        <p class="hero__skill-text" id="hero-skill">تصميم الهوية التجارية</p>
       </div>
     </section>
 
-    <!-- Services Section -->
-    <section class="services section" id="services">
-      <div class="container">
-        <div class="section__header">
-          <span class="section__tag">خدماتنا</span>
-          <h2 class="section__title">حلول شاملة لكل احتياجاتك</h2>
-          <p class="section__subtitle">
-            نقدم مجموعة متكاملة من الخدمات المصممة خصيصاً لتلبية متطلبات الشركات والمؤسسات في مختلف القطاعات
-          </p>
+    <!-- Featured services -->
+    <section class="featured" id="featured" aria-label="خدمات مميزة">
+      <div class="container" style="position:relative">
+        <div class="featured__dots" role="tablist" aria-label="تنقل الشرائح">
+          <button class="featured__dot is-active" aria-label="شريحة 1"></button>
+          <button class="featured__dot" aria-label="شريحة 2"></button>
+          <button class="featured__dot" aria-label="شريحة 3"></button>
         </div>
-        <div class="services__grid">
-          <article class="service-card reveal">
-            <div class="service-card__media"><img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1000&q=82" alt=""></div>
-            <div class="service-card__body">
-              <div class="service-card__number">01</div>
-              <h3 class="service-card__title">التسويق الرقمي</h3>
-              <p class="service-card__desc">حملات ذكية عبر المنصات ومحركات البحث بعائد يُقاس.</p>
-            </div>
-          </article>
-          <article class="service-card service-card--featured reveal">
-            <div class="service-card__media"><img src="https://images.unsplash.com/photo-1561070791-2526d30994b5?w=1000&q=82" alt=""></div>
-            <div class="service-card__body">
-              <div class="service-card__number">02</div>
-              <h3 class="service-card__title">الهوية والتصميم</h3>
-              <p class="service-card__desc">علامات بصرية تُحفر في الذاكرة وتعكس طموح المنشأة.</p>
-            </div>
-          </article>
-          <article class="service-card reveal">
-            <div class="service-card__media"><img src="https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=1000&q=82" alt=""></div>
-            <div class="service-card__body">
-              <div class="service-card__number">03</div>
-              <h3 class="service-card__title">الفيديو والموشن</h3>
-              <p class="service-card__desc">قصص متحركة تُقنع في ثوانٍ وتليق بالسوق الخليجي.</p>
-            </div>
-          </article>
-          <article class="service-card reveal">
-            <div class="service-card__media"><img src="https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=1000&q=82" alt=""></div>
-            <div class="service-card__body">
-              <div class="service-card__number">04</div>
-              <h3 class="service-card__title">الأتمتة والأنظمة</h3>
-              <p class="service-card__desc">CRM ورحلات مؤتمتة تربط الفرصة بالقرار بلا تأخير.</p>
-            </div>
-          </article>
-          <article class="service-card reveal">
-            <div class="service-card__media"><img src="https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?w=1000&q=82" alt=""></div>
-            <div class="service-card__body">
-              <div class="service-card__number">05</div>
-              <h3 class="service-card__title">المواقع والمتاجر</h3>
-              <p class="service-card__desc">تجارب رقمية أنيقة تُسهّل البيع وتُعلي من هيبة العلامة.</p>
-            </div>
-          </article>
-          <article class="service-card reveal">
-            <div class="service-card__media"><img src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=1000&q=82" alt=""></div>
-            <div class="service-card__body">
-              <div class="service-card__number">06</div>
-              <h3 class="service-card__title">الاستشارات الاستراتيجية</h3>
-              <p class="service-card__desc">جلسات خبراء لصناعة قرار واضح في سوق لا يتوقف.</p>
-            </div>
-          </article>
-        </div>
-      </div>
-    </section>
 
-    <!-- Why Us Section -->
-    <section class="why-us section" id="why-us">
-      <div class="container">
-        <div class="why-us__wrapper">
-          <div class="why-us__content">
-            <span class="section__tag">لماذا سعودي تريند؟</span>
-            <h2 class="section__title">نتائج حقيقية، شراكة دائمة</h2>
-            <p class="why-us__text">
-              نجمع بين الخبرة المحلية العميقة والمعايير العالمية لتقديم حلول تسويقية تُحدث فرقاً ملموساً في أداء مؤسستك.
+        <article class="featured__slide is-active">
+          <div class="featured__copy">
+            <p class="featured__num">01</p>
+            <span class="featured__badge">التسويق الإلكتروني</span>
+            <p class="featured__desc">
+              نصنع استراتيجيات تسويق رقمي تزيد وصول علامتك، وتبني حضورًا قويًا على المنصات،
+              وتحوّل الاهتمام إلى عملاء حقيقيين بخطط قابلة للقياس.
             </p>
-            <ul class="why-us__features">
-              <li class="why-us__feature">
-                <span class="why-us__check">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <polyline points="20 6 9 17 4 12"/>
-                  </svg>
-                </span>
-                <div>
-                  <strong>فريق سعودي متخصص</strong>
-                  <p>خبراء يفهمون السوق المحلي وثقافة الأعمال السعودية</p>
-                </div>
-              </li>
-              <li class="why-us__feature">
-                <span class="why-us__check">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <polyline points="20 6 9 17 4 12"/>
-                  </svg>
-                </span>
-                <div>
-                  <strong>نتائج قابلة للقياس</strong>
-                  <p>تقارير دورية شفافة مع مؤشرات أداء واضحة</p>
-                </div>
-              </li>
-              <li class="why-us__feature">
-                <span class="why-us__check">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <polyline points="20 6 9 17 4 12"/>
-                  </svg>
-                </span>
-                <div>
-                  <strong>حلول مخصصة</strong>
-                  <p>استراتيجيات مصممة خصيصاً لاحتياجات كل عميل</p>
-                </div>
-              </li>
-              <li class="why-us__feature">
-                <span class="why-us__check">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <polyline points="20 6 9 17 4 12"/>
-                  </svg>
-                </span>
-                <div>
-                  <strong>دعم مستمر</strong>
-                  <p>فريق دعم متاح لمساعدتك في كل مرحلة</p>
-                </div>
-              </li>
-            </ul>
+            <a class="btn btn--teal" href="#contact">طلب الخدمة</a>
           </div>
-          <div class="why-us__visual">
-            <div class="why-us__metric">
-              <span class="why-us__metric-value">98%</span>
-              <span class="why-us__metric-label">نسبة رضا العملاء</span>
-            </div>
-            <div class="why-us__metric">
-              <span class="why-us__metric-value">3x</span>
-              <span class="why-us__metric-label">متوسط عائد الاستثمار</span>
-            </div>
-            <div class="why-us__metric">
-              <span class="why-us__metric-value">24/7</span>
-              <span class="why-us__metric-label">دعم فني متواصل</span>
+          <div class="featured__visual">
+            <div class="featured__icon-wrap">
+              <div class="iso-card" aria-hidden="true">
+                <svg viewBox="0 0 120 120" width="88" height="88" fill="none"><rect x="18" y="34" width="70" height="48" rx="8" stroke="#76c7b7" stroke-width="3"/><path d="M88 48l18-10v44l-18-10V48z" fill="#4db6a0"/><circle cx="52" cy="58" r="10" stroke="#fff" stroke-width="3"/></svg>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
-    </section>
+        </article>
 
-    <!-- Process Section -->
-    <section class="process section">
-      <div class="container">
-        <div class="section__header">
-          <span class="section__tag">كيف نعمل</span>
-          <h2 class="section__title">رحلة النجاح معنا</h2>
-        </div>
-        <div class="process__steps">
-          <div class="process__step">
-            <div class="process__step-number">1</div>
-            <h3>الاستكشاف</h3>
-            <p>نفهم أعمالك وأهدافك وتحدياتك بعمق</p>
-          </div>
-          <div class="process__connector"></div>
-          <div class="process__step">
-            <div class="process__step-number">2</div>
-            <h3>التخطيط</h3>
-            <p>نضع استراتيجية مخصصة بأهداف واضحة</p>
-          </div>
-          <div class="process__connector"></div>
-          <div class="process__step">
-            <div class="process__step-number">3</div>
-            <h3>التنفيذ</h3>
-            <p>ننفذ باحترافية عالية ومرونة تامة</p>
-          </div>
-          <div class="process__connector"></div>
-          <div class="process__step">
-            <div class="process__step-number">4</div>
-            <h3>التحسين</h3>
-            <p>نقيس النتائج ونطور باستمرار</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Contact Section -->
-    <section class="contact section" id="contact">
-      <div class="container">
-        <div class="contact__wrapper">
-          <div class="contact__info">
-            <span class="section__tag">تواصل معنا</span>
-            <h2 class="section__title">لنبدأ مشروعك القادم</h2>
-            <p class="contact__text">
-              هل أنت مستعد لتحويل رؤيتك إلى واقع؟ تواصل معنا اليوم واحصل على استشارة مجانية.
+        <article class="featured__slide">
+          <div class="featured__copy">
+            <p class="featured__num">02</p>
+            <h2 class="featured__title">التصميم والمونتاج والموشن جرافيك</h2>
+            <p class="featured__desc">
+              نعزز عالمك المرئي بأبعاد جديدة من خلال تصميم الفيديو والموشن جرافيك.
+              تتحرك كل فكرة وتتحدث كل رؤية في تصاميمنا الإبداعية، مما يجعل من محتواك رحلة بصرية لا تُنسى.
             </p>
-            <div class="contact__details">
-              <div class="contact__detail">
-                <div class="contact__detail-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                    <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/>
-                  </svg>
-                </div>
-                <div>
-                  <strong>الهاتف</strong>
-                  <p dir="ltr">+966 50 000 0000</p>
-                </div>
-              </div>
-              <div class="contact__detail">
-                <div class="contact__detail-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-                    <polyline points="22,6 12,13 2,6"/>
-                  </svg>
-                </div>
-                <div>
-                  <strong>البريد الإلكتروني</strong>
-                  <p dir="ltr">info@sauditrend.sa</p>
-                </div>
-              </div>
-              <div class="contact__detail">
-                <div class="contact__detail-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
-                    <circle cx="12" cy="10" r="3"/>
-                  </svg>
-                </div>
-                <div>
-                  <strong>الموقع</strong>
-                  <p>الرياض، المملكة العربية السعودية</p>
-                </div>
+            <a class="btn btn--teal" href="#contact">طلب الخدمة</a>
+          </div>
+          <div class="featured__visual">
+            <div class="featured__icon-wrap">
+              <div class="iso-card" aria-hidden="true">
+                <svg viewBox="0 0 120 120" width="88" height="88" fill="none"><rect x="24" y="30" width="72" height="52" rx="10" stroke="#76c7b7" stroke-width="3"/><path d="M52 48l24 14-24 14V48z" fill="#4db6a0"/><rect x="34" y="88" width="52" height="8" rx="4" fill="#59c3a5"/></svg>
               </div>
             </div>
           </div>
-          <form class="contact__form" id="contact-form">
-            <div class="form__group">
-              <label for="name">الاسم الكامل</label>
-              <input type="text" id="name" name="name" placeholder="أدخل اسمك" required>
+        </article>
+
+        <article class="featured__slide">
+          <div class="featured__copy">
+            <p class="featured__num">03</p>
+            <span class="featured__badge featured__badge--teal">تصميم وبرمجة المواقع والمتاجر الإلكترونية</span>
+            <p class="featured__desc">
+              نبني مواقع ومتاجر سريعة، متوافقة مع الجوال، ومرتبطة ببوابات الدفع — بتجربة استخدام واضحة
+              تعكس هوية علامتك وتحفّز التحويل.
+            </p>
+            <a class="btn btn--teal" href="#contact">طلب الخدمة</a>
+          </div>
+          <div class="featured__visual">
+            <div class="featured__icon-wrap">
+              <div class="iso-card" aria-hidden="true">
+                <svg viewBox="0 0 120 120" width="88" height="88" fill="none"><rect x="20" y="28" width="80" height="58" rx="10" stroke="#76c7b7" stroke-width="3"/><path d="M48 48l-14 12 14 12M72 48l14 12-14 12M58 46l-8 28" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
             </div>
-            <div class="form__group">
-              <label for="email">البريد الإلكتروني</label>
-              <input type="email" id="email" name="email" placeholder="example@email.com" dir="ltr" required>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- Services cards -->
+    <section class="services" id="services">
+      <div class="container">
+        <div class="section-head">
+          <span class="sticker sticker--white">خدماتنا</span>
+        </div>
+        <div class="services__track">
+          <article class="service-card">
+            <div class="service-card__icon" aria-hidden="true"><svg viewBox="0 0 48 48" width="40" height="40" fill="none"><path d="M8 20h10l16-10v28L18 28H8V20z" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/><path d="M36 18c3 2.5 3 9.5 0 12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg></div>
+            <h3>إدارة الحملات الإعلانية</h3>
+            <p>نساعدك على تعزيز حضورك الرقمي بفاعلية عبر استراتيجيات تسويقية مبتكرة وإدارة حملات مستهدفة على منصات التواصل والقنوات الرقمية.</p>
+          </article>
+          <article class="service-card">
+            <div class="service-card__icon" aria-hidden="true"><svg viewBox="0 0 48 48" width="40" height="40" fill="none"><rect x="6" y="10" width="36" height="24" rx="3" stroke="currentColor" stroke-width="2.5"/><path d="M18 40h12M24 34v6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><circle cx="24" cy="22" r="5" stroke="currentColor" stroke-width="2"/></svg></div>
+            <h3>برمجة المواقع والمتاجر الإلكترونية</h3>
+            <p>نطوّر مواقع ومتاجر إلكترونية مخصصة، آمنة، وسريعة — مع تجربة مستخدم واضحة وربط ببوابات الدفع والأنظمة التي تحتاجها.</p>
+          </article>
+          <article class="service-card">
+            <div class="service-card__icon" aria-hidden="true"><svg viewBox="0 0 48 48" width="40" height="40" fill="none"><circle cx="22" cy="22" r="10" stroke="currentColor" stroke-width="2.5"/><path d="M30 30l10 10" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><path d="M16 24h12M18 20l4-4 4 6 4-3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <h3>تحسين محركات البحث (SEO)</h3>
+            <p>نرفع ظهور علامتك في نتائج البحث عبر تحسين تقني ومحتوى وربط داخلي مدروس يبني زيارات عضوية مستدامة.</p>
+          </article>
+          <article class="service-card">
+            <div class="service-card__icon" aria-hidden="true"><svg viewBox="0 0 48 48" width="40" height="40" fill="none"><path d="M24 8c-8 0-14 6-14 14 0 7 5 12 11 12h2c1.5 0 3 1.5 3 3 0 2-2 3-2 5 0 3 3 4 6 4 8 0 14-8 14-16S32 8 24 8z" stroke="currentColor" stroke-width="2.5"/><circle cx="18" cy="20" r="2" fill="currentColor"/><circle cx="24" cy="16" r="2" fill="currentColor"/><circle cx="30" cy="20" r="2" fill="currentColor"/></svg></div>
+            <h3>تصميم الهوية التجارية</h3>
+            <p>نبني هوية بصرية متماسكة من الشعار إلى دليل الاستخدام، لتعكس قيم علامتك وتتميّز في السوق.</p>
+          </article>
+        </div>
+        <div class="services__cta">
+          <a class="btn btn--solid" href="#featured">جميع الخدمات ←</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Portfolio -->
+    <section class="portfolio" id="portfolio">
+      <div class="container">
+        <div class="portfolio__head">
+          <span class="sticker sticker--teal">أعمالنا</span>
+        </div>
+
+        <div class="filters" role="tablist" aria-label="تصفية الأعمال">
+          <button class="filter-btn is-active" data-filter="all">جميع الأعمال</button>
+          <button class="filter-btn" data-filter="branding">الهويات التجارية</button>
+          <button class="filter-btn" data-filter="web">المواقع والمتاجر الإلكترونية</button>
+          <button class="filter-btn" data-filter="video">الفيديو والموشن جرافيك</button>
+        </div>
+
+        <div class="portfolio__grid">
+          <article class="work-card" data-category="branding">
+            <div class="work-card__media ph media-a" aria-hidden="true">✦</div>
+            <div class="work-card__shade"></div>
+            <div class="work-card__meta"><span>↗</span><span>التسويق</span></div>
+            <h3 class="work-card__title">حملة هوية وتسويق رقمي</h3>
+          </article>
+          <article class="work-card" data-category="web">
+            <div class="work-card__media ph media-b" aria-hidden="true">◈</div>
+            <div class="work-card__shade"></div>
+            <div class="work-card__meta"><span>↗</span><span>المواقع</span></div>
+            <h3 class="work-card__title">منصة خدمات طبية</h3>
+          </article>
+          <article class="work-card" data-category="video">
+            <div class="work-card__media ph media-c" aria-hidden="true">◎</div>
+            <div class="work-card__shade"></div>
+            <div class="work-card__meta"><span>↗</span><span>موشن</span></div>
+            <h3 class="work-card__title">فيديو إعلاني وتحويل مسار</h3>
+          </article>
+          <article class="work-card" data-category="branding">
+            <div class="work-card__media ph media-d" aria-hidden="true">✧</div>
+            <div class="work-card__shade"></div>
+            <div class="work-card__meta"><span>↗</span><span>هوية</span></div>
+            <h3 class="work-card__title">هوية سفر وسياحة</h3>
+          </article>
+          <article class="work-card" data-category="web">
+            <div class="work-card__media ph media-e" aria-hidden="true">⬡</div>
+            <div class="work-card__shade"></div>
+            <div class="work-card__meta"><span>↗</span><span>متجر</span></div>
+            <h3 class="work-card__title">متجر خدمات السيارات</h3>
+          </article>
+          <article class="work-card" data-category="video">
+            <div class="work-card__media ph media-f" aria-hidden="true">▹</div>
+            <div class="work-card__shade"></div>
+            <div class="work-card__meta"><span>↗</span><span>موشن</span></div>
+            <h3 class="work-card__title">ريلز وحملات سوشيال</h3>
+          </article>
+        </div>
+
+        <div class="portfolio__ask">
+          <a class="btn" href="#contact">إذا كان لديك أي أسئلة في ذهنك، فما عليك سوى النقر هنا</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Blog -->
+    <section class="blog" id="blog">
+      <div class="container">
+        <div class="blog__grid">
+          <article class="blog-card">
+            <div class="blog-card__media" aria-hidden="true"><svg viewBox="0 0 48 48" width="42" height="42" fill="none"><path d="M10 14h4l4 20h18l4-14H18" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/><circle cx="22" cy="40" r="2.5" fill="currentColor"/><circle cx="34" cy="40" r="2.5" fill="currentColor"/></svg></div>
+            <div class="blog-card__body">
+              <h3>أهمية المتاجر الإلكترونية لنشاطك التجاري</h3>
             </div>
-            <div class="form__group">
-              <label for="company">اسم الشركة</label>
-              <input type="text" id="company" name="company" placeholder="اسم شركتك أو مؤسستك">
+          </article>
+          <article class="blog-card">
+            <div class="blog-card__media" aria-hidden="true"><svg viewBox="0 0 48 48" width="42" height="42" fill="none"><path d="M8 36V12M8 36h32" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><path d="M14 28l8-8 6 5 10-12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div class="blog-card__body">
+              <h3>كيف يساعدك التسويق الرقمي في نمو نشاطك؟</h3>
             </div>
-            <div class="form__group">
-              <label for="service">الخدمة المطلوبة</label>
-              <select id="service" name="service" required>
-                <option value="">اختر الخدمة</option>
-                <option value="digital-marketing">التسويق الرقمي</option>
-                <option value="business-strategy">استراتيجيات الأعمال</option>
-                <option value="branding">العلامة التجارية</option>
-                <option value="content">التسويق بالمحتوى</option>
-                <option value="tech">الحلول التقنية</option>
-                <option value="consulting">الاستشارات</option>
-                <option value="other">أخرى</option>
-              </select>
+          </article>
+          <article class="blog-card">
+            <div class="blog-card__media" aria-hidden="true"><svg viewBox="0 0 48 48" width="42" height="42" fill="none"><circle cx="24" cy="24" r="14" stroke="currentColor" stroke-width="2.5"/><circle cx="24" cy="24" r="7" stroke="currentColor" stroke-width="2.5"/><circle cx="24" cy="24" r="2.5" fill="currentColor"/></svg></div>
+            <div class="blog-card__body">
+              <h3>كيف يساعدك التصميم في نمو نشاطك؟</h3>
             </div>
-            <div class="form__group">
-              <label for="message">رسالتك</label>
-              <textarea id="message" name="message" rows="4" placeholder="أخبرنا عن مشروعك..." required></textarea>
-            </div>
-            <button type="submit" class="btn btn--primary btn--full magnetic">إرسال الطلب</button>
-          </form>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-band" id="contact">
+      <div class="container">
+        <div class="cta-band__inner">
+          <h2>هل تريد التحدث إلينا؟</h2>
+          <a class="btn btn--ghost-dark" href="mailto:sauditrendsa1@gmail.com">بدأ المحادثة ↗</a>
         </div>
       </div>
     </section>
   </main>
 
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="container">
-      <div class="footer__grid">
-        <div class="footer__brand">
-          <a href="#" class="nav__logo">
-            <span class="nav__logo-icon">ST</span>
-            <span class="nav__logo-text">سعودي <strong>تريند</strong></span>
-          </a>
-          <p>شريكك الاستراتيجي في التسويق وتقديم الحلول الذكية للشركات والمؤسسات.</p>
-          <div class="footer__social">
-            <a href="#" aria-label="تويتر">
-              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-            </a>
-            <a href="#" aria-label="لينكد إن">
-              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-            </a>
-            <a href="#" aria-label="إنستغرام">
-              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
-            </a>
-          </div>
-        </div>
-        <div class="footer__links">
-          <h4>روابط سريعة</h4>
-          <ul>
-            <li><a href="#home">الرئيسية</a></li>
-            <li><a href="#about">من نحن</a></li>
-            <li><a href="#services">خدماتنا</a></li>
-            <li><a href="#why-us">لماذا نحن</a></li>
-            <li><a href="#contact">تواصل معنا</a></li>
-          </ul>
-        </div>
-        <div class="footer__links">
-          <h4>خدماتنا</h4>
-          <ul>
-            <li><a href="#services">التسويق الرقمي</a></li>
-            <li><a href="#services">استراتيجيات الأعمال</a></li>
-            <li><a href="#services">العلامة التجارية</a></li>
-            <li><a href="#services">التسويق بالمحتوى</a></li>
-            <li><a href="#services">الحلول التقنية</a></li>
-          </ul>
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div class="footer-col footer-brand">
+        <a class="logo" href="#top">
+          <img class="logo__mark" src="assets/saudi-trend-logo.png" alt="">
+          <span class="logo__text">
+            <span class="logo__name">سعودي <span>ترند</span></span>
+            <span class="logo__tag">Marketing & Advertising Agency</span>
+          </span>
+        </a>
+        <p>شريكك في التسويق والهوية الرقمية وبرمجة المواقع — برؤية خليجية وتنفيذ احترافي.</p>
+        <div class="socials" aria-label="وسائل التواصل">
+          <a href="#" aria-label="Instagram">IG</a>
+          <a href="#" aria-label="X">X</a>
+          <a href="#" aria-label="Snapchat">SN</a>
+          <a href="#" aria-label="LinkedIn">in</a>
+          <a href="#" aria-label="TikTok">TT</a>
         </div>
       </div>
-      <div class="footer__bottom">
-        <p>&copy; 2026 سعودي تريند. جميع الحقوق محفوظة.</p>
+
+      <div class="footer-col">
+        <h4>روابط مفيدة</h4>
+        <ul>
+          <li><a href="#home">الرئيسية</a></li>
+          <li><a href="#portfolio">أعمالنا</a></li>
+          <li><a href="#services">خدماتنا</a></li>
+          <li><a href="#blog">مدونة</a></li>
+          <li><a href="#contact">اتصل بنا</a></li>
+          <li><a href="classic.html">النسخة الكلاسيكية</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>بعض الخدمات</h4>
+        <ul>
+          <li>إدارة الحملات الإعلانية</li>
+          <li>برمجة المواقع والمتاجر الإلكترونية</li>
+          <li>تهيئة محركات البحث</li>
+          <li>تصميم الفيديو والموشن جرافيك</li>
+          <li>تصميم الهوية التجارية</li>
+          <li>تطوير الأعمال</li>
+        </ul>
+      </div>
+
+      <div class="footer-col footer-contact">
+        <h4>تواصل معنا</h4>
+        <ul>
+          <li>رقم الهاتف: 0536542044 — 0532444356</li>
+          <li>البريد: sauditrendsa1@gmail.com</li>
+          <li>عنواننا: حي اليرموك، الرياض، المملكة العربية السعودية</li>
+        </ul>
       </div>
     </div>
+    <div class="copyright">حقوق النشر والنسخ © 2026 سعودي ترند. كل الحقوق محفوظة</div>
   </footer>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-  <script src="js/soundscape.js?v=luxe4"></script>
-  <script src="js/main.js?v=tech1"></script>
+  <!-- Full menu -->
+  <div class="nav-overlay" id="nav-overlay" aria-hidden="true">
+    <button class="nav-overlay__close" id="menu-close" aria-label="إغلاق">×</button>
+    <div class="nav-overlay__decor" aria-hidden="true">استكشف الصفحات</div>
+    <div class="nav-overlay__panel">
+      <a class="logo" href="#top">
+        <img class="logo__mark" src="assets/saudi-trend-logo.png" alt="">
+        <span class="logo__text">
+          <span class="logo__name">سعودي <span>ترند</span></span>
+          <span class="logo__tag">Marketing & Advertising Agency</span>
+        </span>
+      </a>
+      <ul class="nav-overlay__links">
+        <li><a href="#home">الرئيسية</a></li>
+        <li><a href="#featured">عن الشركة</a></li>
+        <li><a href="#services">خدماتنا</a></li>
+        <li><a href="#portfolio">أعمالنا</a></li>
+        <li><a href="#blog">مدونة</a></li>
+        <li><a href="#contact">اتصل بنا</a></li>
+      </ul>
+      <a class="btn" href="#contact">لنتحدث</a>
+      <div class="nav-overlay__socials socials">
+        <a href="#">IG</a>
+        <a href="#">TT</a>
+        <a href="#">X</a>
+        <a href="#">SN</a>
+      </div>
+    </div>
+  </div>
+
+  <button class="back-top" id="back-top" aria-label="العودة للأعلى">↑</button>
+
+  <script src="js/crew.js?v=1"></script>
 </body>
 </html>
