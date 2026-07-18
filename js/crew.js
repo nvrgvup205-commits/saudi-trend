@@ -18,6 +18,23 @@
           "القيمة أولًا — قبل أي رقم",
           "نشتغل على مشروعك كأنه مشروعنا",
           "نتائج تِبان… مو وعود تطير",
+          "عقود واضحة من أوّل يوم — بلا لخبطة",
+          "بنكتب اللي اتفقنا عليه… ونلتزم فيه",
+          "ضمانات ذهبية على جودة التنفيذ",
+          "لو فيه خلل منّا — نصلّحه، مو نتهرّب",
+          "مراحل العمل مضمونة بجدول واضح",
+          "تدفع على مراحل… وأنت مرتاح",
+          "حقوقك محفوظة في العقد — مو كلام طيب",
+          "نراجع العقد معك كلمة بكلمة",
+          "التزام بالمواعيد… هذا أساسنا",
+          "ضمان متابعة بعد التسليم",
+          "شفافية كاملة في التكاليف والبنود",
+          "ما في مفاجآت بعد التوقيع",
+          "ضمان ذهبي: شغل يستاهل اسمك",
+          "العقد يحميك… وإحنا نحترم توقيعنا",
+          "ضمانات مكتوبة — مو وعود بالهوا",
+          "نضمن النتيجة المتفق عليها",
+          "خدمة بعد المشروع… موجودة وما تختفي",
         ];
   if (skillEl) {
     const paintSkill = () => {
@@ -276,16 +293,14 @@
     if (Math.abs(target - whyInvertSmooth) < 0.002) whyInvertSmooth = target;
     whyUs.style.setProperty("--why-invert", whyInvertSmooth.toFixed(4));
 
-    /* Mobile glass: gentle tint follows colors passing behind */
-    if (isMobileMQ.matches) {
-      whyGlass.r += (sample.r - whyGlass.r) * 0.055;
-      whyGlass.g += (sample.g - whyGlass.g) * 0.055;
-      whyGlass.b += (sample.b - whyGlass.b) * 0.055;
-      whyUs.style.setProperty(
-        "--why-glass",
-        `${Math.round(whyGlass.r)}, ${Math.round(whyGlass.g)}, ${Math.round(whyGlass.b)}`
-      );
-    }
+    /* Glass tint follows colors passing behind (mobile + laptop) */
+    whyGlass.r += (sample.r - whyGlass.r) * 0.055;
+    whyGlass.g += (sample.g - whyGlass.g) * 0.055;
+    whyGlass.b += (sample.b - whyGlass.b) * 0.055;
+    whyUs.style.setProperty(
+      "--why-glass",
+      `${Math.round(whyGlass.r)}, ${Math.round(whyGlass.g)}, ${Math.round(whyGlass.b)}`
+    );
   }
   const MAX_LOOK = 0.32;
   const DIVE_END = 0.48;

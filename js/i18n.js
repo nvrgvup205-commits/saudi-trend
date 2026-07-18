@@ -26,6 +26,9 @@
       "hero.welcome": "مرحباً بكم في",
       "hero.excel": "لماذا نحن",
       "hero.why": "لماذا نحن",
+      "wa.label": "تواصل واتساب",
+      "wa.a": "واتساب: 0536542044",
+      "wa.b": "واتساب: 0554319281",
       "skill.1": "أفكارنا غير… وهذا فرقنا",
       "skill.2": "متمكّنين من شغلنا — مو كلام فاضي",
       "skill.3": "ننفّذ أي فكرة… حرفيًا",
@@ -33,6 +36,23 @@
       "skill.5": "القيمة أولًا — قبل أي رقم",
       "skill.6": "نشتغل على مشروعك كأنه مشروعنا",
       "skill.7": "نتائج تِبان… مو وعود تطير",
+      "skill.8": "عقود واضحة من أوّل يوم — بلا لخبطة",
+      "skill.9": "بنكتب اللي اتفقنا عليه… ونلتزم فيه",
+      "skill.10": "ضمانات ذهبية على جودة التنفيذ",
+      "skill.11": "لو فيه خلل منّا — نصلّحه، مو نتهرّب",
+      "skill.12": "مراحل العمل مضمونة بجدول واضح",
+      "skill.13": "تدفع على مراحل… وأنت مرتاح",
+      "skill.14": "حقوقك محفوظة في العقد — مو كلام طيب",
+      "skill.15": "نراجع العقد معك كلمة بكلمة",
+      "skill.16": "التزام بالمواعيد… هذا أساسنا",
+      "skill.17": "ضمان متابعة بعد التسليم",
+      "skill.18": "شفافية كاملة في التكاليف والبنود",
+      "skill.19": "ما في مفاجآت بعد التوقيع",
+      "skill.20": "ضمان ذهبي: شغل يستاهل اسمك",
+      "skill.21": "العقد يحميك… وإحنا نحترم توقيعنا",
+      "skill.22": "ضمانات مكتوبة — مو وعود بالهوا",
+      "skill.23": "نضمن النتيجة المتفق عليها",
+      "skill.24": "خدمة بعد المشروع… موجودة وما تختفي",
       "featured.label": "خدمات مميزة",
       "featured.dots": "تنقل الشرائح",
       "featured.01.title": "التسويق الإلكتروني",
@@ -222,6 +242,9 @@
       "hero.welcome": "Welcome to",
       "hero.excel": "Why us",
       "hero.why": "Why us",
+      "wa.label": "WhatsApp contact",
+      "wa.a": "WhatsApp: 0536542044",
+      "wa.b": "WhatsApp: 0554319281",
       "skill.1": "Our ideas are different — that's our edge",
       "skill.2": "Masters of the craft — not empty talk",
       "skill.3": "We deliver any idea — literally",
@@ -229,6 +252,23 @@
       "skill.5": "Value first — before any number",
       "skill.6": "We treat your project like our own",
       "skill.7": "Results you see — not promises that fade",
+      "skill.8": "Clear contracts from day one — no confusion",
+      "skill.9": "We write what we agree — and we stand by it",
+      "skill.10": "Golden guarantees on delivery quality",
+      "skill.11": "If it's on us — we fix it, we don't dodge it",
+      "skill.12": "Guaranteed phases with a clear timeline",
+      "skill.13": "Pay in stages — and stay comfortable",
+      "skill.14": "Your rights are protected in the contract",
+      "skill.15": "We review the contract with you, line by line",
+      "skill.16": "On-time delivery is our baseline",
+      "skill.17": "Follow-up guaranteed after handover",
+      "skill.18": "Full transparency on costs and terms",
+      "skill.19": "No surprises after signing",
+      "skill.20": "Golden promise: work worthy of your name",
+      "skill.21": "The contract protects you — we honor our signature",
+      "skill.22": "Written guarantees — not airy promises",
+      "skill.23": "We guarantee the agreed outcome",
+      "skill.24": "After-project support that stays with you",
       "featured.label": "Featured services",
       "featured.dots": "Slide navigation",
       "featured.01.title": "Digital marketing",
@@ -719,7 +759,13 @@
     getLang,
     apply,
     skills(lang) {
-      return [1, 2, 3, 4, 5, 6, 7].map((n) => t(lang, `skill.${n}`));
+      const out = [];
+      for (let n = 1; n <= 24; n++) {
+        const key = `skill.${n}`;
+        const value = t(lang, key);
+        if (value && value !== key) out.push(value);
+      }
+      return out;
     },
   };
 
