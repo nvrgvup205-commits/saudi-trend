@@ -686,7 +686,7 @@
   });
   requestAnimationFrame(tick);
 
-  /* ── SAUDI TREND: sequential physical free-fall letters ── */
+  /* ── SAUDI TREND: calm sequential free-fall (wide poster type) ── */
   (() => {
     const title = document.getElementById("hero-title");
     if (!title) return;
@@ -695,23 +695,25 @@
     const words = ["SAUDI", "TREND"];
     title.textContent = "";
     title.setAttribute("aria-label", "SAUDI TREND");
+    title.setAttribute("dir", "ltr");
 
     const letters = [];
     words.forEach((word, lineIndex) => {
       const line = document.createElement("span");
       line.className = "hero__title-line";
+      line.setAttribute("dir", "ltr");
       [...word].forEach((ch, charIndex) => {
         const span = document.createElement("span");
         span.className = "hero__title-char";
         span.textContent = ch;
         line.appendChild(span);
-        /* Start above, stagger release — later letters wait a beat */
-        const order = lineIndex * word.length + charIndex;
+        const order = lineIndex * 5 + charIndex;
         letters.push({
           el: span,
-          y: -(180 + charIndex * 14 + lineIndex * 36),
+          /* Higher start + gentle stagger = calm, readable sequence */
+          y: -(260 + charIndex * 22 + lineIndex * 48),
           vy: 0,
-          delay: 0.08 + order * 0.07,
+          delay: 0.18 + order * 0.16,
           age: 0,
           settled: false,
           bounces: 0,
@@ -720,28 +722,34 @@
       title.appendChild(line);
     });
 
+    const xScale = 1.08;
+    const paint = (L) => {
+      L.el.style.transform = `translate3d(0, ${L.y.toFixed(2)}px, 0) scaleX(${xScale})`;
+    };
+
     if (reduceMotion) {
       letters.forEach((L) => {
         L.y = 0;
         L.settled = true;
-        L.el.style.transform = "translate3d(0,0,0)";
+        paint(L);
         L.el.classList.add("is-settled");
       });
       return;
     }
 
-    const G = 3200; /* px/s² — crisp fall */
+    /* Softer gravity + longer hang = impressive, not rushed */
+    const G = 980;
     const REST = 0;
-    const RESTITUTION = 0.34;
-    const FRICTION = 0.86;
-    const SETTLE_V = 28;
+    const RESTITUTION = 0.22;
+    const FRICTION = 0.78;
+    const SETTLE_V = 18;
     let last = performance.now();
-    let alive = true;
 
     function step(now) {
-      if (!alive) return;
-      const dt = Math.min(0.032, (now - last) / 1000);
+      const rawDt = (now - last) / 1000;
       last = now;
+      /* Cap dt but keep motion silky on fast refresh rates */
+      const dt = Math.min(0.028, Math.max(0.008, rawDt));
       let moving = false;
 
       for (const L of letters) {
@@ -749,11 +757,16 @@
         moving = true;
         L.age += dt;
         if (L.age < L.delay) {
-          L.el.style.transform = `translate3d(0, ${L.y}px, 0)`;
+          paint(L);
           continue;
         }
 
-        L.vy += G * dt;
+        /* Ease into gravity so the first frames feel weighty, not snapped */
+        const fallAge = L.age - L.delay;
+        const gScale = Math.min(1, fallAge / 0.35);
+        L.vy += G * gScale * dt;
+        /* Soft terminal feel — never runaway speed */
+        L.vy = Math.min(L.vy, 920);
         L.y += L.vy * dt;
 
         if (L.y >= REST) {
@@ -761,7 +774,7 @@
           L.vy = -L.vy * RESTITUTION;
           L.bounces += 1;
           if (L.bounces > 1) L.vy *= FRICTION;
-          if (Math.abs(L.vy) < SETTLE_V || L.bounces >= 4) {
+          if (Math.abs(L.vy) < SETTLE_V || L.bounces >= 3) {
             L.y = REST;
             L.vy = 0;
             L.settled = true;
@@ -769,7 +782,7 @@
           }
         }
 
-        L.el.style.transform = `translate3d(0, ${L.y.toFixed(2)}px, 0)`;
+        paint(L);
       }
 
       if (moving) requestAnimationFrame(step);

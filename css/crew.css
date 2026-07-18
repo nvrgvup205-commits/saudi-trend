@@ -595,45 +595,54 @@ html[dir="ltr"] .section-head__sub {
 }
 
 .hero__title {
-  --brand-display: "Bebas Neue", "Syne", var(--display);
+  --brand-display: "Archivo Black", "Syne", var(--display);
   margin: 0;
   font-family: var(--brand-display);
   font-weight: 400;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  line-height: 0.86;
+  line-height: 0.9;
   overflow: visible;
+  /* Keep Latin brand reading LTR even on Arabic pages */
+  direction: ltr;
+  unicode-bidi: isolate;
 }
 
 .hero__title-line {
   display: block;
-  font-size: clamp(3.4rem, 11vw, 7.4rem);
+  font-size: clamp(2.9rem, 9.5vw, 6.6rem);
   white-space: nowrap;
+  direction: ltr;
+  unicode-bidi: isolate;
 }
 
 .hero__title-char {
   display: inline-block;
-  transform: translate3d(0, -140%, 0);
+  transform: translate3d(0, -160%, 0) scaleX(1.08);
   will-change: transform;
+  margin-inline: 0.01em;
+  font-weight: 400;
   text-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.08),
-    0 18px 40px rgba(0, 0, 0, 0.35);
-  background: linear-gradient(180deg, #ffffff 35%, #d7ebe4 100%);
+    0 2px 0 rgba(255, 255, 255, 0.12),
+    0 22px 48px rgba(0, 0, 0, 0.4);
+  background: linear-gradient(185deg, #ffffff 28%, #e8f6f1 68%, #b7d8cd 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
   -webkit-text-fill-color: transparent;
+  /* Wider, poster-like letterforms */
+  transform-origin: 50% 100%;
 }
 
 .hero__title-char.is-settled {
   text-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.1),
-    0 10px 28px rgba(0, 0, 0, 0.28);
+    0 2px 0 rgba(255, 255, 255, 0.14),
+    0 14px 34px rgba(0, 0, 0, 0.32);
 }
 
 @media (prefers-reduced-motion: reduce) {
   .hero__title-char {
-    transform: none !important;
+    transform: scaleX(1.08) !important;
   }
 }
 
