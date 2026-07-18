@@ -280,38 +280,69 @@
     placePortal(0, 0, false);
   }
 
-  /* Mobile: same almond eye the whole way — smooth morph into the header (no orb/distort) */
+  /* Mobile: laptop-style dive → resurface, but snappier and always almond-shaped */
   function updateEyeDockMobile(t, from, to) {
     clearSpellFX();
-    placeRipple(0, 0, false);
+    const diveEnd = 0.5;
 
-    const p = easeInOut(clamp(t, 0, 1));
-    const width = lerp(from.width, to.width, p);
-    const height = lerp(from.height, to.height, p);
-    const left = lerp(from.left, to.left, p);
-    const top = lerp(from.top, to.top, p);
-    /* Soft water dip mid-path — keeps shape, never turns into a ball */
-    const dip = Math.sin(p * Math.PI) * Math.min(22, from.height * 0.14);
+    if (t <= diveEnd) {
+      const dive = easeInOut(t / diveEnd);
+      const width = lerp(from.width, from.width * 0.72, dive);
+      const height = lerp(from.height, from.height * 0.72, dive);
+      applyEyeBox({
+        left: from.left + (from.width - width) / 2,
+        top: from.top + dive * Math.min(36, from.height * 0.28),
+        width,
+        height,
+      });
+      setEyeVisual({
+        opacity: lerp(1, 0, dive),
+        blur: lerp(0, 7, dive),
+        sink: lerp(0, Math.min(36, from.height * 0.28), dive),
+        scale: lerp(1, 0.88, dive),
+        diving: dive > 0.1,
+        surfacing: false,
+        docked: false,
+        enchanting: false,
+        orb: false,
+        rotate: 0,
+        glow: 0,
+        lid: lerp(0, 0.55, dive),
+        sclera: 1,
+        orbShow: 0,
+      });
+      placeRipple(
+        from.left + from.width / 2,
+        from.top + from.height * 0.7 + dive * 20,
+        dive > 0.2 && dive < 0.95
+      );
+      return;
+    }
 
-    applyEyeBox({ left, top: top + dip, width, height });
-
-    const mid = Math.sin(p * Math.PI); // 0 → 1 → 0
+    const rise = easeOut((t - diveEnd) / (1 - diveEnd));
+    applyEyeBox({
+      left: to.left,
+      top: to.top,
+      width: to.width,
+      height: to.height,
+    });
     setEyeVisual({
-      opacity: lerp(1, 0.42, mid * 0.9),
-      blur: mid * 5,
-      sink: 0,
-      scale: 1 - mid * 0.06,
-      diving: p > 0.12 && p < 0.55,
-      surfacing: p >= 0.55 && p < 0.92,
-      docked: p > 0.9,
+      opacity: rise,
+      blur: lerp(5, 0, rise),
+      sink: lerp(10, 0, rise),
+      scale: lerp(0.9, 1, rise),
+      diving: false,
+      surfacing: rise < 0.95,
+      docked: rise > 0.85,
       enchanting: false,
       orb: false,
       rotate: 0,
       glow: 0,
-      lid: mid * 0.35,
+      lid: lerp(0.4, 0.1, rise),
       sclera: 1,
       orbShow: 0,
     });
+    placeRipple(to.left + to.width / 2, to.top + to.height / 2, rise > 0.08 && rise < 0.55);
   }
 
   function updateEyeDock() {
