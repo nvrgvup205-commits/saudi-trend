@@ -280,41 +280,45 @@
     placePortal(0, 0, false);
   }
 
-  /* Mobile: laptop-style dive → resurface, but snappier and always almond-shaped */
+  /* Mobile: quick underwater shrink — less scroll so frame glitches aren’t noticeable */
   function updateEyeDockMobile(t, from, to) {
     clearSpellFX();
-    const diveEnd = 0.5;
+    const diveEnd = 0.58;
 
     if (t <= diveEnd) {
-      const dive = easeInOut(t / diveEnd);
-      const width = lerp(from.width, from.width * 0.72, dive);
-      const height = lerp(from.height, from.height * 0.72, dive);
+      /* Ease hard so most of the dive finishes in the first finger flick */
+      const dive = easeIn(easeInOut(t / diveEnd));
+      const width = lerp(from.width, from.width * 0.28, dive);
+      const height = lerp(from.height, from.height * 0.28, dive);
+      const sink = lerp(0, Math.min(48, from.height * 0.4), dive);
       applyEyeBox({
         left: from.left + (from.width - width) / 2,
-        top: from.top + dive * Math.min(36, from.height * 0.28),
+        top: from.top + sink * 0.35,
         width,
         height,
       });
+      const opacity = lerp(1, 0, dive);
       setEyeVisual({
-        opacity: lerp(1, 0, dive),
-        blur: lerp(0, 7, dive),
-        sink: lerp(0, Math.min(36, from.height * 0.28), dive),
-        scale: lerp(1, 0.88, dive),
-        diving: dive > 0.1,
+        opacity,
+        blur: lerp(0, 2.5, dive), /* tiny blur only — heavy blur = dark frame */
+        sink,
+        scale: lerp(1, 0.45, dive),
+        diving: dive > 0.06,
         surfacing: false,
         docked: false,
         enchanting: false,
         orb: false,
         rotate: 0,
         glow: 0,
-        lid: lerp(0, 0.55, dive),
+        lid: lerp(0, 0.7, dive),
         sclera: 1,
         orbShow: 0,
       });
+      if (eye) eye.style.visibility = opacity < 0.04 ? "hidden" : "visible";
       placeRipple(
         from.left + from.width / 2,
-        from.top + from.height * 0.7 + dive * 20,
-        dive > 0.2 && dive < 0.95
+        from.top + from.height * 0.72 + sink * 0.5,
+        dive > 0.12 && dive < 0.92
       );
       return;
     }
@@ -326,23 +330,24 @@
       width: to.width,
       height: to.height,
     });
+    if (eye) eye.style.visibility = "visible";
     setEyeVisual({
       opacity: rise,
-      blur: lerp(5, 0, rise),
-      sink: lerp(10, 0, rise),
-      scale: lerp(0.9, 1, rise),
+      blur: lerp(2, 0, rise),
+      sink: lerp(6, 0, rise),
+      scale: lerp(0.85, 1, rise),
       diving: false,
-      surfacing: rise < 0.95,
-      docked: rise > 0.85,
+      surfacing: rise < 0.92,
+      docked: rise > 0.82,
       enchanting: false,
       orb: false,
       rotate: 0,
       glow: 0,
-      lid: lerp(0.4, 0.1, rise),
+      lid: lerp(0.35, 0.08, rise),
       sclera: 1,
       orbShow: 0,
     });
-    placeRipple(to.left + to.width / 2, to.top + to.height / 2, rise > 0.08 && rise < 0.55);
+    placeRipple(to.left + to.width / 2, to.top + to.height / 2, rise > 0.05 && rise < 0.5);
   }
 
   function updateEyeDock() {
@@ -366,6 +371,7 @@
         sclera: 1,
         orbShow: 0,
       });
+      if (eye) eye.style.visibility = "visible";
       placeRipple(0, 0, false);
       clearSpellFX();
       return;
@@ -373,9 +379,9 @@
 
     const heroRect = hero.getBoundingClientRect();
     const mobile = isMobileMQ.matches;
-    /* Shorter range on phones so the settle feels snappy, not dragged */
+    /* Very short range on phones: one light scroll finishes the dive */
     const range = mobile
-      ? Math.max(hero.offsetHeight * 0.4, window.innerHeight * 0.26)
+      ? Math.max(hero.offsetHeight * 0.2, window.innerHeight * 0.12)
       : Math.max(hero.offsetHeight * 0.62, window.innerHeight * 0.4);
     const scrolled = clamp(-heroRect.top, 0, range);
     const t = scrolled / range;
@@ -385,6 +391,7 @@
     if (mobile) {
       updateEyeDockMobile(t, from, to);
     } else {
+      if (eye) eye.style.visibility = "visible";
       updateEyeDockDesktop(t, from, to);
       clearSpellFX();
     }
