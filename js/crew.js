@@ -2,24 +2,28 @@
   const prefersFine = window.matchMedia("(pointer: fine)").matches;
   const isMobileMQ = window.matchMedia("(max-width: 720px)");
 
-  /* ── Skills rotator (bilingual) ── */
+  /* ── Why-us rotator (bilingual) ── */
   const skillEl = document.getElementById("hero-skill");
+  const whyWrap = document.getElementById("why-wrap");
+  const whyUs = document.getElementById("why-us");
   let skillIndex = 0;
   const skillsFor = () =>
     window.ST_I18N
       ? window.ST_I18N.skills(window.ST_I18N.getLang())
       : [
-          "تصميم الهوية التجارية",
-          "برمجة المواقع والمتاجر الإلكترونية",
-          "تهيئة محركات البحث (SEO)",
-          "تصميم الفيديو والموشن جرافيك",
-          "إدارة الحملات الإعلانية",
+          "مختلفين في أفكارنا",
+          "متمكّنين من شغلنا",
+          "نقدر ننفّذ أي حاجة… حرفيًا",
+          "عقودنا مرنة وقابلة للتفاوض لإرضاء العملاء",
+          "نهتم بالقيمة",
+          "نشتغل للناس كأنه شغلنا",
         ];
   if (skillEl) {
     const paintSkill = () => {
       const skills = skillsFor();
       skillEl.textContent = skills[skillIndex % skills.length];
     };
+    paintSkill();
     setInterval(() => {
       skillEl.classList.add("is-fading");
       setTimeout(() => {
@@ -27,7 +31,7 @@
         paintSkill();
         skillEl.classList.remove("is-fading");
       }, 220);
-    }, 2600);
+    }, 2800);
     window.addEventListener("st:langchange", () => {
       skillIndex = 0;
       paintSkill();
@@ -130,6 +134,24 @@
   const header = document.querySelector(".site-header");
   const hero = document.querySelector(".hero");
   const hasHeroEye = document.body.classList.contains("has-hero-eye") && !!hero;
+
+  /* Pin «لماذا نحن» under the header once it reaches it */
+  function updateWhyPin() {
+    if (!whyWrap || !whyUs || !header) return;
+    const pinY = header.getBoundingClientRect().bottom + 6;
+
+    if (!whyUs.classList.contains("is-pinned")) {
+      if (whyUs.getBoundingClientRect().top <= pinY) {
+        whyWrap.style.height = `${whyUs.offsetHeight}px`;
+        whyUs.classList.add("is-pinned");
+        document.body.classList.add("why-pinned");
+      }
+    } else if (whyWrap.getBoundingClientRect().top > pinY) {
+      whyUs.classList.remove("is-pinned");
+      whyWrap.style.height = "";
+      document.body.classList.remove("why-pinned");
+    }
+  }
   const MAX_LOOK = 0.32;
   const DIVE_END = 0.48;
 
@@ -473,6 +495,7 @@
     }
 
     updateEyeDock();
+    updateWhyPin();
 
     if (eye && ball) {
       const rect = eye.getBoundingClientRect();

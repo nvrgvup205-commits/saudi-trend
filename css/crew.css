@@ -320,12 +320,18 @@ html[dir="ltr"] .hero__content {
 }
 
 /* Keep eye on the left, skill on the right (no overlap) */
-html[dir="ltr"] .hero__skill {
+html[dir="ltr"] .hero__skill-wrap {
   left: auto;
   right: max(4%, 1rem);
-  text-align: left;
-  z-index: 5;
   max-width: min(340px, 38vw);
+}
+
+html[dir="ltr"] .hero__skill {
+  text-align: left;
+}
+
+html[dir="ltr"] .hero__skill.is-pinned {
+  text-align: center;
 }
 
 html[dir="ltr"] .hero__skill-text {
@@ -424,12 +430,17 @@ html[dir="ltr"] .section-head__sub {
     transform: none;
   }
 
+  html[dir="ltr"] .hero__skill-wrap,
   html[dir="ltr"] .hero__skill {
     left: auto;
     right: auto;
     max-width: none;
     text-align: center;
     position: relative;
+  }
+
+  html[dir="ltr"] .hero__skill.is-pinned {
+    position: fixed !important;
   }
 
   html[dir="ltr"] .back-top {
@@ -886,13 +897,31 @@ body.eye-docked .eye {
   transform: translateY(calc(var(--lid-close) * -55%));
 }
 
-.hero__skill {
+.hero__skill-wrap {
   position: absolute;
   right: max(5%, 1.2rem);
   bottom: 10%;
   z-index: 5;
-  text-align: right;
   max-width: min(360px, 42vw);
+}
+
+.hero__skill {
+  text-align: right;
+  max-width: 100%;
+}
+
+.hero__skill.is-pinned {
+  position: fixed !important;
+  top: calc(var(--header-h) + env(safe-area-inset-top, 0px) + 0.4rem);
+  left: 50%;
+  right: auto;
+  bottom: auto;
+  transform: translateX(-50%);
+  width: min(92vw, 420px);
+  max-width: none;
+  text-align: center;
+  z-index: 56;
+  margin: 0;
 }
 
 @media (min-width: 721px) {
@@ -1870,8 +1899,9 @@ body.eye-docked .eye {
     display: none !important;
   }
 
-  /* Skill text stays above the diving eye so it never gets covered */
-  .hero__skill {
+  /* Why-us stays readable above the dissolving eye */
+  .hero__skill,
+  .hero__skill.is-pinned {
     z-index: 66 !important;
   }
 
@@ -1996,7 +2026,7 @@ body.eye-docked .eye {
     visibility: hidden;
   }
 
-  .hero__skill {
+  .hero__skill-wrap {
     position: relative !important;
     left: auto !important;
     right: auto !important;
@@ -2005,10 +2035,20 @@ body.eye-docked .eye {
     max-width: 100% !important;
     width: 100%;
     margin: 0 !important;
-    text-align: center !important;
     align-self: center !important;
-    z-index: 2;
     order: 3;
+  }
+
+  .hero__skill {
+    position: relative !important;
+    width: 100%;
+    margin: 0 !important;
+    text-align: center !important;
+  }
+
+  .hero__skill.is-pinned {
+    position: fixed !important;
+    width: min(92vw, 420px);
   }
 
   .hero__skill-label {
@@ -2019,6 +2059,10 @@ body.eye-docked .eye {
     font-size: 1.05rem;
     min-height: 2.4em;
     padding-inline: 0.5rem;
+  }
+
+  .hero__skill.is-pinned .hero__skill-text {
+    text-shadow: 0 2px 14px rgba(0, 0, 0, 0.55);
   }
 
   .hero__circuit,
