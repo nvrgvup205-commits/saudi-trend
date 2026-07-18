@@ -907,13 +907,18 @@ body.eye-docked .eye {
 
 .hero__skill {
   --why-invert: 0; /* 0 = white pill on dark, 1 = dark pill on light */
+  --why-blur: 0px;
+  --why-fade: 1;
   text-align: right;
   max-width: 100%;
+  opacity: var(--why-fade);
+  filter: blur(var(--why-blur));
+  will-change: opacity, filter, transform;
 }
 
 .hero__skill.is-pinned {
   position: fixed !important;
-  top: calc(var(--header-h) + env(safe-area-inset-top, 0px) + 0.4rem);
+  top: calc(var(--header-h) + env(safe-area-inset-top, 0px) + 0.45rem);
   left: 50%;
   right: auto;
   bottom: auto;

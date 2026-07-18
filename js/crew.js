@@ -135,22 +135,53 @@
   const hero = document.querySelector(".hero");
   const hasHeroEye = document.body.classList.contains("has-hero-eye") && !!hero;
 
-  /* Pin «لماذا نحن» under the header once it reaches it */
+  /* Approach blur → pin centered under header (silky reveal) */
+  let whyBlurSmooth = 0;
+  let whyFadeSmooth = 1;
+  const WHY_APPROACH = 96; /* start blur a little before the header */
+
   function updateWhyPin() {
     if (!whyWrap || !whyUs || !header) return;
     const pinY = header.getBoundingClientRect().bottom + 6;
+    const pinned = whyUs.classList.contains("is-pinned");
+    let targetBlur = 0;
+    let targetFade = 1;
 
-    if (!whyUs.classList.contains("is-pinned")) {
-      if (whyUs.getBoundingClientRect().top <= pinY) {
+    if (!pinned) {
+      const top = whyUs.getBoundingClientRect().top;
+      const dist = top - pinY; /* >0 still below header */
+      if (dist < WHY_APPROACH) {
+        const t = clamp(1 - dist / WHY_APPROACH, 0, 1);
+        const soft = t * t * (3 - 2 * t); /* smoothstep */
+        targetBlur = soft * 7;
+        targetFade = lerp(1, 0.22, soft);
+      }
+      if (top <= pinY) {
         whyWrap.style.height = `${whyUs.offsetHeight}px`;
         whyUs.classList.add("is-pinned");
         document.body.classList.add("why-pinned");
+        /* keep a touch of blur so the centered reveal feels soft */
+        whyBlurSmooth = Math.max(whyBlurSmooth, 5);
+        whyFadeSmooth = Math.min(whyFadeSmooth, 0.3);
       }
-    } else if (whyWrap.getBoundingClientRect().top > pinY) {
-      whyUs.classList.remove("is-pinned");
-      whyWrap.style.height = "";
-      document.body.classList.remove("why-pinned");
+    } else {
+      /* Settled in the center — blur clears, opacity returns */
+      targetBlur = 0;
+      targetFade = 1;
+      if (whyWrap.getBoundingClientRect().top > pinY) {
+        whyUs.classList.remove("is-pinned");
+        whyWrap.style.height = "";
+        document.body.classList.remove("why-pinned");
+      }
     }
+
+    whyBlurSmooth += (targetBlur - whyBlurSmooth) * 0.11;
+    whyFadeSmooth += (targetFade - whyFadeSmooth) * 0.1;
+    if (Math.abs(targetBlur - whyBlurSmooth) < 0.02) whyBlurSmooth = targetBlur;
+    if (Math.abs(targetFade - whyFadeSmooth) < 0.005) whyFadeSmooth = targetFade;
+
+    whyUs.style.setProperty("--why-blur", `${whyBlurSmooth.toFixed(2)}px`);
+    whyUs.style.setProperty("--why-fade", whyFadeSmooth.toFixed(3));
   }
 
   /* Silky adaptive contrast — pill quietly shifts when meeting similar colors */
