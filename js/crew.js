@@ -280,22 +280,37 @@
     placePortal(0, 0, false);
   }
 
-  /* Mobile: no shrink — silky water blur dissolve ↔ same style resurface */
+  /* Frozen viewport spot — eye watches the page, then dissolves so you can read */
+  let frozenEyeBox = null;
+
+  function captureFrozenEye(from) {
+    frozenEyeBox = {
+      left: from.left,
+      top: from.top,
+      width: from.width,
+      height: from.height,
+    };
+  }
+
+  /* Mobile: fixed in place (no scroll drift) — water blur dissolve ↔ header resurface */
   function updateEyeDockMobile(t, from, to) {
     clearSpellFX();
     const diveEnd = 0.52;
     const smooth = (x) => easeInOut(clamp(x, 0, 1));
 
+    /* Refresh rest pose only at the top; while dissolving keep it locked */
+    if (t < 0.03 || !frozenEyeBox) captureFrozenEye(from);
+    const rest = frozenEyeBox;
+
     if (t <= diveEnd) {
       const p = smooth(t / diveEnd);
-      /* Keep full almond size — only water + blur + fade */
-      applyEyeBox(from);
+      applyEyeBox(rest);
       const opacity = 1 - p;
       const blur = lerp(0.85, 5.5, p);
       setEyeVisual({
         opacity,
         blur,
-        sink: lerp(0, 10, p),
+        sink: 0,
         scale: 1,
         diving: p > 0.01,
         surfacing: false,
@@ -314,8 +329,8 @@
         eye.style.visibility = opacity < 0.02 ? "hidden" : "visible";
       }
       placeRipple(
-        from.left + from.width / 2,
-        from.top + from.height * 0.72,
+        rest.left + rest.width / 2,
+        rest.top + rest.height * 0.72,
         p > 0.08 && p < 0.95
       );
       return;
@@ -332,7 +347,7 @@
     setEyeVisual({
       opacity: p,
       blur: lerp(5.5, 0, p),
-      sink: lerp(8, 0, p),
+      sink: 0,
       scale: 1,
       diving: false,
       surfacing: p < 0.96,
@@ -471,8 +486,14 @@
   }
 
   updateEyeDock();
-  window.addEventListener("resize", updateEyeDock);
-  window.addEventListener("orientationchange", () => setTimeout(updateEyeDock, 120));
+  window.addEventListener("resize", () => {
+    frozenEyeBox = null;
+    updateEyeDock();
+  });
+  window.addEventListener("orientationchange", () => {
+    frozenEyeBox = null;
+    setTimeout(updateEyeDock, 120);
+  });
   window.addEventListener("st:langchange", () => {
     // Recalculate eye/skill geometry after RTL ↔ LTR swap
     requestAnimationFrame(updateEyeDock);
