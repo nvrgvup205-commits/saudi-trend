@@ -280,106 +280,79 @@
     placePortal(0, 0, false);
   }
 
-  /* Mobile: dive with rising blur → striking water breach in the header */
+  /* Mobile: no shrink — silky water blur dissolve ↔ same style resurface */
   function updateEyeDockMobile(t, from, to) {
     clearSpellFX();
-    const diveEnd = 0.55;
+    const diveEnd = 0.52;
+    const smooth = (x) => easeInOut(clamp(x, 0, 1));
 
     if (t <= diveEnd) {
-      const diveLin = clamp(t / diveEnd, 0, 1);
-      /* Hard ease for position/opacity so a light flick finishes the sink */
-      const dive = easeIn(easeInOut(diveLin));
-      const width = lerp(from.width, from.width * 0.28, dive);
-      const height = lerp(from.height, from.height * 0.28, dive);
-      const sink = lerp(0, Math.min(52, from.height * 0.42), dive);
-      applyEyeBox({
-        left: from.left + (from.width - width) / 2,
-        top: from.top + sink * 0.35,
-        width,
-        height,
-      });
-      const opacity = lerp(1, 0, dive);
-      /* Blur from the very first scroll pixel, then deepens underwater */
-      const blur = lerp(0.7, 4.2, easeInOut(diveLin));
+      const p = smooth(t / diveEnd);
+      /* Keep full almond size — only water + blur + fade */
+      applyEyeBox(from);
+      const opacity = 1 - p;
+      const blur = lerp(0.85, 5.5, p);
       setEyeVisual({
         opacity,
         blur,
-        sink,
-        scale: lerp(1, 0.42, dive),
-        diving: diveLin > 0.02,
+        sink: lerp(0, 10, p),
+        scale: 1,
+        diving: p > 0.01,
         surfacing: false,
         docked: false,
         enchanting: false,
         orb: false,
         rotate: 0,
         glow: 0,
-        lid: lerp(0, 0.75, dive),
+        lid: lerp(0, 0.45, p),
         sclera: 1,
         orbShow: 0,
       });
       if (eye) {
-        eye.style.setProperty("--water-opacity", String(lerp(0.2, 1, diveLin)));
+        eye.style.setProperty("--water-opacity", String(lerp(0.25, 1, p)));
         eye.style.setProperty("--rise", "0");
-        eye.style.visibility = opacity < 0.03 ? "hidden" : "visible";
+        eye.style.visibility = opacity < 0.02 ? "hidden" : "visible";
       }
       placeRipple(
         from.left + from.width / 2,
-        from.top + from.height * 0.72 + sink * 0.5,
-        diveLin > 0.1 && diveLin < 0.95
+        from.top + from.height * 0.72,
+        p > 0.08 && p < 0.95
       );
       return;
     }
 
-    /* Breach the surface in the header — blur clears as it rises from water */
-    const riseLin = clamp((t - diveEnd) / (1 - diveEnd), 0, 1);
-    const rise = easeOut(riseLin);
-    /* Pop through the surface in the first third, then settle */
-    const breach = clamp(riseLin / 0.38, 0, 1);
-    const settle = easeOut(clamp((riseLin - 0.38) / 0.62, 0, 1));
-    const emergeY = lerp(to.top + 18, to.top, easeOut(breach));
-    const sizePop = riseLin < 0.38
-      ? lerp(0.55, 1.08, easeOut(breach))
-      : lerp(1.08, 1, settle);
-    const opacity = riseLin < 0.04
-      ? 0
-      : lerp(0, 1, easeOut(clamp((riseLin - 0.04) / 0.32, 0, 1)));
-    const blur = riseLin < 0.38
-      ? lerp(4.2, 1.2, easeOut(breach))
-      : lerp(1.2, 0, settle);
-
-    applyEyeBox({
-      left: to.left,
-      top: emergeY,
-      width: to.width,
-      height: to.height,
-    });
+    /* Same water language in the header — blur clears, size stays natural */
+    const p = smooth((t - diveEnd) / (1 - diveEnd));
+    applyEyeBox(to);
     if (eye) {
       eye.style.visibility = "visible";
-      eye.style.setProperty("--water-opacity", String(lerp(1, 0, rise)));
-      eye.style.setProperty("--rise", String(riseLin));
+      eye.style.setProperty("--water-opacity", String(lerp(1, 0, p)));
+      eye.style.setProperty("--rise", String(p));
     }
     setEyeVisual({
-      opacity,
-      blur,
-      sink: lerp(14, 0, easeOut(breach)),
-      scale: sizePop,
+      opacity: p,
+      blur: lerp(5.5, 0, p),
+      sink: lerp(8, 0, p),
+      scale: 1,
       diving: false,
-      surfacing: riseLin < 0.94,
-      docked: riseLin > 0.78,
+      surfacing: p < 0.96,
+      docked: p > 0.82,
       enchanting: false,
       orb: false,
       rotate: 0,
       glow: 0,
-      lid: lerp(0.85, 0.08, rise),
+      lid: lerp(0.4, 0.08, p),
       sclera: 1,
       orbShow: 0,
     });
     placeRipple(
       to.left + to.width / 2,
       to.top + to.height / 2,
-      riseLin > 0.02 && riseLin < 0.62
+      p > 0.02 && p < 0.7
     );
   }
+
+  let eyeTSmooth = 0;
 
   function updateEyeDock() {
     if (!eye || !eyeSlot) return;
@@ -410,12 +383,20 @@
 
     const heroRect = hero.getBoundingClientRect();
     const mobile = isMobileMQ.matches;
-    /* Very short range on phones: one light scroll finishes the dive */
+    /* ~1/10 of prior mobile range — tiny scroll completes dissolve/resurface */
     const range = mobile
-      ? Math.max(hero.offsetHeight * 0.2, window.innerHeight * 0.12)
+      ? Math.max(hero.offsetHeight * 0.02, window.innerHeight * 0.012, 28)
       : Math.max(hero.offsetHeight * 0.62, window.innerHeight * 0.4);
     const scrolled = clamp(-heroRect.top, 0, range);
-    const t = scrolled / range;
+    const targetT = clamp(scrolled / range, 0, 1);
+    /* Butter-smooth follow on phones so water blur never stutters */
+    if (mobile) {
+      eyeTSmooth += (targetT - eyeTSmooth) * 0.16;
+      if (Math.abs(targetT - eyeTSmooth) < 0.001) eyeTSmooth = targetT;
+    } else {
+      eyeTSmooth = targetT;
+    }
+    const t = eyeTSmooth;
     const from = heroStartRect();
     const to = slotRect();
 
