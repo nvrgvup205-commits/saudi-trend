@@ -595,17 +595,46 @@ html[dir="ltr"] .section-head__sub {
 }
 
 .hero__title {
+  --brand-display: "Bebas Neue", "Syne", var(--display);
   margin: 0;
-  font-family: var(--display);
-  font-weight: 900;
-  letter-spacing: -0.04em;
-  text-transform: lowercase;
-  line-height: 0.92;
+  font-family: var(--brand-display);
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  line-height: 0.86;
+  overflow: visible;
 }
 
 .hero__title-line {
   display: block;
-  font-size: clamp(3.2rem, 10vw, 7rem);
+  font-size: clamp(3.4rem, 11vw, 7.4rem);
+  white-space: nowrap;
+}
+
+.hero__title-char {
+  display: inline-block;
+  transform: translate3d(0, -140%, 0);
+  will-change: transform;
+  text-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.08),
+    0 18px 40px rgba(0, 0, 0, 0.35);
+  background: linear-gradient(180deg, #ffffff 35%, #d7ebe4 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero__title-char.is-settled {
+  text-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.1),
+    0 10px 28px rgba(0, 0, 0, 0.28);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__title-char {
+    transform: none !important;
+  }
 }
 
 /* Interactive eye — dives into water, resurfaces in header */

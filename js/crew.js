@@ -686,6 +686,98 @@
   });
   requestAnimationFrame(tick);
 
+  /* ── SAUDI TREND: sequential physical free-fall letters ── */
+  (() => {
+    const title = document.getElementById("hero-title");
+    if (!title) return;
+
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const words = ["SAUDI", "TREND"];
+    title.textContent = "";
+    title.setAttribute("aria-label", "SAUDI TREND");
+
+    const letters = [];
+    words.forEach((word, lineIndex) => {
+      const line = document.createElement("span");
+      line.className = "hero__title-line";
+      [...word].forEach((ch, charIndex) => {
+        const span = document.createElement("span");
+        span.className = "hero__title-char";
+        span.textContent = ch;
+        line.appendChild(span);
+        /* Start above, stagger release — later letters wait a beat */
+        const order = lineIndex * word.length + charIndex;
+        letters.push({
+          el: span,
+          y: -(180 + charIndex * 14 + lineIndex * 36),
+          vy: 0,
+          delay: 0.08 + order * 0.07,
+          age: 0,
+          settled: false,
+          bounces: 0,
+        });
+      });
+      title.appendChild(line);
+    });
+
+    if (reduceMotion) {
+      letters.forEach((L) => {
+        L.y = 0;
+        L.settled = true;
+        L.el.style.transform = "translate3d(0,0,0)";
+        L.el.classList.add("is-settled");
+      });
+      return;
+    }
+
+    const G = 3200; /* px/s² — crisp fall */
+    const REST = 0;
+    const RESTITUTION = 0.34;
+    const FRICTION = 0.86;
+    const SETTLE_V = 28;
+    let last = performance.now();
+    let alive = true;
+
+    function step(now) {
+      if (!alive) return;
+      const dt = Math.min(0.032, (now - last) / 1000);
+      last = now;
+      let moving = false;
+
+      for (const L of letters) {
+        if (L.settled) continue;
+        moving = true;
+        L.age += dt;
+        if (L.age < L.delay) {
+          L.el.style.transform = `translate3d(0, ${L.y}px, 0)`;
+          continue;
+        }
+
+        L.vy += G * dt;
+        L.y += L.vy * dt;
+
+        if (L.y >= REST) {
+          L.y = REST;
+          L.vy = -L.vy * RESTITUTION;
+          L.bounces += 1;
+          if (L.bounces > 1) L.vy *= FRICTION;
+          if (Math.abs(L.vy) < SETTLE_V || L.bounces >= 4) {
+            L.y = REST;
+            L.vy = 0;
+            L.settled = true;
+            L.el.classList.add("is-settled");
+          }
+        }
+
+        L.el.style.transform = `translate3d(0, ${L.y.toFixed(2)}px, 0)`;
+      }
+
+      if (moving) requestAnimationFrame(step);
+    }
+
+    requestAnimationFrame(step);
+  })();
+
   /* ── Flip cards ── */
   document.querySelectorAll(".flip-card").forEach((card) => {
     card.addEventListener("click", (e) => {
