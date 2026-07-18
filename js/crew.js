@@ -204,11 +204,14 @@
     const from = heroStartRect();
     const to = slotRect();
 
+    const mobile = isMobileMQ.matches;
+
     if (t <= DIVE_END) {
-      // Sink & dissolve like diving into water
+      // Sink & dissolve like diving into water (gentler on phones)
       const dive = easeIn(t / DIVE_END);
-      const width = lerp(from.width, from.width * 0.35, dive);
-      const height = lerp(from.height, from.height * 0.35, dive);
+      const shrink = mobile ? 0.5 : 0.35;
+      const width = lerp(from.width, from.width * shrink, dive);
+      const height = lerp(from.height, from.height * shrink, dive);
       applyEyeBox({
         left: from.left + (from.width - width) / 2,
         top: from.top,
@@ -217,16 +220,16 @@
       });
       setEyeVisual({
         opacity: lerp(1, 0, dive),
-        blur: lerp(0, 14, dive),
-        sink: lerp(0, Math.min(110, from.height * 0.85), dive),
-        scale: lerp(1, 0.55, dive),
+        blur: lerp(0, mobile ? 8 : 14, dive),
+        sink: lerp(0, Math.min(mobile ? 48 : 110, from.height * (mobile ? 0.45 : 0.85)), dive),
+        scale: lerp(1, mobile ? 0.7 : 0.55, dive),
         diving: dive > 0.12,
         surfacing: false,
         docked: false,
       });
       placeRipple(
         from.left + from.width / 2,
-        from.top + from.height * 0.72 + dive * 36,
+        from.top + from.height * 0.72 + dive * (mobile ? 18 : 36),
         dive > 0.18 && dive < 0.98
       );
       return;
@@ -242,9 +245,9 @@
     });
     setEyeVisual({
       opacity: rise,
-      blur: lerp(10, 0, rise),
-      sink: lerp(18, 0, rise),
-      scale: lerp(0.7, 1, rise),
+      blur: lerp(mobile ? 6 : 10, 0, rise),
+      sink: lerp(mobile ? 8 : 18, 0, rise),
+      scale: lerp(mobile ? 0.85 : 0.7, 1, rise),
       diving: false,
       surfacing: rise < 0.98,
       docked: rise > 0.88,
