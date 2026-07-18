@@ -11,12 +11,13 @@
     window.ST_I18N
       ? window.ST_I18N.skills(window.ST_I18N.getLang())
       : [
-          "مختلفين في أفكارنا",
-          "متمكّنين من شغلنا",
-          "نقدر ننفّذ أي حاجة… حرفيًا",
-          "عقودنا مرنة وقابلة للتفاوض لإرضاء العملاء",
-          "نهتم بالقيمة",
-          "نشتغل للناس كأنه شغلنا",
+          "أفكارنا غير… وهذا فرقنا",
+          "متمكّنين من شغلنا — مو كلام فاضي",
+          "ننفّذ أي فكرة… حرفيًا",
+          "عقود مرنة، والتفاوض لمصلحتك",
+          "القيمة أولًا — قبل أي رقم",
+          "نشتغل على مشروعك كأنه مشروعنا",
+          "نتائج تِبان… مو وعود تطير",
         ];
   if (skillEl) {
     const paintSkill = () => {
@@ -135,13 +136,26 @@
   const hero = document.querySelector(".hero");
   const hasHeroEye = document.body.classList.contains("has-hero-eye") && !!hero;
 
-  /* Approach blur → pin centered under header (silky reveal) */
+  /* Mobile only: approach blur → pin centered under header */
   let whyBlurSmooth = 0;
   let whyFadeSmooth = 1;
-  const WHY_APPROACH = 96; /* start blur a little before the header */
+  const WHY_APPROACH = 96;
 
   function updateWhyPin() {
     if (!whyWrap || !whyUs || !header) return;
+
+    /* Laptop: stay fixed bottom-right — no header docking */
+    if (!isMobileMQ.matches) {
+      whyUs.classList.remove("is-pinned");
+      whyWrap.style.height = "";
+      document.body.classList.remove("why-pinned");
+      whyBlurSmooth = 0;
+      whyFadeSmooth = 1;
+      whyUs.style.setProperty("--why-blur", "0px");
+      whyUs.style.setProperty("--why-fade", "1");
+      return;
+    }
+
     const pinY = header.getBoundingClientRect().bottom + 6;
     const pinned = whyUs.classList.contains("is-pinned");
     let targetBlur = 0;
@@ -149,10 +163,10 @@
 
     if (!pinned) {
       const top = whyUs.getBoundingClientRect().top;
-      const dist = top - pinY; /* >0 still below header */
+      const dist = top - pinY;
       if (dist < WHY_APPROACH) {
         const t = clamp(1 - dist / WHY_APPROACH, 0, 1);
-        const soft = t * t * (3 - 2 * t); /* smoothstep */
+        const soft = t * t * (3 - 2 * t);
         targetBlur = soft * 7;
         targetFade = lerp(1, 0.22, soft);
       }
@@ -160,12 +174,10 @@
         whyWrap.style.height = `${whyUs.offsetHeight}px`;
         whyUs.classList.add("is-pinned");
         document.body.classList.add("why-pinned");
-        /* keep a touch of blur so the centered reveal feels soft */
         whyBlurSmooth = Math.max(whyBlurSmooth, 5);
         whyFadeSmooth = Math.min(whyFadeSmooth, 0.3);
       }
     } else {
-      /* Settled in the center — blur clears, opacity returns */
       targetBlur = 0;
       targetFade = 1;
       if (whyWrap.getBoundingClientRect().top > pinY) {
@@ -184,8 +196,9 @@
     whyUs.style.setProperty("--why-fade", whyFadeSmooth.toFixed(3));
   }
 
-  /* Silky adaptive contrast — pill quietly shifts when meeting similar colors */
+  /* Adaptive pill contrast + mobile glass tint from colors behind */
   let whyInvertSmooth = 0;
+  let whyGlass = { r: 14, g: 42, b: 34 };
   const whyLabel = whyUs?.querySelector(".hero__skill-label");
 
   function parseRgba(str) {
@@ -204,18 +217,22 @@
     return (0.2126 * rgb.r + 0.7152 * rgb.g + 0.0722 * rgb.b) / 255;
   }
 
-  function sampleLumaBehind(el) {
-    if (!el) return 0.12;
+  function sampleBackdrop(el) {
+    const fallback = { r: 12, g: 40, b: 32, luma: 0.12 };
+    if (!el) return fallback;
     const r = el.getBoundingClientRect();
-    if (r.width < 2 || r.height < 2) return 0.12;
+    if (r.width < 2 || r.height < 2) return fallback;
     const pts = [
       [r.left + r.width * 0.5, r.top + r.height * 0.5],
-      [r.left + r.width * 0.2, r.top + r.height * 0.5],
-      [r.left + r.width * 0.8, r.top + r.height * 0.5],
-      [r.left + r.width * 0.5, r.top + 2],
-      [r.left + r.width * 0.5, r.bottom - 2],
+      [r.left + r.width * 0.18, r.top + r.height * 0.5],
+      [r.left + r.width * 0.82, r.top + r.height * 0.5],
+      [r.left + r.width * 0.5, r.top + 3],
+      [r.left + r.width * 0.5, r.bottom - 3],
     ];
-    let sum = 0;
+    let sr = 0;
+    let sg = 0;
+    let sb = 0;
+    let sl = 0;
     let n = 0;
     for (const [x, y] of pts) {
       if (x < 0 || y < 0 || x > window.innerWidth || y > window.innerHeight) continue;
@@ -227,37 +244,48 @@
         const cs = getComputedStyle(node);
         const bg = parseRgba(cs.backgroundColor);
         if (bg && bg.a > 0.12) {
-          sum += lumaOf(bg);
+          sr += bg.r;
+          sg += bg.g;
+          sb += bg.b;
+          sl += lumaOf(bg);
           n += 1;
           break;
         }
-        /* Light text/buttons nearby count as a “similar color” threat for the white pill */
         const fg = parseRgba(cs.color);
         if (fg && fg.a > 0.5 && lumaOf(fg) > 0.82 && (cs.fontWeight >= 600 || node.matches("button, .btn, .featured__badge"))) {
-          sum += 0.88;
+          sr += fg.r;
+          sg += fg.g;
+          sb += fg.b;
+          sl += 0.88;
           n += 1;
           break;
         }
       }
     }
-    return n ? sum / n : 0.12;
+    if (!n) return fallback;
+    return { r: sr / n, g: sg / n, b: sb / n, luma: sl / n };
   }
 
   function updateWhyContrast() {
     if (!whyUs || !whyLabel) return;
-    const luma = sampleLumaBehind(whyLabel);
-    /*
-      White pill (invert=0) on dark.
-      When background/nearby surfaces get bright (~similar to the pill),
-      ease toward a dark pill (invert=1). Soft thresholds = no flicker.
-    */
+    const sample = sampleBackdrop(whyLabel);
     let target = 0;
-    if (luma > 0.55) target = 1;
-    else if (luma > 0.38) target = (luma - 0.38) / (0.55 - 0.38);
-    /* Very slow follow — silky, almost subconscious */
+    if (sample.luma > 0.55) target = 1;
+    else if (sample.luma > 0.38) target = (sample.luma - 0.38) / (0.55 - 0.38);
     whyInvertSmooth += (target - whyInvertSmooth) * 0.045;
     if (Math.abs(target - whyInvertSmooth) < 0.002) whyInvertSmooth = target;
     whyUs.style.setProperty("--why-invert", whyInvertSmooth.toFixed(4));
+
+    /* Mobile glass: gentle tint follows colors passing behind */
+    if (isMobileMQ.matches) {
+      whyGlass.r += (sample.r - whyGlass.r) * 0.055;
+      whyGlass.g += (sample.g - whyGlass.g) * 0.055;
+      whyGlass.b += (sample.b - whyGlass.b) * 0.055;
+      whyUs.style.setProperty(
+        "--why-glass",
+        `${Math.round(whyGlass.r)}, ${Math.round(whyGlass.g)}, ${Math.round(whyGlass.b)}`
+      );
+    }
   }
   const MAX_LOOK = 0.32;
   const DIVE_END = 0.48;
