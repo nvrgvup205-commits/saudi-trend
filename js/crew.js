@@ -280,17 +280,18 @@
     placePortal(0, 0, false);
   }
 
-  /* Mobile: quick underwater shrink — less scroll so frame glitches aren’t noticeable */
+  /* Mobile: dive with rising blur → striking water breach in the header */
   function updateEyeDockMobile(t, from, to) {
     clearSpellFX();
-    const diveEnd = 0.58;
+    const diveEnd = 0.55;
 
     if (t <= diveEnd) {
-      /* Ease hard so most of the dive finishes in the first finger flick */
-      const dive = easeIn(easeInOut(t / diveEnd));
+      const diveLin = clamp(t / diveEnd, 0, 1);
+      /* Hard ease for position/opacity so a light flick finishes the sink */
+      const dive = easeIn(easeInOut(diveLin));
       const width = lerp(from.width, from.width * 0.28, dive);
       const height = lerp(from.height, from.height * 0.28, dive);
-      const sink = lerp(0, Math.min(48, from.height * 0.4), dive);
+      const sink = lerp(0, Math.min(52, from.height * 0.42), dive);
       applyEyeBox({
         left: from.left + (from.width - width) / 2,
         top: from.top + sink * 0.35,
@@ -298,56 +299,86 @@
         height,
       });
       const opacity = lerp(1, 0, dive);
+      /* Blur from the very first scroll pixel, then deepens underwater */
+      const blur = lerp(0.7, 4.2, easeInOut(diveLin));
       setEyeVisual({
         opacity,
-        blur: lerp(0, 2.5, dive), /* tiny blur only — heavy blur = dark frame */
+        blur,
         sink,
-        scale: lerp(1, 0.45, dive),
-        diving: dive > 0.06,
+        scale: lerp(1, 0.42, dive),
+        diving: diveLin > 0.02,
         surfacing: false,
         docked: false,
         enchanting: false,
         orb: false,
         rotate: 0,
         glow: 0,
-        lid: lerp(0, 0.7, dive),
+        lid: lerp(0, 0.75, dive),
         sclera: 1,
         orbShow: 0,
       });
-      if (eye) eye.style.visibility = opacity < 0.04 ? "hidden" : "visible";
+      if (eye) {
+        eye.style.setProperty("--water-opacity", String(lerp(0.2, 1, diveLin)));
+        eye.style.setProperty("--rise", "0");
+        eye.style.visibility = opacity < 0.03 ? "hidden" : "visible";
+      }
       placeRipple(
         from.left + from.width / 2,
         from.top + from.height * 0.72 + sink * 0.5,
-        dive > 0.12 && dive < 0.92
+        diveLin > 0.1 && diveLin < 0.95
       );
       return;
     }
 
-    const rise = easeOut((t - diveEnd) / (1 - diveEnd));
+    /* Breach the surface in the header — blur clears as it rises from water */
+    const riseLin = clamp((t - diveEnd) / (1 - diveEnd), 0, 1);
+    const rise = easeOut(riseLin);
+    /* Pop through the surface in the first third, then settle */
+    const breach = clamp(riseLin / 0.38, 0, 1);
+    const settle = easeOut(clamp((riseLin - 0.38) / 0.62, 0, 1));
+    const emergeY = lerp(to.top + 18, to.top, easeOut(breach));
+    const sizePop = riseLin < 0.38
+      ? lerp(0.55, 1.08, easeOut(breach))
+      : lerp(1.08, 1, settle);
+    const opacity = riseLin < 0.04
+      ? 0
+      : lerp(0, 1, easeOut(clamp((riseLin - 0.04) / 0.32, 0, 1)));
+    const blur = riseLin < 0.38
+      ? lerp(4.2, 1.2, easeOut(breach))
+      : lerp(1.2, 0, settle);
+
     applyEyeBox({
       left: to.left,
-      top: to.top,
+      top: emergeY,
       width: to.width,
       height: to.height,
     });
-    if (eye) eye.style.visibility = "visible";
+    if (eye) {
+      eye.style.visibility = "visible";
+      eye.style.setProperty("--water-opacity", String(lerp(1, 0, rise)));
+      eye.style.setProperty("--rise", String(riseLin));
+    }
     setEyeVisual({
-      opacity: rise,
-      blur: lerp(2, 0, rise),
-      sink: lerp(6, 0, rise),
-      scale: lerp(0.85, 1, rise),
+      opacity,
+      blur,
+      sink: lerp(14, 0, easeOut(breach)),
+      scale: sizePop,
       diving: false,
-      surfacing: rise < 0.92,
-      docked: rise > 0.82,
+      surfacing: riseLin < 0.94,
+      docked: riseLin > 0.78,
       enchanting: false,
       orb: false,
       rotate: 0,
       glow: 0,
-      lid: lerp(0.35, 0.08, rise),
+      lid: lerp(0.85, 0.08, rise),
       sclera: 1,
       orbShow: 0,
     });
-    placeRipple(to.left + to.width / 2, to.top + to.height / 2, rise > 0.05 && rise < 0.5);
+    placeRipple(
+      to.left + to.width / 2,
+      to.top + to.height / 2,
+      riseLin > 0.02 && riseLin < 0.62
+    );
   }
 
   function updateEyeDock() {
