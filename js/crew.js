@@ -280,31 +280,28 @@
     placePortal(0, 0, false);
   }
 
-  /* Frozen viewport spot — eye watches the page, then dissolves so you can read */
+  /* Locked viewport box — never follows the scrolling anchor */
   let frozenEyeBox = null;
 
-  function captureFrozenEye(from) {
+  function captureFrozenEye(box) {
     frozenEyeBox = {
-      left: from.left,
-      top: from.top,
-      width: from.width,
-      height: from.height,
+      left: box.left,
+      top: box.top,
+      width: box.width,
+      height: box.height,
     };
   }
 
-  /* Mobile: fixed in place (no scroll drift) — water blur dissolve ↔ header resurface */
-  function updateEyeDockMobile(t, from, to) {
+  /* Mobile: 100% fixed while dissolving — only opacity/blur/water change */
+  function updateEyeDockMobile(t, rest, to) {
     clearSpellFX();
     const diveEnd = 0.52;
     const smooth = (x) => easeInOut(clamp(x, 0, 1));
-
-    /* Refresh rest pose only at the top; while dissolving keep it locked */
-    if (t < 0.03 || !frozenEyeBox) captureFrozenEye(from);
-    const rest = frozenEyeBox;
+    const box = rest || to;
 
     if (t <= diveEnd) {
       const p = smooth(t / diveEnd);
-      applyEyeBox(rest);
+      applyEyeBox(box);
       const opacity = 1 - p;
       const blur = lerp(0.85, 5.5, p);
       setEyeVisual({
@@ -326,23 +323,25 @@
       if (eye) {
         eye.style.setProperty("--water-opacity", String(lerp(0.25, 1, p)));
         eye.style.setProperty("--rise", "0");
+        eye.style.setProperty("--eye-sink", "0px");
         eye.style.visibility = opacity < 0.02 ? "hidden" : "visible";
       }
       placeRipple(
-        rest.left + rest.width / 2,
-        rest.top + rest.height * 0.72,
+        box.left + box.width / 2,
+        box.top + box.height * 0.72,
         p > 0.08 && p < 0.95
       );
       return;
     }
 
-    /* Same water language in the header — blur clears, size stays natural */
+    /* Resurface in header — same water blur language */
     const p = smooth((t - diveEnd) / (1 - diveEnd));
     applyEyeBox(to);
     if (eye) {
       eye.style.visibility = "visible";
       eye.style.setProperty("--water-opacity", String(lerp(1, 0, p)));
       eye.style.setProperty("--rise", String(p));
+      eye.style.setProperty("--eye-sink", "0px");
     }
     setEyeVisual({
       opacity: p,
@@ -416,8 +415,20 @@
     const to = slotRect();
 
     if (mobile) {
-      updateEyeDockMobile(t, from, to);
+      /*
+        Pin on REAL scroll, not smoothed t.
+        - At rest (scrolled <= 1): keep updating the rest pose
+        - After any real scroll: NEVER update frozenEyeBox again
+          (this was why it still drifted — smooth t stayed < 0.03 while the anchor moved)
+      */
+      if (scrolled <= 1) {
+        captureFrozenEye(from);
+      } else if (!frozenEyeBox) {
+        captureFrozenEye(from);
+      }
+      updateEyeDockMobile(t, frozenEyeBox, to);
     } else {
+      frozenEyeBox = null;
       if (eye) eye.style.visibility = "visible";
       updateEyeDockDesktop(t, from, to);
       clearSpellFX();

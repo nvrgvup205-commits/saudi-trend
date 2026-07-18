@@ -1880,14 +1880,22 @@ body.eye-docked .eye {
     --eye-h: calc(var(--eye-w) / 2.15);
     --water-opacity: 0;
     --rise: 0;
+    --eye-sink: 0px;
     z-index: 45;
     /* No drop-shadow: blur+shadow = visible dark oval “frame” on phones */
     filter: blur(var(--eye-blur));
+    /* Hard-pin: never translate with scroll / sink */
+    transform: scale(var(--eye-scale)) !important;
   }
 
   .eye.is-diving,
   .eye.is-surfacing {
     filter: blur(var(--eye-blur));
+    transform: scale(var(--eye-scale)) !important;
+  }
+
+  .eye.is-docked {
+    transform: scale(var(--eye-scale)) !important;
   }
 
   /* Water lives INSIDE the eye shape only — no outer oval frame */
