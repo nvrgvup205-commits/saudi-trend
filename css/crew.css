@@ -605,6 +605,11 @@ html[dir="ltr"] .section-head__sub {
   --eye-blur: 0px;
   --eye-sink: 0px;
   --eye-scale: 1;
+  --eye-rotate: 0deg;
+  --eye-glow: 0;
+  --lid-close: 0;
+  --sclera-fade: 1;
+  --orb-show: 0;
   position: fixed;
   left: 0;
   top: 0;
@@ -612,10 +617,14 @@ html[dir="ltr"] .section-head__sub {
   height: var(--eye-h);
   z-index: 60;
   opacity: var(--eye-opacity);
-  filter: blur(var(--eye-blur)) drop-shadow(0 18px 28px rgba(0, 0, 0, 0.4));
+  filter:
+    blur(var(--eye-blur))
+    drop-shadow(0 18px 28px rgba(0, 0, 0, 0.4))
+    drop-shadow(0 0 calc(var(--eye-glow) * 28px) rgba(77, 182, 160, calc(var(--eye-glow) * 0.55)))
+    drop-shadow(0 0 calc(var(--eye-glow) * 48px) rgba(212, 175, 55, calc(var(--eye-glow) * 0.28)));
   pointer-events: none;
   will-change: left, top, width, height, opacity, filter, transform;
-  transform: translateY(var(--eye-sink)) scale(var(--eye-scale));
+  transform: translateY(var(--eye-sink)) scale(var(--eye-scale)) rotate(var(--eye-rotate));
   transform-origin: center center;
 }
 
@@ -627,12 +636,53 @@ html[dir="ltr"] .section-head__sub {
   z-index: 70;
 }
 
+.eye.is-enchanting {
+  z-index: 80;
+}
+
+.eye.is-orb .eye__sclera {
+  clip-path: circle(42% at 50% 50%);
+  border-radius: 50%;
+}
+
 .eye.is-docked,
 body.eye-docked .eye {
   --eye-w: 52px;
   --eye-h: 28px;
   filter: blur(var(--eye-blur)) drop-shadow(0 4px 10px rgba(0, 0, 0, 0.35));
   z-index: 70;
+}
+
+.eye__aura {
+  position: absolute;
+  inset: -35%;
+  border-radius: 50%;
+  opacity: calc(var(--eye-glow) * 0.85);
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(212, 175, 55, 0.35) 0%, rgba(77, 182, 160, 0.22) 38%, transparent 68%);
+  filter: blur(8px);
+  mix-blend-mode: screen;
+  transform: scale(calc(0.75 + var(--eye-glow) * 0.55));
+}
+
+.eye__orb {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 42%;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%) scale(calc(0.35 + var(--orb-show) * 0.9));
+  border-radius: 50%;
+  opacity: var(--orb-show);
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 35% 30%, #fff8d6 0%, #d4af37 28%, #4db6a0 62%, #0c2b23 100%);
+  box-shadow:
+    0 0 18px rgba(212, 175, 55, 0.65),
+    0 0 42px rgba(77, 182, 160, 0.45),
+    inset 0 0 12px rgba(255, 255, 255, 0.35);
+  z-index: 4;
 }
 
 .eye__water {
@@ -693,6 +743,66 @@ body.eye-docked .eye {
   }
 }
 
+.eye-spell {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 75;
+  pointer-events: none;
+  display: none;
+}
+
+.eye-portal {
+  position: fixed;
+  width: 64px;
+  height: 64px;
+  margin-left: -32px;
+  margin-top: -32px;
+  z-index: 74;
+  pointer-events: none;
+  opacity: 0;
+  transform: scale(0.2);
+}
+
+.eye-portal.is-on {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.eye-portal span {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1.5px solid rgba(212, 175, 55, 0.55);
+  box-shadow: 0 0 22px rgba(77, 182, 160, 0.4), inset 0 0 16px rgba(212, 175, 55, 0.2);
+  animation: eyePortalSpin 1.4s linear infinite;
+}
+
+.eye-portal span:nth-child(2) {
+  inset: 10%;
+  border-color: rgba(77, 182, 160, 0.65);
+  animation-direction: reverse;
+  animation-duration: 1.1s;
+}
+
+.eye-portal span:nth-child(3) {
+  inset: 22%;
+  border-color: rgba(255, 255, 255, 0.35);
+  animation-duration: 0.85s;
+}
+
+@keyframes eyePortalSpin {
+  0% {
+    transform: rotate(0deg) scale(0.85);
+    opacity: 0.9;
+  }
+  100% {
+    transform: rotate(360deg) scale(1.15);
+    opacity: 0.15;
+  }
+}
+
 .eye__defs {
   position: absolute;
   width: 0;
@@ -706,6 +816,7 @@ body.eye-docked .eye {
   background: #ffffff;
   overflow: hidden;
   clip-path: url(#eye-almond);
+  opacity: var(--sclera-fade);
 }
 
 .eye__ball {
@@ -756,6 +867,7 @@ body.eye-docked .eye {
   right: -2%;
   pointer-events: none;
   z-index: 2;
+  transition: none;
 }
 
 .eye__lid--top {
@@ -763,6 +875,7 @@ body.eye-docked .eye {
   height: 34%;
   background: linear-gradient(180deg, rgba(8, 28, 22, 0.72), rgba(12, 43, 35, 0.35) 70%, transparent);
   border-radius: 0 0 50% 50% / 0 0 100% 100%;
+  transform: translateY(calc(var(--lid-close) * 70%));
 }
 
 .eye__lid--bottom {
@@ -770,6 +883,7 @@ body.eye-docked .eye {
   height: 22%;
   background: linear-gradient(0deg, rgba(8, 28, 22, 0.45), transparent);
   border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+  transform: translateY(calc(var(--lid-close) * -55%));
 }
 
 .hero__skill {
@@ -1753,11 +1867,35 @@ body.eye-docked .eye {
     --eye-h: calc(var(--eye-w) / 2.15);
   }
 
+  .eye.is-enchanting:not(.is-docked) {
+    filter:
+      blur(var(--eye-blur))
+      drop-shadow(0 10px 20px rgba(0, 0, 0, 0.35))
+      drop-shadow(0 0 calc(var(--eye-glow) * 34px) rgba(77, 182, 160, calc(var(--eye-glow) * 0.7)))
+      drop-shadow(0 0 calc(var(--eye-glow) * 60px) rgba(212, 175, 55, calc(var(--eye-glow) * 0.4)));
+  }
+
   .eye-ripple {
     width: 72px;
     height: 28px;
     margin-left: -36px;
     margin-top: -14px;
+    display: none; /* mobile uses spell trail instead */
+  }
+
+  .eye-spell {
+    display: block;
+  }
+
+  .eye-portal {
+    width: 52px;
+    height: 52px;
+    margin-left: -26px;
+    margin-top: -26px;
+  }
+
+  .eye__water {
+    display: none; /* mobile spell path — no water dive */
   }
 
   .hero__content {
