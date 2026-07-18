@@ -1975,12 +1975,16 @@ body.eye-docked .eye {
   }
 
   .hero__circuit,
-  .hero__scribble {
-    display: none;
+  .hero__scribble,
+  .hero__line {
+    display: none !important; /* line cuts through the eye on phones */
   }
 
-  .hero__line {
-    opacity: 0.25;
+  /* Soft ambient only — no hard ring/frame behind the eye */
+  .hero__arcs {
+    opacity: 0.35;
+    background:
+      radial-gradient(circle at 50% 48%, rgba(30, 110, 88, 0.22) 0%, transparent 55%);
   }
 
   /* Featured */
