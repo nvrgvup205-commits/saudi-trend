@@ -906,6 +906,7 @@ body.eye-docked .eye {
 }
 
 .hero__skill {
+  --why-invert: 0; /* 0 = white pill on dark, 1 = dark pill on light */
   text-align: right;
   max-width: 100%;
 }
@@ -940,14 +941,16 @@ body.eye-docked .eye {
 
 .hero__skill-label {
   display: inline-block;
-  background: var(--white);
-  color: #0a1210;
+  background: color-mix(in srgb, #ffffff calc((1 - var(--why-invert)) * 100%), #0c1814 calc(var(--why-invert) * 100%));
+  color: color-mix(in srgb, #0a1210 calc((1 - var(--why-invert)) * 100%), #f3faf7 calc(var(--why-invert) * 100%));
   border-radius: 1rem;
   padding: 0.4rem 1.1rem;
   font-weight: 800;
   font-size: 0.95rem;
   margin-bottom: 0.55rem;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+  box-shadow:
+    0 8px 20px rgba(0, 0, 0, calc(0.22 * (1 - var(--why-invert) * 0.55))),
+    0 0 0 1px rgba(255, 255, 255, calc(0.08 * var(--why-invert)));
 }
 
 .hero__skill-text {
@@ -955,6 +958,8 @@ body.eye-docked .eye {
   font-size: clamp(1.05rem, 2.1vw, 1.5rem);
   font-weight: 700;
   min-height: 1.6em;
+  color: color-mix(in srgb, #ffffff calc((1 - var(--why-invert)) * 100%), #10201a calc(var(--why-invert) * 100%));
+  text-shadow: 0 2px 14px rgba(0, 0, 0, calc(0.45 * (1 - var(--why-invert))));
   transition: opacity 0.22s ease, transform 0.22s ease;
 }
 

@@ -152,6 +152,82 @@
       document.body.classList.remove("why-pinned");
     }
   }
+
+  /* Silky adaptive contrast — pill quietly shifts when meeting similar colors */
+  let whyInvertSmooth = 0;
+  const whyLabel = whyUs?.querySelector(".hero__skill-label");
+
+  function parseRgba(str) {
+    if (!str || str === "transparent") return null;
+    const m = str.match(/rgba?\((\d+)[,\s]+(\d+)[,\s]+(\d+)(?:[,\s/]+([\d.]+))?/i);
+    if (!m) return null;
+    return {
+      r: +m[1],
+      g: +m[2],
+      b: +m[3],
+      a: m[4] === undefined ? 1 : +m[4],
+    };
+  }
+
+  function lumaOf(rgb) {
+    return (0.2126 * rgb.r + 0.7152 * rgb.g + 0.0722 * rgb.b) / 255;
+  }
+
+  function sampleLumaBehind(el) {
+    if (!el) return 0.12;
+    const r = el.getBoundingClientRect();
+    if (r.width < 2 || r.height < 2) return 0.12;
+    const pts = [
+      [r.left + r.width * 0.5, r.top + r.height * 0.5],
+      [r.left + r.width * 0.2, r.top + r.height * 0.5],
+      [r.left + r.width * 0.8, r.top + r.height * 0.5],
+      [r.left + r.width * 0.5, r.top + 2],
+      [r.left + r.width * 0.5, r.bottom - 2],
+    ];
+    let sum = 0;
+    let n = 0;
+    for (const [x, y] of pts) {
+      if (x < 0 || y < 0 || x > window.innerWidth || y > window.innerHeight) continue;
+      const stack = document.elementsFromPoint(x, y);
+      for (const node of stack) {
+        if (!node || node === whyUs || whyUs.contains(node)) continue;
+        if (node === eye || eye?.contains(node)) continue;
+        if (node.classList?.contains("eye-ripple")) continue;
+        const cs = getComputedStyle(node);
+        const bg = parseRgba(cs.backgroundColor);
+        if (bg && bg.a > 0.12) {
+          sum += lumaOf(bg);
+          n += 1;
+          break;
+        }
+        /* Light text/buttons nearby count as a “similar color” threat for the white pill */
+        const fg = parseRgba(cs.color);
+        if (fg && fg.a > 0.5 && lumaOf(fg) > 0.82 && (cs.fontWeight >= 600 || node.matches("button, .btn, .featured__badge"))) {
+          sum += 0.88;
+          n += 1;
+          break;
+        }
+      }
+    }
+    return n ? sum / n : 0.12;
+  }
+
+  function updateWhyContrast() {
+    if (!whyUs || !whyLabel) return;
+    const luma = sampleLumaBehind(whyLabel);
+    /*
+      White pill (invert=0) on dark.
+      When background/nearby surfaces get bright (~similar to the pill),
+      ease toward a dark pill (invert=1). Soft thresholds = no flicker.
+    */
+    let target = 0;
+    if (luma > 0.55) target = 1;
+    else if (luma > 0.38) target = (luma - 0.38) / (0.55 - 0.38);
+    /* Very slow follow — silky, almost subconscious */
+    whyInvertSmooth += (target - whyInvertSmooth) * 0.045;
+    if (Math.abs(target - whyInvertSmooth) < 0.002) whyInvertSmooth = target;
+    whyUs.style.setProperty("--why-invert", whyInvertSmooth.toFixed(4));
+  }
   const MAX_LOOK = 0.32;
   const DIVE_END = 0.48;
 
@@ -496,6 +572,7 @@
 
     updateEyeDock();
     updateWhyPin();
+    updateWhyContrast();
 
     if (eye && ball) {
       const rect = eye.getBoundingClientRect();
