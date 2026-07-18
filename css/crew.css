@@ -1862,17 +1862,18 @@ body.eye-docked .eye {
     gap: 1.35rem;
   }
 
+  /* Keep the almond eye pure — no aura/orb gimmicks that smear the design */
+  .eye__aura,
+  .eye__orb,
+  .eye-spell,
+  .eye-portal {
+    display: none !important;
+  }
+
   .eye:not(.is-docked) {
     --eye-w: min(68vw, 250px);
     --eye-h: calc(var(--eye-w) / 2.15);
-  }
-
-  .eye.is-enchanting:not(.is-docked) {
-    filter:
-      blur(var(--eye-blur))
-      drop-shadow(0 10px 20px rgba(0, 0, 0, 0.35))
-      drop-shadow(0 0 calc(var(--eye-glow) * 34px) rgba(77, 182, 160, calc(var(--eye-glow) * 0.7)))
-      drop-shadow(0 0 calc(var(--eye-glow) * 60px) rgba(212, 175, 55, calc(var(--eye-glow) * 0.4)));
+    filter: blur(var(--eye-blur)) drop-shadow(0 12px 20px rgba(0, 0, 0, 0.35));
   }
 
   .eye-ripple {
@@ -1880,22 +1881,10 @@ body.eye-docked .eye {
     height: 28px;
     margin-left: -36px;
     margin-top: -14px;
-    display: none; /* mobile uses spell trail instead */
   }
 
-  .eye-spell {
-    display: block;
-  }
-
-  .eye-portal {
-    width: 52px;
-    height: 52px;
-    margin-left: -26px;
-    margin-top: -26px;
-  }
-
-  .eye__water {
-    display: none; /* mobile spell path — no water dive */
+  .eye.is-diving .eye__water {
+    opacity: 0.7;
   }
 
   .hero__content {
