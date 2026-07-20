@@ -2554,14 +2554,6 @@ body.eye-docked .eye {
     transform: translateY(-8px) scale(1.03);
   }
 
-  .service-flip__scene {
-    max-width: 70%;
-    font-size: 0.62rem;
-    top: 0.7rem;
-    inset-inline-end: 0.7rem;
-    padding: 0.22rem 0.45rem;
-  }
-
   .service-flip.flip-card {
     min-height: 340px;
     aspect-ratio: 3 / 4;
