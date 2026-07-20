@@ -745,6 +745,8 @@
     let raf = 0;
     let last = 0;
     const speed = 0.62; // px per ms — cinema crawl
+    let speedSign = 1;
+    let userHeld = false;
 
     const anyFlipped = () => cards.some((c) => c.classList.contains("is-flipped"));
 
@@ -804,8 +806,7 @@
 
     const onPointerDown = (e) => {
       if (e.pointerType === "touch") {
-        paused = true;
-        film.classList.add("is-paused");
+        holdForUser(3200);
         return;
       }
       if (e.button !== 0) return;
@@ -827,12 +828,7 @@
 
     const endDrag = (e) => {
       if (e?.pointerType === "touch") {
-        window.setTimeout(() => {
-          if (!hovering && !anyFlipped()) {
-            paused = false;
-            film.classList.remove("is-paused");
-          }
-        }, 900);
+        holdForUser(3200);
         return;
       }
       if (!dragging) return;
@@ -850,10 +846,7 @@
         };
         track.addEventListener("click", block, true);
       }
-      if (!hovering && !anyFlipped()) {
-        paused = false;
-        film.classList.remove("is-paused");
-      }
+      holdForUser(2400);
     };
 
     track.addEventListener("pointerdown", onPointerDown);
@@ -862,21 +855,26 @@
     window.addEventListener("pointercancel", endDrag);
 
     let userScrollTimer = 0;
-    track.addEventListener(
-      "wheel",
-      () => {
-        paused = true;
-        film.classList.add("is-paused");
-        clearTimeout(userScrollTimer);
-        userScrollTimer = window.setTimeout(() => {
-          if (!hovering && !anyFlipped() && !dragging) {
-            paused = false;
-            film.classList.remove("is-paused");
-          }
-        }, 1200);
-      },
-      { passive: true }
-    );
+    const holdForUser = (ms = 2200) => {
+      userHeld = true;
+      paused = true;
+      film.classList.add("is-paused");
+      clearTimeout(userScrollTimer);
+      userScrollTimer = window.setTimeout(() => {
+        if (!hovering && !anyFlipped() && !dragging && !locked) {
+          userHeld = false;
+          paused = false;
+          film.classList.remove("is-paused");
+        }
+      }, ms);
+    };
+
+    track.addEventListener("wheel", () => holdForUser(2800), { passive: true });
+    track.addEventListener("scroll", () => {
+      if (dragging) return;
+      // Native touch/trackpad scroll should never be yanked back
+      if (!userHeld) holdForUser(2800);
+    }, { passive: true });
 
     if (reduceMotion) return;
 
@@ -885,18 +883,16 @@
       const dt = Math.min(32, ts - last);
       last = ts;
 
-      if (!paused && !locked && track.scrollWidth > track.clientWidth + 8) {
+      if (!paused && !locked && !userHeld && track.scrollWidth > track.clientWidth + 8) {
         const max = Math.max(1, track.scrollWidth - track.clientWidth);
-        // Cinema: always crawl so frames move right → left (RTL reading).
-        // Chromium RTL: scrollLeft goes 0 → max while content moves that way.
-        const delta = speed * dt;
+        const delta = speed * dt * speedSign;
         let next = track.scrollLeft + delta;
-        if (next >= max - 1) next = 0;
-        if (next < 0) next = 0;
-        // Negative-scrollLeft engines (older): keep crawling leftward
-        if (track.scrollLeft < 0) {
-          next = track.scrollLeft - delta;
-          if (next <= -max + 1) next = 0;
+        if (next >= max - 0.5) {
+          next = max;
+          speedSign = -1;
+        } else if (next <= 0.5) {
+          next = 0;
+          speedSign = 1;
         }
         track.scrollLeft = next;
       }
@@ -922,7 +918,41 @@
     io.observe(film);
   })();
 
-  /* Featured: flip cards — no slider */
+  /* ── Featured slider (01–06) ── */
+  const slides = [...document.querySelectorAll(".featured__slide")];
+  const dots = [...document.querySelectorAll(".featured__dot")];
+  let slideIndex = 0;
+
+  const showSlide = (index) => {
+    if (!slides.length) return;
+    slideIndex = (index + slides.length) % slides.length;
+    slides.forEach((slide, i) => slide.classList.toggle("is-active", i === slideIndex));
+    dots.forEach((dot, i) => dot.classList.toggle("is-active", i === slideIndex));
+  };
+
+  dots.forEach((dot, i) => dot.addEventListener("click", () => showSlide(i)));
+  if (slides.length) setInterval(() => showSlide(slideIndex + 1), 5500);
+
+  const featured = document.querySelector(".featured");
+  if (featured && slides.length) {
+    let startX = 0;
+    featured.addEventListener(
+      "touchstart",
+      (e) => {
+        startX = e.touches[0].clientX;
+      },
+      { passive: true }
+    );
+    featured.addEventListener(
+      "touchend",
+      (e) => {
+        const dx = e.changedTouches[0].clientX - startX;
+        if (Math.abs(dx) < 40) return;
+        showSlide(slideIndex + (dx > 0 ? -1 : 1));
+      },
+      { passive: true }
+    );
+  }
 
   /* ── Portfolio filters ── */
   const filterBtns = [...document.querySelectorAll(".filter-btn")];
