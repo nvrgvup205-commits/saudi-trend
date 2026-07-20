@@ -805,7 +805,7 @@
     });
   });
 
-  /* ── Services film strip: auto-scroll + hover pop/pause ── */
+  /* ── Services film strip: cinema motion + drag + hover pop ── */
   (() => {
     const film = document.getElementById("services-film");
     const track = document.getElementById("services-track");
@@ -815,15 +815,18 @@
     const cards = [...track.querySelectorAll(".service-flip")];
     let paused = false;
     let hovering = false;
+    let dragging = false;
     let raf = 0;
     let last = 0;
-    const speed = 0.42; // px per ms
+    const speed = 0.55; // px per ms — film-like crawl
+
+    const anyFlipped = () => cards.some((c) => c.classList.contains("is-flipped"));
 
     const setPop = (card, on) => {
       cards.forEach((c) => c.classList.remove("is-popped"));
       if (on && card) card.classList.add("is-popped");
-      film.classList.toggle("is-paused", Boolean(on));
-      paused = Boolean(on) || hovering;
+      film.classList.toggle("is-paused", Boolean(on) || dragging);
+      paused = Boolean(on) || hovering || dragging;
     };
 
     const pauseStrip = (card) => {
@@ -833,7 +836,7 @@
 
     const resumeStrip = () => {
       hovering = false;
-      if (cards.some((c) => c.classList.contains("is-flipped"))) {
+      if (anyFlipped() || dragging) {
         paused = true;
         film.classList.add("is-paused");
         return;
@@ -843,9 +846,12 @@
     };
 
     cards.forEach((card) => {
-      card.addEventListener("pointerenter", () => pauseStrip(card));
+      card.addEventListener("pointerenter", () => {
+        if (dragging) return;
+        pauseStrip(card);
+      });
       card.addEventListener("pointerleave", () => {
-        if (card.classList.contains("is-flipped")) return;
+        if (card.classList.contains("is-flipped") || dragging) return;
         resumeStrip();
       });
       card.addEventListener("focus", () => pauseStrip(card));
@@ -854,18 +860,77 @@
         resumeStrip();
       });
       card.addEventListener("click", () => {
-        // After flip toggle, keep paused while flipped
         requestAnimationFrame(() => {
-          if (card.classList.contains("is-flipped")) {
-            pauseStrip(card);
-          } else if (!hovering) {
-            resumeStrip();
-          }
+          if (card.classList.contains("is-flipped")) pauseStrip(card);
+          else if (!hovering) resumeStrip();
         });
       });
     });
 
-    // Manual drag / touch should pause briefly
+    /* Manual drag (mouse) + native touch scroll */
+    let dragStartX = 0;
+    let dragScroll = 0;
+    let moved = false;
+
+    const onPointerDown = (e) => {
+      if (e.pointerType === "touch") {
+        paused = true;
+        film.classList.add("is-paused");
+        return;
+      }
+      if (e.button !== 0) return;
+      dragging = true;
+      moved = false;
+      dragStartX = e.clientX;
+      dragScroll = track.scrollLeft;
+      film.classList.add("is-dragging", "is-paused");
+      paused = true;
+      track.setPointerCapture?.(e.pointerId);
+    };
+
+    const onPointerMove = (e) => {
+      if (!dragging) return;
+      const dx = e.clientX - dragStartX;
+      if (Math.abs(dx) > 3) moved = true;
+      track.scrollLeft = dragScroll - dx;
+    };
+
+    const endDrag = (e) => {
+      if (e?.pointerType === "touch") {
+        window.setTimeout(() => {
+          if (!hovering && !anyFlipped()) {
+            paused = false;
+            film.classList.remove("is-paused");
+          }
+        }, 900);
+        return;
+      }
+      if (!dragging) return;
+      dragging = false;
+      film.classList.remove("is-dragging");
+      try {
+        track.releasePointerCapture?.(e.pointerId);
+      } catch (_) {}
+      if (moved) {
+        // prevent accidental flip after drag
+        const block = (ev) => {
+          ev.stopPropagation();
+          ev.preventDefault();
+          track.removeEventListener("click", block, true);
+        };
+        track.addEventListener("click", block, true);
+      }
+      if (!hovering && !anyFlipped()) {
+        paused = false;
+        film.classList.remove("is-paused");
+      }
+    };
+
+    track.addEventListener("pointerdown", onPointerDown);
+    window.addEventListener("pointermove", onPointerMove);
+    window.addEventListener("pointerup", endDrag);
+    window.addEventListener("pointercancel", endDrag);
+
     let userScrollTimer = 0;
     track.addEventListener(
       "wheel",
@@ -874,33 +939,11 @@
         film.classList.add("is-paused");
         clearTimeout(userScrollTimer);
         userScrollTimer = window.setTimeout(() => {
-          if (!hovering && !cards.some((c) => c.classList.contains("is-flipped"))) {
+          if (!hovering && !anyFlipped() && !dragging) {
             paused = false;
             film.classList.remove("is-paused");
           }
-        }, 1400);
-      },
-      { passive: true }
-    );
-
-    track.addEventListener(
-      "touchstart",
-      () => {
-        paused = true;
-        film.classList.add("is-paused");
-      },
-      { passive: true }
-    );
-    track.addEventListener(
-      "touchend",
-      () => {
-        clearTimeout(userScrollTimer);
-        userScrollTimer = window.setTimeout(() => {
-          if (!hovering && !cards.some((c) => c.classList.contains("is-flipped"))) {
-            paused = false;
-            film.classList.remove("is-paused");
-          }
-        }, 1600);
+        }, 1200);
       },
       { passive: true }
     );
@@ -918,15 +961,12 @@
         const delta = speed * dt;
         let next = track.scrollLeft + (rtl ? -delta : delta);
 
-        // Normalize wrap for both positive and negative RTL scrollLeft models
         if (!rtl) {
           if (next >= max - 1) next = 0;
           if (next < 0) next = 0;
         } else if (track.scrollLeft <= 0 && track.scrollLeft > -1) {
-          // Classic RTL (scrollLeft decreases toward end in some engines → negative)
           if (next <= -max + 1) next = 0;
         } else {
-          // Chromium RTL often uses 0 at visual start and increases toward end
           if (next >= max - 1) next = 0;
           if (next < 0) next = max;
         }
