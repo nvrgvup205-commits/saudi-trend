@@ -805,6 +805,155 @@
     });
   });
 
+  /* ── Services film strip: auto-scroll + hover pop/pause ── */
+  (() => {
+    const film = document.getElementById("services-film");
+    const track = document.getElementById("services-track");
+    if (!film || !track) return;
+
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const cards = [...track.querySelectorAll(".service-flip")];
+    let paused = false;
+    let hovering = false;
+    let raf = 0;
+    let last = 0;
+    const speed = 0.42; // px per ms
+
+    const setPop = (card, on) => {
+      cards.forEach((c) => c.classList.remove("is-popped"));
+      if (on && card) card.classList.add("is-popped");
+      film.classList.toggle("is-paused", Boolean(on));
+      paused = Boolean(on) || hovering;
+    };
+
+    const pauseStrip = (card) => {
+      hovering = true;
+      setPop(card, true);
+    };
+
+    const resumeStrip = () => {
+      hovering = false;
+      if (cards.some((c) => c.classList.contains("is-flipped"))) {
+        paused = true;
+        film.classList.add("is-paused");
+        return;
+      }
+      setPop(null, false);
+      paused = false;
+    };
+
+    cards.forEach((card) => {
+      card.addEventListener("pointerenter", () => pauseStrip(card));
+      card.addEventListener("pointerleave", () => {
+        if (card.classList.contains("is-flipped")) return;
+        resumeStrip();
+      });
+      card.addEventListener("focus", () => pauseStrip(card));
+      card.addEventListener("blur", () => {
+        if (card.classList.contains("is-flipped")) return;
+        resumeStrip();
+      });
+      card.addEventListener("click", () => {
+        // After flip toggle, keep paused while flipped
+        requestAnimationFrame(() => {
+          if (card.classList.contains("is-flipped")) {
+            pauseStrip(card);
+          } else if (!hovering) {
+            resumeStrip();
+          }
+        });
+      });
+    });
+
+    // Manual drag / touch should pause briefly
+    let userScrollTimer = 0;
+    track.addEventListener(
+      "wheel",
+      () => {
+        paused = true;
+        film.classList.add("is-paused");
+        clearTimeout(userScrollTimer);
+        userScrollTimer = window.setTimeout(() => {
+          if (!hovering && !cards.some((c) => c.classList.contains("is-flipped"))) {
+            paused = false;
+            film.classList.remove("is-paused");
+          }
+        }, 1400);
+      },
+      { passive: true }
+    );
+
+    track.addEventListener(
+      "touchstart",
+      () => {
+        paused = true;
+        film.classList.add("is-paused");
+      },
+      { passive: true }
+    );
+    track.addEventListener(
+      "touchend",
+      () => {
+        clearTimeout(userScrollTimer);
+        userScrollTimer = window.setTimeout(() => {
+          if (!hovering && !cards.some((c) => c.classList.contains("is-flipped"))) {
+            paused = false;
+            film.classList.remove("is-paused");
+          }
+        }, 1600);
+      },
+      { passive: true }
+    );
+
+    if (reduceMotion) return;
+
+    const step = (ts) => {
+      if (!last) last = ts;
+      const dt = Math.min(32, ts - last);
+      last = ts;
+
+      if (!paused && track.scrollWidth > track.clientWidth + 8) {
+        const max = Math.max(1, track.scrollWidth - track.clientWidth);
+        const rtl = getComputedStyle(track).direction === "rtl";
+        const delta = speed * dt;
+        let next = track.scrollLeft + (rtl ? -delta : delta);
+
+        // Normalize wrap for both positive and negative RTL scrollLeft models
+        if (!rtl) {
+          if (next >= max - 1) next = 0;
+          if (next < 0) next = 0;
+        } else if (track.scrollLeft <= 0 && track.scrollLeft > -1) {
+          // Classic RTL (scrollLeft decreases toward end in some engines → negative)
+          if (next <= -max + 1) next = 0;
+        } else {
+          // Chromium RTL often uses 0 at visual start and increases toward end
+          if (next >= max - 1) next = 0;
+          if (next < 0) next = max;
+        }
+        track.scrollLeft = next;
+      }
+
+      raf = requestAnimationFrame(step);
+    };
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        const visible = entries.some((e) => e.isIntersecting);
+        if (visible && !raf) {
+          last = 0;
+          raf = requestAnimationFrame(step);
+        }
+        if (!visible && raf) {
+          cancelAnimationFrame(raf);
+          raf = 0;
+          last = 0;
+        }
+      },
+      { threshold: 0.12 }
+    );
+    io.observe(film);
+  })();
+
   /* ── Featured slider ── */
   const slides = [...document.querySelectorAll(".featured__slide")];
   const dots = [...document.querySelectorAll(".featured__dot")];

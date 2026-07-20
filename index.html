@@ -9,9 +9,20 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700;800&family=Noto+Kufi+Arabic:wght@500;700;800;900&family=Syne:wght@700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/crew.css?v=26">
+  <link rel="stylesheet" href="css/crew.css?v=28">
 </head>
 <body class="has-custom-cursor has-hero-eye">
+  <div class="ambient-field" aria-hidden="true">
+    <div class="ambient-field__drift ambient-field__drift--a"></div>
+    <div class="ambient-field__drift ambient-field__drift--b"></div>
+    <div class="ambient-field__glyphs">
+      <span>&lt;/&gt;</span><span>{;}</span><span>(fn)</span><span>[cam]</span>
+      <span>*</span><span>::</span><span>&lt;&gt;</span><span>~/</span>
+      <span>01</span><span>--&gt;</span><span>o</span><span>#</span>
+      <span>API</span><span>ROI</span><span>CRM</span><span>SEO</span>
+      <span>auto</span><span>ads</span><span>ux</span><span>ai</span>
+    </div>
+  </div>
   <div class="cursor" id="cursor" aria-hidden="true">
     <div class="cursor__glow"></div>
     <div class="cursor__ring"></div>
@@ -172,11 +183,13 @@
           <span class="sticker sticker--white" data-i18n="services.title">خدماتنا</span>
           <p class="section-head__sub" data-i18n="services.sub">تسويق • هوية • برمجة • أنظمة • أتمتة • حلول أعمال — اضغط أي كارت للتفاصيل</p>
         </div>
-        <div class="services__track">
+        <div class="film-strip" id="services-film">
+        <div class="film-strip__edge film-strip__edge--top" aria-hidden="true"></div>
+        <div class="services__track" id="services-track">
           <article class="flip-card service-flip" tabindex="0" role="button" aria-label="إدارة الحملات الإعلانية">
             <span class="flip-card__inner">
               <span class="flip-card__face flip-card__front service-flip__front">
-                <img class="flip-card__img" src="https://images.unsplash.com/photo-1557838923-2985c318be48?auto=format&fit=crop&w=900&q=80" alt="" loading="lazy">
+                <img class="flip-card__img" src="assets/services/svc-ads.jpg" alt="" loading="lazy">
                 <span class="flip-card__shade"></span>
                 <span class="flip-card__title" data-i18n="svc.ads.title">إدارة الحملات الإعلانية</span>
                 <span class="flip-card__hint">↻</span>
@@ -199,7 +212,7 @@
           <article class="flip-card service-flip" tabindex="0" role="button" aria-label="برمجة المواقع والمتاجر">
             <span class="flip-card__inner">
               <span class="flip-card__face flip-card__front service-flip__front">
-                <img class="flip-card__img" src="https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?auto=format&fit=crop&w=900&q=80" alt="" loading="lazy">
+                <img class="flip-card__img" src="assets/services/svc-web.jpg" alt="" loading="lazy">
                 <span class="flip-card__shade"></span>
                 <span class="flip-card__title" data-i18n="svc.web.title">برمجة المواقع والمتاجر</span>
                 <span class="flip-card__hint">↻</span>
@@ -222,7 +235,7 @@
           <article class="flip-card service-flip" tabindex="0" role="button" aria-label="بناء الأنظمة البرمجية">
             <span class="flip-card__inner">
               <span class="flip-card__face flip-card__front service-flip__front">
-                <img class="flip-card__img" src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=900&q=80" alt="" loading="lazy">
+                <img class="flip-card__img" src="assets/services/svc-systems.jpg" alt="" loading="lazy">
                 <span class="flip-card__shade"></span>
                 <span class="flip-card__title" data-i18n="svc.systems.title">بناء الأنظمة البرمجية</span>
                 <span class="flip-card__hint">↻</span>
@@ -245,7 +258,7 @@
           <article class="flip-card service-flip" tabindex="0" role="button" aria-label="حلول الأتمتة">
             <span class="flip-card__inner">
               <span class="flip-card__face flip-card__front service-flip__front">
-                <img class="flip-card__img" src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=900&q=80" alt="" loading="lazy">
+                <img class="flip-card__img" src="assets/services/svc-automation.jpg" alt="" loading="lazy">
                 <span class="flip-card__shade"></span>
                 <span class="flip-card__title" data-i18n="svc.automation.title">حلول الأتمتة لكل المجالات</span>
                 <span class="flip-card__hint">↻</span>
@@ -268,7 +281,7 @@
           <article class="flip-card service-flip" tabindex="0" role="button" aria-label="تهيئة محركات البحث">
             <span class="flip-card__inner">
               <span class="flip-card__face flip-card__front service-flip__front">
-                <img class="flip-card__img" src="https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?auto=format&fit=crop&w=900&q=80" alt="" loading="lazy">
+                <img class="flip-card__img" src="assets/services/svc-seo.jpg" alt="" loading="lazy">
                 <span class="flip-card__shade"></span>
                 <span class="flip-card__title" data-i18n="svc.seo.title">تهيئة محركات البحث SEO</span>
                 <span class="flip-card__hint">↻</span>
@@ -291,7 +304,7 @@
           <article class="flip-card service-flip" tabindex="0" role="button" aria-label="تصميم الهوية التجارية">
             <span class="flip-card__inner">
               <span class="flip-card__face flip-card__front service-flip__front">
-                <img class="flip-card__img" src="https://images.unsplash.com/photo-1561070791-2526d30994b5?auto=format&fit=crop&w=900&q=80" alt="" loading="lazy">
+                <img class="flip-card__img" src="assets/services/svc-branding.jpg" alt="" loading="lazy">
                 <span class="flip-card__shade"></span>
                 <span class="flip-card__title" data-i18n="svc.branding.title">تصميم الهوية التجارية</span>
                 <span class="flip-card__hint">↻</span>
@@ -314,7 +327,7 @@
           <article class="flip-card service-flip" tabindex="0" role="button" aria-label="الفيديو والموشن">
             <span class="flip-card__inner">
               <span class="flip-card__face flip-card__front service-flip__front">
-                <img class="flip-card__img" src="https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=900&q=80" alt="" loading="lazy">
+                <img class="flip-card__img" src="assets/services/svc-video.jpg" alt="" loading="lazy">
                 <span class="flip-card__shade"></span>
                 <span class="flip-card__title" data-i18n="svc.video.title">الفيديو والموشن جرافيك</span>
                 <span class="flip-card__hint">↻</span>
@@ -337,7 +350,7 @@
           <article class="flip-card service-flip" tabindex="0" role="button" aria-label="إدارة السوشيال ميديا">
             <span class="flip-card__inner">
               <span class="flip-card__face flip-card__front service-flip__front">
-                <img class="flip-card__img" src="https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=900&q=80" alt="" loading="lazy">
+                <img class="flip-card__img" src="assets/services/svc-social.jpg" alt="" loading="lazy">
                 <span class="flip-card__shade"></span>
                 <span class="flip-card__title" data-i18n="svc.social.title">إدارة السوشيال ميديا</span>
                 <span class="flip-card__hint">↻</span>
@@ -360,7 +373,7 @@
           <article class="flip-card service-flip" tabindex="0" role="button" aria-label="تطوير الأعمال">
             <span class="flip-card__inner">
               <span class="flip-card__face flip-card__front service-flip__front">
-                <img class="flip-card__img" src="https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=900&q=80" alt="" loading="lazy">
+                <img class="flip-card__img" src="assets/services/svc-business.jpg" alt="" loading="lazy">
                 <span class="flip-card__shade"></span>
                 <span class="flip-card__title" data-i18n="svc.business.title">تطوير الأعمال والحلول</span>
                 <span class="flip-card__hint">↻</span>
@@ -383,7 +396,7 @@
           <article class="flip-card service-flip" tabindex="0" role="button" aria-label="التسويق الشامل للشركات">
             <span class="flip-card__inner">
               <span class="flip-card__face flip-card__front service-flip__front">
-                <img class="flip-card__img" src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=900&q=80" alt="" loading="lazy">
+                <img class="flip-card__img" src="assets/services/svc-marketing.jpg" alt="" loading="lazy">
                 <span class="flip-card__shade"></span>
                 <span class="flip-card__title" data-i18n="svc.marketing.title">حلول تسويق شاملة للشركات</span>
                 <span class="flip-card__hint">↻</span>
@@ -402,6 +415,8 @@
               </span>
             </span>
           </article>
+        </div>
+        <div class="film-strip__edge film-strip__edge--bottom" aria-hidden="true"></div>
         </div>
         <div class="services__cta">
           <a class="btn btn--solid" href="#contact" data-i18n="services.cta">اطلب باقة مخصصة ←</a>
@@ -720,6 +735,6 @@
   </div>
 
   <script src="js/i18n.js?v=4"></script>
-  <script src="js/crew.js?v=26"></script>
+  <script src="js/crew.js?v=28"></script>
 </body>
 </html>
