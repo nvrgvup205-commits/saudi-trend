@@ -730,225 +730,253 @@
     card.classList.toggle("is-flipped");
   });
 
-  /* ── Services film strip: cinema motion + drag + infinite loop ── */
+  /* ── Services: 3D cinema projector coverflow (infinite) ── */
   (() => {
     const film = document.getElementById("services-film");
     const track = document.getElementById("services-track");
     if (!film || !track) return;
 
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const originals = [...track.querySelectorAll(".service-flip")];
-    if (!originals.length) return;
-
-    /* Duplicate once for seamless infinite loop */
-    const frag = document.createDocumentFragment();
-    originals.forEach((card) => {
-      const clone = card.cloneNode(true);
-      clone.setAttribute("aria-hidden", "true");
-      clone.tabIndex = -1;
-      frag.appendChild(clone);
-    });
-    track.appendChild(frag);
-
     const cards = [...track.querySelectorAll(".service-flip")];
-    let paused = false;
-    let hovering = false;
-    let dragging = false;
-    let locked = false;
-    let raf = 0;
-    let last = 0;
-    const speed = 0.62;
-    let userHeld = false;
-    let loopWidth = 0;
+    const n = cards.length;
+    if (!n) return;
 
-    const measureLoop = () => {
-      const firstClone = cards[originals.length];
-      if (!firstClone) {
-        loopWidth = track.scrollWidth / 2;
-        return;
-      }
-      loopWidth = firstClone.offsetLeft - cards[0].offsetLeft;
-      if (loopWidth < 8) loopWidth = track.scrollWidth / 2;
+    let index = 0;
+    let offset = 0; // fractional for smooth drag
+    let vel = 0;
+    let dragging = false;
+    let dragMoved = false;
+    let lastX = 0;
+    let lastT = 0;
+    let raf = 0;
+    let auto = !reduceMotion;
+    let holdTimer = 0;
+    let locked = false;
+
+    const wrapIndex = (i) => ((i % n) + n) % n;
+
+    const shortest = (from, to) => {
+      let d = to - from;
+      while (d > n / 2) d -= n;
+      while (d < -n / 2) d += n;
+      return d;
     };
 
-    const wrapScroll = () => {
-      if (loopWidth < 8) return;
-      while (track.scrollLeft >= loopWidth) track.scrollLeft -= loopWidth;
-      while (track.scrollLeft < 0) track.scrollLeft += loopWidth;
+    const metrics = () => {
+      const w = window.innerWidth;
+      if (w < 640) return { spacing: 118, depth: 160, rot: 38, lift: 10, scaleStep: 0.1 };
+      if (w < 980) return { spacing: 150, depth: 200, rot: 42, lift: 12, scaleStep: 0.09 };
+      return { spacing: 178, depth: 240, rot: 46, lift: 14, scaleStep: 0.085 };
     };
 
     const anyFlipped = () => cards.some((c) => c.classList.contains("is-flipped"));
 
-    const setPop = (card, on) => {
-      cards.forEach((c) => c.classList.remove("is-popped"));
-      if (on && card) card.classList.add("is-popped");
-      film.classList.toggle("is-paused", Boolean(on) || dragging || locked);
-      paused = Boolean(on) || hovering || dragging || locked;
-    };
+    const paint = () => {
+      const m = metrics();
+      const center = index + offset;
 
-    const pauseStrip = (card) => {
-      hovering = true;
-      setPop(card, true);
-    };
+      cards.forEach((card, i) => {
+        const raw = shortest(center, i);
+        const abs = Math.abs(raw);
+        const x = raw * m.spacing;
+        const z = 80 - abs * m.depth;
+        const ry = raw * -m.rot;
+        const rx = abs * 4;
+        const y = abs * m.lift;
+        const scale = Math.max(0.55, 1 - abs * m.scaleStep);
+        const visible = abs < 3.2;
 
-    const resumeStrip = () => {
-      hovering = false;
-      locked = anyFlipped();
-      if (locked || dragging) {
-        paused = true;
-        film.classList.add("is-paused");
-        return;
-      }
-      setPop(null, false);
-      paused = false;
-    };
-
-    cards.forEach((card) => {
-      card.addEventListener("pointerenter", () => {
-        if (dragging) return;
-        pauseStrip(card);
+        card.style.transform = `translate(-50%, -50%) translate3d(${x}px, ${y}px, ${z}px) rotateY(${ry}deg) rotateX(${rx}deg) scale(${scale})`;
+        card.style.zIndex = String(Math.round(40 - abs * 8));
+        card.style.opacity = visible ? String(Math.max(0.2, 1 - abs * 0.28)) : "0";
+        card.style.visibility = visible ? "visible" : "hidden";
+        card.classList.toggle("is-active", abs < 0.45);
+        card.classList.toggle("is-near", abs >= 0.45 && abs < 1.35);
+        card.classList.toggle("is-popped", abs < 0.45);
+        card.tabIndex = abs < 0.45 ? 0 : -1;
+        card.setAttribute("aria-hidden", abs < 0.45 ? "false" : "true");
+        if (abs >= 0.45) card.classList.remove("is-flipped");
       });
-      card.addEventListener("pointerleave", () => {
-        if (card.classList.contains("is-flipped") || dragging || locked) return;
-        resumeStrip();
-      });
-      card.addEventListener("focus", () => pauseStrip(card));
-      card.addEventListener("blur", () => {
-        if (card.classList.contains("is-flipped") || locked) return;
-        resumeStrip();
-      });
-      card.addEventListener("click", () => {
-        locked = true;
-        pauseStrip(card);
-        requestAnimationFrame(() => {
-          locked = anyFlipped();
-          if (!locked && !hovering) resumeStrip();
-        });
-      });
-    });
-
-    let dragStartX = 0;
-    let dragScroll = 0;
-    let moved = false;
-
-    const onPointerDown = (e) => {
-      if (e.pointerType === "touch") {
-        holdForUser(3200);
-        return;
-      }
-      if (e.button !== 0) return;
-      dragging = true;
-      moved = false;
-      dragStartX = e.clientX;
-      dragScroll = track.scrollLeft;
-      film.classList.add("is-dragging", "is-paused");
-      paused = true;
-      track.setPointerCapture?.(e.pointerId);
     };
 
-    const onPointerMove = (e) => {
-      if (!dragging) return;
-      const dx = e.clientX - dragStartX;
-      if (Math.abs(dx) > 3) moved = true;
-      track.scrollLeft = dragScroll - dx;
-      wrapScroll();
-    };
-
-    const endDrag = (e) => {
-      if (e?.pointerType === "touch") {
-        holdForUser(3200);
-        return;
-      }
-      if (!dragging) return;
-      dragging = false;
-      film.classList.remove("is-dragging");
-      try {
-        track.releasePointerCapture?.(e.pointerId);
-      } catch (_) {}
-      wrapScroll();
-      if (moved) {
-        const block = (ev) => {
-          ev.stopPropagation();
-          ev.preventDefault();
-          track.removeEventListener("click", block, true);
-        };
-        track.addEventListener("click", block, true);
-      }
-      holdForUser(2400);
-    };
-
-    track.addEventListener("pointerdown", onPointerDown);
-    window.addEventListener("pointermove", onPointerMove);
-    window.addEventListener("pointerup", endDrag);
-    window.addEventListener("pointercancel", endDrag);
-
-    let userScrollTimer = 0;
-    const holdForUser = (ms = 2200) => {
-      userHeld = true;
-      paused = true;
+    const pauseAuto = (ms = 3600) => {
+      auto = false;
       film.classList.add("is-paused");
-      clearTimeout(userScrollTimer);
-      userScrollTimer = window.setTimeout(() => {
-        if (!hovering && !anyFlipped() && !dragging && !locked) {
-          userHeld = false;
-          paused = false;
+      clearTimeout(holdTimer);
+      holdTimer = window.setTimeout(() => {
+        if (!dragging && !anyFlipped() && !locked && !reduceMotion) {
+          auto = true;
           film.classList.remove("is-paused");
         }
       }, ms);
     };
 
-    track.addEventListener("wheel", () => holdForUser(2800), { passive: true });
-    track.addEventListener(
-      "scroll",
-      () => {
-        wrapScroll();
-        if (dragging) return;
-        if (!userHeld) holdForUser(2800);
-      },
-      { passive: true }
-    );
+    const snap = () => {
+      index = wrapIndex(Math.round(index + offset));
+      offset = 0;
+      vel = 0;
+      paint();
+    };
 
-    measureLoop();
-    window.addEventListener("resize", () => {
-      measureLoop();
-      wrapScroll();
-    });
+    const stepBy = (dir) => {
+      cards.forEach((c) => c.classList.remove("is-flipped"));
+      locked = false;
+      index = wrapIndex(index + dir);
+      offset = 0;
+      vel = 0;
+      paint();
+      pauseAuto(4200);
+    };
 
-    /* Start in the middle of the duplicated track for both-direction loop */
-    requestAnimationFrame(() => {
-      measureLoop();
-      if (loopWidth > 8) track.scrollLeft = loopWidth * 0.15;
-    });
+    const tick = (ts) => {
+      if (!lastT) lastT = ts;
+      const dt = Math.min(32, ts - lastT) / 16.67;
+      lastT = ts;
 
-    if (reduceMotion) return;
+      locked = anyFlipped();
 
-    const step = (ts) => {
-      if (!last) last = ts;
-      const dt = Math.min(32, ts - last);
-      last = ts;
-
-      if (!paused && !locked && !userHeld && track.scrollWidth > track.clientWidth + 8) {
-        track.scrollLeft += speed * dt;
-        wrapScroll();
+      if (!dragging) {
+        if (Math.abs(vel) > 0.001) {
+          offset += vel * dt;
+          vel *= Math.pow(0.9, dt);
+          if (Math.abs(offset) >= 1) {
+            index = wrapIndex(index + Math.round(offset));
+            offset -= Math.round(offset);
+          }
+          if (Math.abs(vel) < 0.002) snap();
+        } else if (Math.abs(offset) > 0.001) {
+          offset *= Math.pow(0.82, dt);
+          if (Math.abs(offset) < 0.02) snap();
+        } else if (auto && !locked) {
+          offset += 0.006 * dt;
+          if (offset >= 1) {
+            index = wrapIndex(index + 1);
+            offset = 0;
+            cards.forEach((c) => c.classList.remove("is-flipped"));
+          }
+        }
       }
 
-      raf = requestAnimationFrame(step);
+      paint();
+      raf = requestAnimationFrame(tick);
     };
+
+    const onDown = (e) => {
+      if (e.target.closest(".film-stage__nav")) return;
+      if (e.target.closest("a")) return;
+      /* allow flip click on active without drag capture */
+      if (e.target.closest(".service-flip.is-active") && e.pointerType !== "touch") {
+        pauseAuto(5000);
+        return;
+      }
+      dragging = true;
+      dragMoved = false;
+      lastX = e.clientX;
+      vel = 0;
+      film.classList.add("is-dragging", "is-paused");
+      pauseAuto(5000);
+      if (e.pointerType !== "touch") film.setPointerCapture?.(e.pointerId);
+    };
+
+    const onMove = (e) => {
+      if (!dragging) return;
+      const dx = e.clientX - lastX;
+      lastX = e.clientX;
+      if (Math.abs(dx) > 3) dragMoved = true;
+      /* RTL page: drag right still feels natural for coverflow */
+      offset -= dx / (metrics().spacing * 1.05);
+      while (offset > 0.5) {
+        offset -= 1;
+        index = wrapIndex(index - 1);
+      }
+      while (offset < -0.5) {
+        offset += 1;
+        index = wrapIndex(index + 1);
+      }
+      vel = -dx / 400;
+      paint();
+    };
+
+    const onUp = (e) => {
+      if (!dragging) return;
+      dragging = false;
+      film.classList.remove("is-dragging");
+      try {
+        film.releasePointerCapture?.(e.pointerId);
+      } catch (_) {}
+      if (dragMoved) {
+        const block = (ev) => {
+          ev.preventDefault();
+          ev.stopPropagation();
+          film.removeEventListener("click", block, true);
+        };
+        film.addEventListener("click", block, true);
+      }
+      snap();
+      pauseAuto(4200);
+    };
+
+    film.addEventListener("pointerdown", onDown);
+    window.addEventListener("pointermove", onMove);
+    window.addEventListener("pointerup", onUp);
+    window.addEventListener("pointercancel", onUp);
+
+    film.querySelectorAll(".film-stage__nav").forEach((btn) => {
+      btn.addEventListener("pointerdown", (e) => e.stopPropagation());
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        stepBy(Number(btn.getAttribute("data-dir") || 1));
+      });
+    });
+
+    cards.forEach((card) => {
+      card.addEventListener("click", (e) => {
+        if (dragMoved) {
+          e.preventDefault();
+          e.stopPropagation();
+          return;
+        }
+        if (!card.classList.contains("is-active")) {
+          e.preventDefault();
+          e.stopPropagation();
+          const i = cards.indexOf(card);
+          index = i;
+          offset = 0;
+          paint();
+          pauseAuto(4500);
+          return;
+        }
+        /* active: flip via delegated handler; lock auto */
+        pauseAuto(6000);
+        requestAnimationFrame(() => {
+          locked = anyFlipped();
+          if (locked) {
+            auto = false;
+            film.classList.add("is-paused");
+          }
+        });
+      });
+    });
+
+    window.addEventListener("resize", paint);
+    paint();
+    raf = requestAnimationFrame(tick);
 
     const io = new IntersectionObserver(
       (entries) => {
         const visible = entries.some((e) => e.isIntersecting);
         if (visible && !raf) {
-          last = 0;
-          raf = requestAnimationFrame(step);
+          lastT = 0;
+          raf = requestAnimationFrame(tick);
         }
         if (!visible && raf) {
           cancelAnimationFrame(raf);
           raf = 0;
-          last = 0;
+          lastT = 0;
         }
       },
-      { threshold: 0.12 }
+      { threshold: 0.1 }
     );
     io.observe(film);
   })();

@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/crew.css?v=36">
+  <link rel="stylesheet" href="css/crew.css?v=37">
 </head>
 <body class="has-custom-cursor has-hero-eye">
   <div class="ambient-field" aria-hidden="true">
@@ -224,11 +224,15 @@
       <div class="container">
         <div class="section-head">
           <span class="sticker sticker--white" data-i18n="services.title">خدماتنا</span>
-          <p class="section-head__sub" data-i18n="services.sub">تسويق • هوية • برمجة • أنظمة • أتمتة • حلول أعمال — اضغط أي كارت للتفاصيل</p>
+          <p class="section-head__sub" data-i18n="services.sub">اسحب أو لف — الكارت الأمامي ينقلب للتفاصيل · لوب سينمائي بلا نهاية</p>
         </div>
-        <div class="film-strip" id="services-film">
+        <div class="film-strip film-stage" id="services-film">
         <div class="film-strip__edge film-strip__edge--top" aria-hidden="true"></div>
-        <div class="services__track" id="services-track">
+        <div class="film-stage__scene">
+          <div class="film-stage__beam" aria-hidden="true"></div>
+          <div class="film-stage__haze" aria-hidden="true"></div>
+          <div class="film-stage__floor" aria-hidden="true"></div>
+          <div class="services__track" id="services-track">
           <article class="flip-card service-flip" tabindex="0" role="button" aria-label="إدارة الحملات الإعلانية">
             <span class="flip-card__inner">
               <span class="flip-card__face flip-card__front service-flip__front">
@@ -458,6 +462,13 @@
               </span>
             </span>
           </article>
+          </div>
+          <button type="button" class="film-stage__nav film-stage__nav--prev" data-dir="-1" aria-label="السابق">
+            <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+          </button>
+          <button type="button" class="film-stage__nav film-stage__nav--next" data-dir="1" aria-label="التالي">
+            <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>
+          </button>
         </div>
         <div class="film-strip__edge film-strip__edge--bottom" aria-hidden="true"></div>
         </div>
@@ -839,7 +850,7 @@
     </a>
   </div>
 
-  <script src="js/i18n.js?v=10"></script>
-  <script src="js/crew.js?v=35"></script>
+  <script src="js/i18n.js?v=11"></script>
+  <script src="js/crew.js?v=37"></script>
 </body>
 </html>
