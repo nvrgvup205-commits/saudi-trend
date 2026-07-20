@@ -56,69 +56,32 @@
     });
   }
 
-  /* ── Magic cursor + particle trail (desktop) ── */
+  /* ── Light cursor (no particle trail — performance) ── */
   const cursor = document.getElementById("cursor");
   const cursorRing = cursor?.querySelector(".cursor__ring");
   const trailCanvas = document.getElementById("cursor-trail");
+  trailCanvas?.remove();
   let mx = window.innerWidth * 0.5;
   let my = window.innerHeight * 0.45;
   let rx = mx;
   let ry = my;
-  const particles = [];
-
-  function spawnParticle(x, y) {
-    particles.push({
-      x,
-      y,
-      vx: (Math.random() - 0.5) * 1.4,
-      vy: (Math.random() - 0.5) * 1.4 - 0.4,
-      life: 1,
-      size: 2 + Math.random() * 3.5,
-      color: Math.random() > 0.45 ? "rgba(77,182,160," : "rgba(212,175,55,",
-    });
-    if (particles.length > 90) particles.splice(0, particles.length - 90);
-  }
 
   if (prefersFine && cursor) {
     document.body.classList.add("has-custom-cursor");
-    if (trailCanvas) {
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      const resize = () => {
-        trailCanvas.width = window.innerWidth * dpr;
-        trailCanvas.height = window.innerHeight * dpr;
-        trailCanvas.style.width = `${window.innerWidth}px`;
-        trailCanvas.style.height = `${window.innerHeight}px`;
-        const ctx = trailCanvas.getContext("2d");
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      };
-      resize();
-      window.addEventListener("resize", resize);
-    }
-
-    let lastSpawn = 0;
     window.addEventListener("mousemove", (e) => {
       mx = e.clientX;
       my = e.clientY;
       cursor.classList.add("is-on");
-      const now = performance.now();
-      if (now - lastSpawn > 16) {
-        spawnParticle(mx, my);
-        lastSpawn = now;
-      }
-    });
-    window.addEventListener("mousedown", () => {
-      cursor.classList.add("is-click");
-      for (let i = 0; i < 10; i++) spawnParticle(mx, my);
-    });
+    }, { passive: true });
+    window.addEventListener("mousedown", () => cursor.classList.add("is-click"));
     window.addEventListener("mouseup", () => cursor.classList.remove("is-click"));
-    document.querySelectorAll("a, button, .filter-btn, .featured__dot, .flip-card").forEach((el) => {
+    document.querySelectorAll("a, button, .flip-card").forEach((el) => {
       el.addEventListener("mouseenter", () => cursor.classList.add("is-hover"));
       el.addEventListener("mouseleave", () => cursor.classList.remove("is-hover"));
     });
   } else {
     document.body.classList.remove("has-custom-cursor");
     cursor?.remove();
-    trailCanvas?.remove();
   }
 
   /* Touch: eye looks toward tap / finger */
@@ -283,8 +246,11 @@
     return { r: sr / n, g: sg / n, b: sb / n, luma: sl / n };
   }
 
+  let whyContrastTick = 0;
   function updateWhyContrast() {
     if (!whyUs || !whyLabel) return;
+    whyContrastTick = (whyContrastTick + 1) % 4; // every 4th frame
+    if (whyContrastTick !== 0) return;
     const sample = sampleBackdrop(whyLabel);
     let target = 0;
     if (sample.luma > 0.55) target = 1;
@@ -568,43 +534,23 @@
     }
 
     const heroRect = hero.getBoundingClientRect();
-    const mobile = isMobileMQ.matches;
-    /* ~1/10 of prior mobile range — tiny scroll completes dissolve/resurface */
-    const range = mobile
-      ? Math.max(hero.offsetHeight * 0.02, window.innerHeight * 0.012, 28)
-      : Math.max(hero.offsetHeight * 0.62, window.innerHeight * 0.4);
+    /* Fast dissolve range — fade only, never move with page scroll */
+    const range = Math.max(hero.offsetHeight * 0.08, window.innerHeight * 0.06, 48);
     const scrolled = clamp(-heroRect.top, 0, range);
     const targetT = clamp(scrolled / range, 0, 1);
-    /* Butter-smooth follow on phones so water blur never stutters */
-    if (mobile) {
-      eyeTSmooth += (targetT - eyeTSmooth) * 0.16;
-      if (Math.abs(targetT - eyeTSmooth) < 0.001) eyeTSmooth = targetT;
-    } else {
-      eyeTSmooth = targetT;
-    }
+    eyeTSmooth += (targetT - eyeTSmooth) * 0.22;
+    if (Math.abs(targetT - eyeTSmooth) < 0.001) eyeTSmooth = targetT;
     const t = eyeTSmooth;
     const from = heroStartRect();
     const to = slotRect();
 
-    if (mobile) {
-      /*
-        Pin on REAL scroll, not smoothed t.
-        - At rest (scrolled <= 1): keep updating the rest pose
-        - After any real scroll: NEVER update frozenEyeBox again
-          (this was why it still drifted — smooth t stayed < 0.03 while the anchor moved)
-      */
-      if (scrolled <= 1) {
-        captureFrozenEye(from);
-      } else if (!frozenEyeBox) {
-        captureFrozenEye(from);
-      }
-      updateEyeDockMobile(t, frozenEyeBox, to);
-    } else {
-      frozenEyeBox = null;
-      if (eye) eye.style.visibility = "visible";
-      updateEyeDockDesktop(t, from, to);
-      clearSpellFX();
+    /* Hard-pin on real scroll: 0% movement while fading */
+    if (scrolled <= 1) {
+      captureFrozenEye(from);
+    } else if (!frozenEyeBox) {
+      captureFrozenEye(from);
     }
+    updateEyeDockMobile(t, frozenEyeBox, to);
   }
 
   /* Gentle idle look on mobile when no touch */
@@ -613,30 +559,9 @@
   function tick(now = performance.now()) {
     if (prefersFine && cursor) {
       cursor.style.transform = `translate(${mx}px, ${my}px)`;
-      rx += (mx - rx) * 0.16;
-      ry += (my - ry) * 0.16;
+      rx += (mx - rx) * 0.2;
+      ry += (my - ry) * 0.2;
       if (cursorRing) cursorRing.style.transform = `translate(${rx - mx}px, ${ry - my}px)`;
-
-      if (trailCanvas) {
-        const ctx = trailCanvas.getContext("2d");
-        ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
-        for (let i = particles.length - 1; i >= 0; i--) {
-          const p = particles[i];
-          p.x += p.vx;
-          p.y += p.vy;
-          p.life -= 0.02;
-          if (p.life <= 0) {
-            particles.splice(i, 1);
-            continue;
-          }
-          ctx.beginPath();
-          ctx.fillStyle = `${p.color}${p.life.toFixed(2)})`;
-          ctx.shadowColor = p.color.includes("212") ? "#d4af37" : "#4db6a0";
-          ctx.shadowBlur = 8;
-          ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
-          ctx.fill();
-        }
-      }
     } else if (!prefersFine && eye && !eye.classList.contains("is-docked")) {
       idlePhase = now * 0.001;
       const rect = eye.getBoundingClientRect();
@@ -816,17 +741,18 @@
     let paused = false;
     let hovering = false;
     let dragging = false;
+    let locked = false; // stays paused after card click until all unflipped
     let raf = 0;
     let last = 0;
-    const speed = 0.55; // px per ms — film-like crawl
+    const speed = 0.62; // px per ms — cinema crawl
 
     const anyFlipped = () => cards.some((c) => c.classList.contains("is-flipped"));
 
     const setPop = (card, on) => {
       cards.forEach((c) => c.classList.remove("is-popped"));
       if (on && card) card.classList.add("is-popped");
-      film.classList.toggle("is-paused", Boolean(on) || dragging);
-      paused = Boolean(on) || hovering || dragging;
+      film.classList.toggle("is-paused", Boolean(on) || dragging || locked);
+      paused = Boolean(on) || hovering || dragging || locked;
     };
 
     const pauseStrip = (card) => {
@@ -836,7 +762,8 @@
 
     const resumeStrip = () => {
       hovering = false;
-      if (anyFlipped() || dragging) {
+      locked = anyFlipped();
+      if (locked || dragging) {
         paused = true;
         film.classList.add("is-paused");
         return;
@@ -851,18 +778,21 @@
         pauseStrip(card);
       });
       card.addEventListener("pointerleave", () => {
-        if (card.classList.contains("is-flipped") || dragging) return;
+        if (card.classList.contains("is-flipped") || dragging || locked) return;
         resumeStrip();
       });
       card.addEventListener("focus", () => pauseStrip(card));
       card.addEventListener("blur", () => {
-        if (card.classList.contains("is-flipped")) return;
+        if (card.classList.contains("is-flipped") || locked) return;
         resumeStrip();
       });
       card.addEventListener("click", () => {
+        // Click locks cinema until card is unflipped / leave
+        locked = true;
+        pauseStrip(card);
         requestAnimationFrame(() => {
-          if (card.classList.contains("is-flipped")) pauseStrip(card);
-          else if (!hovering) resumeStrip();
+          locked = anyFlipped();
+          if (!locked && !hovering) resumeStrip();
         });
       });
     });
@@ -955,20 +885,18 @@
       const dt = Math.min(32, ts - last);
       last = ts;
 
-      if (!paused && track.scrollWidth > track.clientWidth + 8) {
+      if (!paused && !locked && track.scrollWidth > track.clientWidth + 8) {
         const max = Math.max(1, track.scrollWidth - track.clientWidth);
-        const rtl = getComputedStyle(track).direction === "rtl";
+        // Cinema: always crawl so frames move right → left (RTL reading).
+        // Chromium RTL: scrollLeft goes 0 → max while content moves that way.
         const delta = speed * dt;
-        let next = track.scrollLeft + (rtl ? -delta : delta);
-
-        if (!rtl) {
-          if (next >= max - 1) next = 0;
-          if (next < 0) next = 0;
-        } else if (track.scrollLeft <= 0 && track.scrollLeft > -1) {
+        let next = track.scrollLeft + delta;
+        if (next >= max - 1) next = 0;
+        if (next < 0) next = 0;
+        // Negative-scrollLeft engines (older): keep crawling leftward
+        if (track.scrollLeft < 0) {
+          next = track.scrollLeft - delta;
           if (next <= -max + 1) next = 0;
-        } else {
-          if (next >= max - 1) next = 0;
-          if (next < 0) next = max;
         }
         track.scrollLeft = next;
       }
@@ -994,42 +922,7 @@
     io.observe(film);
   })();
 
-  /* ── Featured slider ── */
-  const slides = [...document.querySelectorAll(".featured__slide")];
-  const dots = [...document.querySelectorAll(".featured__dot")];
-  let slideIndex = 0;
-
-  const showSlide = (index) => {
-    slideIndex = (index + slides.length) % slides.length;
-    slides.forEach((slide, i) => slide.classList.toggle("is-active", i === slideIndex));
-    dots.forEach((dot, i) => dot.classList.toggle("is-active", i === slideIndex));
-  };
-
-  dots.forEach((dot, i) => dot.addEventListener("click", () => showSlide(i)));
-  if (slides.length) setInterval(() => showSlide(slideIndex + 1), 5500);
-
-  // swipe featured on mobile
-  const featured = document.querySelector(".featured");
-  if (featured && slides.length) {
-    let startX = 0;
-    featured.addEventListener(
-      "touchstart",
-      (e) => {
-        startX = e.touches[0].clientX;
-      },
-      { passive: true }
-    );
-    featured.addEventListener(
-      "touchend",
-      (e) => {
-        const dx = e.changedTouches[0].clientX - startX;
-        if (Math.abs(dx) < 40) return;
-        // RTL: swipe right -> previous, left -> next visually feels natural
-        showSlide(slideIndex + (dx > 0 ? -1 : 1));
-      },
-      { passive: true }
-    );
-  }
+  /* Featured: flip cards — no slider */
 
   /* ── Portfolio filters ── */
   const filterBtns = [...document.querySelectorAll(".filter-btn")];
