@@ -716,37 +716,66 @@
     requestAnimationFrame(step);
   })();
 
-  /* ── Flip cards ── */
-  document.querySelectorAll(".flip-card").forEach((card) => {
-    card.addEventListener("click", (e) => {
-      if (e.target.closest("a")) return;
-      card.classList.toggle("is-flipped");
-    });
-    card.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" || e.key === " ") {
-        e.preventDefault();
-        card.classList.toggle("is-flipped");
-      }
-    });
+  /* ── Flip cards (delegation so film-strip clones work) ── */
+  document.addEventListener("click", (e) => {
+    const card = e.target.closest(".flip-card");
+    if (!card || e.target.closest("a")) return;
+    card.classList.toggle("is-flipped");
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key !== "Enter" && e.key !== " ") return;
+    const card = e.target.closest(".flip-card");
+    if (!card) return;
+    e.preventDefault();
+    card.classList.toggle("is-flipped");
   });
 
-  /* ── Services film strip: cinema motion + drag + hover pop ── */
+  /* ── Services film strip: cinema motion + drag + infinite loop ── */
   (() => {
     const film = document.getElementById("services-film");
     const track = document.getElementById("services-track");
     if (!film || !track) return;
 
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const originals = [...track.querySelectorAll(".service-flip")];
+    if (!originals.length) return;
+
+    /* Duplicate once for seamless infinite loop */
+    const frag = document.createDocumentFragment();
+    originals.forEach((card) => {
+      const clone = card.cloneNode(true);
+      clone.setAttribute("aria-hidden", "true");
+      clone.tabIndex = -1;
+      frag.appendChild(clone);
+    });
+    track.appendChild(frag);
+
     const cards = [...track.querySelectorAll(".service-flip")];
     let paused = false;
     let hovering = false;
     let dragging = false;
-    let locked = false; // stays paused after card click until all unflipped
+    let locked = false;
     let raf = 0;
     let last = 0;
-    const speed = 0.62; // px per ms — cinema crawl
-    let speedSign = 1;
+    const speed = 0.62;
     let userHeld = false;
+    let loopWidth = 0;
+
+    const measureLoop = () => {
+      const firstClone = cards[originals.length];
+      if (!firstClone) {
+        loopWidth = track.scrollWidth / 2;
+        return;
+      }
+      loopWidth = firstClone.offsetLeft - cards[0].offsetLeft;
+      if (loopWidth < 8) loopWidth = track.scrollWidth / 2;
+    };
+
+    const wrapScroll = () => {
+      if (loopWidth < 8) return;
+      while (track.scrollLeft >= loopWidth) track.scrollLeft -= loopWidth;
+      while (track.scrollLeft < 0) track.scrollLeft += loopWidth;
+    };
 
     const anyFlipped = () => cards.some((c) => c.classList.contains("is-flipped"));
 
@@ -789,7 +818,6 @@
         resumeStrip();
       });
       card.addEventListener("click", () => {
-        // Click locks cinema until card is unflipped / leave
         locked = true;
         pauseStrip(card);
         requestAnimationFrame(() => {
@@ -799,7 +827,6 @@
       });
     });
 
-    /* Manual drag (mouse) + native touch scroll */
     let dragStartX = 0;
     let dragScroll = 0;
     let moved = false;
@@ -824,6 +851,7 @@
       const dx = e.clientX - dragStartX;
       if (Math.abs(dx) > 3) moved = true;
       track.scrollLeft = dragScroll - dx;
+      wrapScroll();
     };
 
     const endDrag = (e) => {
@@ -837,8 +865,8 @@
       try {
         track.releasePointerCapture?.(e.pointerId);
       } catch (_) {}
+      wrapScroll();
       if (moved) {
-        // prevent accidental flip after drag
         const block = (ev) => {
           ev.stopPropagation();
           ev.preventDefault();
@@ -870,11 +898,27 @@
     };
 
     track.addEventListener("wheel", () => holdForUser(2800), { passive: true });
-    track.addEventListener("scroll", () => {
-      if (dragging) return;
-      // Native touch/trackpad scroll should never be yanked back
-      if (!userHeld) holdForUser(2800);
-    }, { passive: true });
+    track.addEventListener(
+      "scroll",
+      () => {
+        wrapScroll();
+        if (dragging) return;
+        if (!userHeld) holdForUser(2800);
+      },
+      { passive: true }
+    );
+
+    measureLoop();
+    window.addEventListener("resize", () => {
+      measureLoop();
+      wrapScroll();
+    });
+
+    /* Start in the middle of the duplicated track for both-direction loop */
+    requestAnimationFrame(() => {
+      measureLoop();
+      if (loopWidth > 8) track.scrollLeft = loopWidth * 0.15;
+    });
 
     if (reduceMotion) return;
 
@@ -884,17 +928,8 @@
       last = ts;
 
       if (!paused && !locked && !userHeld && track.scrollWidth > track.clientWidth + 8) {
-        const max = Math.max(1, track.scrollWidth - track.clientWidth);
-        const delta = speed * dt * speedSign;
-        let next = track.scrollLeft + delta;
-        if (next >= max - 0.5) {
-          next = max;
-          speedSign = -1;
-        } else if (next <= 0.5) {
-          next = 0;
-          speedSign = 1;
-        }
-        track.scrollLeft = next;
+        track.scrollLeft += speed * dt;
+        wrapScroll();
       }
 
       raf = requestAnimationFrame(step);
@@ -916,6 +951,197 @@
       { threshold: 0.12 }
     );
     io.observe(film);
+  })();
+
+  /* ── Partners: 3D standing pages, infinite ring ── */
+  (() => {
+    const stage = document.getElementById("partner-stage");
+    const ring = document.getElementById("partner-ring");
+    if (!stage || !ring) return;
+
+    const pages = [...ring.querySelectorAll(".partner-page")];
+    const n = pages.length;
+    if (!n) return;
+
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const stepDeg = 360 / n;
+    let rot = 0;
+    let vel = 0;
+    let dragging = false;
+    let dragMoved = false;
+    let lastX = 0;
+    let lastT = 0;
+    let raf = 0;
+    let auto = !reduceMotion;
+    let holdTimer = 0;
+    let frontIndex = 0;
+
+    const norm180 = (deg) => {
+      let a = ((deg % 360) + 360) % 360;
+      if (a > 180) a -= 360;
+      return a;
+    };
+
+    const radiusFor = () => {
+      const w = window.innerWidth;
+      if (w < 640) return 240;
+      if (w < 980) return 320;
+      return 420;
+    };
+
+    const paint = () => {
+      const radius = radiusFor();
+      stage.style.setProperty("--partner-radius", `${radius}px`);
+      ring.style.setProperty("--ring-rot", `${rot}deg`);
+
+      const bend = Math.max(-14, Math.min(14, vel * 2.2));
+      let best = 0;
+      let bestFacing = -2;
+
+      pages.forEach((page, i) => {
+        const slot = i * stepDeg;
+        const world = slot + rot;
+        const a = norm180(world);
+        const facing = Math.cos((a * Math.PI) / 180);
+        page.style.setProperty("--slot", String(slot));
+        page.style.setProperty("--facing", facing.toFixed(3));
+        page.style.setProperty("--bend", `${(bend * Math.max(0.2, Math.abs(facing))).toFixed(2)}deg`);
+        page.classList.toggle("is-front", false);
+        page.classList.toggle("is-near", Math.abs(a) < stepDeg * 0.85);
+        page.tabIndex = -1;
+        if (facing > bestFacing) {
+          bestFacing = facing;
+          best = i;
+        }
+      });
+
+      frontIndex = best;
+      const front = pages[frontIndex];
+      front.classList.add("is-front");
+      front.classList.remove("is-near");
+      front.tabIndex = 0;
+    };
+
+    const tick = (ts) => {
+      if (!lastT) lastT = ts;
+      const dt = Math.min(32, ts - lastT) / 16.67;
+      lastT = ts;
+
+      if (!dragging) {
+        if (Math.abs(vel) > 0.002) {
+          rot += vel * dt;
+          vel *= Math.pow(0.94, dt);
+        } else if (auto) {
+          vel = 0;
+          rot -= 0.12 * dt; // slow continuous loop
+        } else {
+          /* snap toward nearest page */
+          const target = -frontIndex * stepDeg;
+          let diff = norm180(target - rot);
+          if (Math.abs(diff) > 0.15) rot += diff * 0.08 * dt;
+          else vel = 0;
+        }
+      }
+
+      paint();
+      raf = requestAnimationFrame(tick);
+    };
+
+    const pauseAuto = (ms = 2800) => {
+      auto = false;
+      clearTimeout(holdTimer);
+      holdTimer = window.setTimeout(() => {
+        if (!dragging && !reduceMotion) auto = true;
+      }, ms);
+    };
+
+    const onDown = (e) => {
+      if (e.target.closest(".partner-stage__nav")) return;
+      dragging = true;
+      dragMoved = false;
+      stage.classList.add("is-dragging");
+      lastX = e.clientX ?? e.touches?.[0]?.clientX ?? 0;
+      vel = 0;
+      pauseAuto(4000);
+      stage.setPointerCapture?.(e.pointerId);
+    };
+
+    const onMove = (e) => {
+      if (!dragging) return;
+      const x = e.clientX ?? e.touches?.[0]?.clientX ?? lastX;
+      const dx = x - lastX;
+      lastX = x;
+      if (Math.abs(dx) > 2) dragMoved = true;
+      const delta = dx * 0.28;
+      rot += delta;
+      vel = delta * 0.35;
+      paint();
+    };
+
+    const onUp = (e) => {
+      if (!dragging) return;
+      dragging = false;
+      stage.classList.remove("is-dragging");
+      try {
+        stage.releasePointerCapture?.(e.pointerId);
+      } catch (_) {}
+      if (dragMoved) {
+        const block = (ev) => {
+          ev.preventDefault();
+          ev.stopPropagation();
+          stage.removeEventListener("click", block, true);
+        };
+        stage.addEventListener("click", block, true);
+      }
+      pauseAuto(3200);
+    };
+
+    stage.addEventListener("pointerdown", onDown);
+    window.addEventListener("pointermove", onMove);
+    window.addEventListener("pointerup", onUp);
+    window.addEventListener("pointercancel", onUp);
+
+    stage.querySelectorAll(".partner-stage__nav").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const dir = Number(btn.getAttribute("data-dir") || 1);
+        vel += dir * 2.4;
+        pauseAuto(3200);
+      });
+    });
+
+    pages.forEach((page) => {
+      page.addEventListener("click", (e) => {
+        if (!page.classList.contains("is-front")) {
+          e.preventDefault();
+          /* bring clicked page to front */
+          const i = pages.indexOf(page);
+          const target = -i * stepDeg;
+          let diff = norm180(target - rot);
+          vel = diff * 0.08;
+          pauseAuto(3600);
+        }
+      });
+    });
+
+    window.addEventListener("resize", paint);
+    paint();
+    raf = requestAnimationFrame(tick);
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        const vis = entries.some((e) => e.isIntersecting);
+        if (!vis && raf) {
+          cancelAnimationFrame(raf);
+          raf = 0;
+          lastT = 0;
+        } else if (vis && !raf) {
+          lastT = 0;
+          raf = requestAnimationFrame(tick);
+        }
+      },
+      { threshold: 0.08 }
+    );
+    io.observe(stage);
   })();
 
   /* ── Featured slider (01–06) ── */
