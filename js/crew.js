@@ -967,6 +967,7 @@
     const stepDeg = 360 / n;
     let rot = 0;
     let vel = 0;
+    let targetRot = null;
     let dragging = false;
     let dragMoved = false;
     let lastX = 0;
@@ -984,9 +985,9 @@
 
     const radiusFor = () => {
       const w = window.innerWidth;
-      if (w < 640) return 240;
-      if (w < 980) return 320;
-      return 420;
+      if (w < 640) return 250;
+      if (w < 980) return 300;
+      return 380;
     };
 
     const paint = () => {
@@ -994,7 +995,7 @@
       stage.style.setProperty("--partner-radius", `${radius}px`);
       ring.style.setProperty("--ring-rot", `${rot}deg`);
 
-      const bend = Math.max(-14, Math.min(14, vel * 2.2));
+      const bend = Math.max(-12, Math.min(12, vel * 2));
       let best = 0;
       let bestFacing = -2;
 
@@ -1007,7 +1008,7 @@
         page.style.setProperty("--facing", facing.toFixed(3));
         page.style.setProperty("--bend", `${(bend * Math.max(0.2, Math.abs(facing))).toFixed(2)}deg`);
         page.classList.toggle("is-front", false);
-        page.classList.toggle("is-near", Math.abs(a) < stepDeg * 0.85);
+        page.classList.toggle("is-near", Math.abs(a) < stepDeg * 0.9 && facing > 0.15);
         page.tabIndex = -1;
         if (facing > bestFacing) {
           bestFacing = facing;
@@ -1028,17 +1029,26 @@
       lastT = ts;
 
       if (!dragging) {
-        if (Math.abs(vel) > 0.002) {
+        if (targetRot != null) {
+          const diff = norm180(targetRot - rot);
+          if (Math.abs(diff) < 0.35) {
+            rot = targetRot;
+            targetRot = null;
+            vel = 0;
+          } else {
+            rot += diff * Math.min(1, 0.16 * dt);
+            vel = diff * 0.05;
+          }
+        } else if (Math.abs(vel) > 0.002) {
           rot += vel * dt;
-          vel *= Math.pow(0.94, dt);
+          vel *= Math.pow(0.92, dt);
         } else if (auto) {
           vel = 0;
-          rot -= 0.12 * dt; // slow continuous loop
+          rot -= 0.1 * dt;
         } else {
-          /* snap toward nearest page */
           const target = -frontIndex * stepDeg;
-          let diff = norm180(target - rot);
-          if (Math.abs(diff) > 0.15) rot += diff * 0.08 * dt;
+          const diff = norm180(target - rot);
+          if (Math.abs(diff) > 0.2) rot += diff * 0.1 * dt;
           else vel = 0;
         }
       }
@@ -1047,7 +1057,7 @@
       raf = requestAnimationFrame(tick);
     };
 
-    const pauseAuto = (ms = 2800) => {
+    const pauseAuto = (ms = 3200) => {
       auto = false;
       clearTimeout(holdTimer);
       holdTimer = window.setTimeout(() => {
@@ -1055,15 +1065,28 @@
       }, ms);
     };
 
+    const stepBy = (dir) => {
+      const next = (frontIndex - dir + n) % n;
+      targetRot = -next * stepDeg;
+      vel = 0;
+      pauseAuto(4500);
+    };
+
     const onDown = (e) => {
       if (e.target.closest(".partner-stage__nav")) return;
+      /* Allow simple clicks on front page to open without starting a drag fight */
+      if (e.target.closest(".partner-page.is-front") && e.pointerType !== "touch") {
+        pauseAuto(5000);
+        return;
+      }
       dragging = true;
       dragMoved = false;
+      targetRot = null;
       stage.classList.add("is-dragging");
       lastX = e.clientX ?? e.touches?.[0]?.clientX ?? 0;
       vel = 0;
-      pauseAuto(4000);
-      stage.setPointerCapture?.(e.pointerId);
+      pauseAuto(4500);
+      if (e.pointerType !== "touch") stage.setPointerCapture?.(e.pointerId);
     };
 
     const onMove = (e) => {
@@ -1071,10 +1094,10 @@
       const x = e.clientX ?? e.touches?.[0]?.clientX ?? lastX;
       const dx = x - lastX;
       lastX = x;
-      if (Math.abs(dx) > 2) dragMoved = true;
-      const delta = dx * 0.28;
+      if (Math.abs(dx) > 3) dragMoved = true;
+      const delta = dx * 0.32;
       rot += delta;
-      vel = delta * 0.35;
+      vel = delta * 0.4;
       paint();
     };
 
@@ -1092,8 +1115,10 @@
           stage.removeEventListener("click", block, true);
         };
         stage.addEventListener("click", block, true);
+        /* snap to nearest after drag */
+        targetRot = -frontIndex * stepDeg;
       }
-      pauseAuto(3200);
+      pauseAuto(4000);
     };
 
     stage.addEventListener("pointerdown", onDown);
@@ -1102,24 +1127,31 @@
     window.addEventListener("pointercancel", onUp);
 
     stage.querySelectorAll(".partner-stage__nav").forEach((btn) => {
-      btn.addEventListener("click", () => {
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
         const dir = Number(btn.getAttribute("data-dir") || 1);
-        vel += dir * 2.4;
-        pauseAuto(3200);
+        stepBy(dir);
       });
+      btn.addEventListener("pointerdown", (e) => e.stopPropagation());
     });
 
     pages.forEach((page) => {
       page.addEventListener("click", (e) => {
+        if (dragMoved) {
+          e.preventDefault();
+          return;
+        }
         if (!page.classList.contains("is-front")) {
           e.preventDefault();
-          /* bring clicked page to front */
           const i = pages.indexOf(page);
-          const target = -i * stepDeg;
-          let diff = norm180(target - rot);
-          vel = diff * 0.08;
-          pauseAuto(3600);
+          targetRot = -i * stepDeg;
+          vel = 0;
+          pauseAuto(4500);
+          return;
         }
+        /* front page: let the browser open the link (new tab) */
+        pauseAuto(5000);
       });
     });
 
