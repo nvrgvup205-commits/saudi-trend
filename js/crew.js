@@ -737,21 +737,24 @@
     if (!film || !track) return;
 
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
     const cards = [...track.querySelectorAll(".service-flip")];
     const n = cards.length;
     if (!n) return;
 
     let index = 0;
-    let offset = 0; // fractional for smooth drag
+    let offset = 0;
     let vel = 0;
     let dragging = false;
     let dragMoved = false;
+    let hovering = false;
     let lastX = 0;
     let lastT = 0;
     let raf = 0;
     let auto = !reduceMotion;
     let holdTimer = 0;
-    let locked = false;
+    let autoAcc = 0;
+    const AUTO_MS = 3200;
 
     const wrapIndex = (i) => ((i % n) + n) % n;
 
@@ -770,6 +773,11 @@
     };
 
     const anyFlipped = () => cards.some((c) => c.classList.contains("is-flipped"));
+
+    const syncPausedClass = () => {
+      const paused = hovering || dragging || anyFlipped() || !auto;
+      film.classList.toggle("is-paused", paused);
+    };
 
     const paint = () => {
       const m = metrics();
@@ -799,14 +807,16 @@
       });
     };
 
-    const pauseAuto = (ms = 3600) => {
+    const resumeAutoSoon = (ms = 2800) => {
+      if (reduceMotion) return;
       auto = false;
-      film.classList.add("is-paused");
+      syncPausedClass();
       clearTimeout(holdTimer);
       holdTimer = window.setTimeout(() => {
-        if (!dragging && !anyFlipped() && !locked && !reduceMotion) {
+        if (!dragging && !hovering && !anyFlipped()) {
           auto = true;
-          film.classList.remove("is-paused");
+          autoAcc = 0;
+          syncPausedClass();
         }
       }, ms);
     };
@@ -820,20 +830,21 @@
 
     const stepBy = (dir) => {
       cards.forEach((c) => c.classList.remove("is-flipped"));
-      locked = false;
       index = wrapIndex(index + dir);
       offset = 0;
       vel = 0;
+      autoAcc = 0;
       paint();
-      pauseAuto(4200);
+      resumeAutoSoon(3200);
     };
 
     const tick = (ts) => {
       if (!lastT) lastT = ts;
-      const dt = Math.min(32, ts - lastT) / 16.67;
+      const dtMs = Math.min(32, ts - lastT);
+      const dt = dtMs / 16.67;
       lastT = ts;
 
-      locked = anyFlipped();
+      const flipped = anyFlipped();
 
       if (!dragging) {
         if (Math.abs(vel) > 0.001) {
@@ -847,9 +858,11 @@
         } else if (Math.abs(offset) > 0.001) {
           offset *= Math.pow(0.82, dt);
           if (Math.abs(offset) < 0.02) snap();
-        } else if (auto && !locked) {
-          offset += 0.006 * dt;
-          if (offset >= 1) {
+        } else if (auto && !hovering && !flipped) {
+          /* Discrete auto-advance — works on mobile without interaction */
+          autoAcc += dtMs;
+          if (autoAcc >= AUTO_MS) {
+            autoAcc = 0;
             index = wrapIndex(index + 1);
             offset = 0;
             cards.forEach((c) => c.classList.remove("is-flipped"));
@@ -857,6 +870,7 @@
         }
       }
 
+      syncPausedClass();
       paint();
       raf = requestAnimationFrame(tick);
     };
@@ -864,17 +878,17 @@
     const onDown = (e) => {
       if (e.target.closest(".film-stage__nav")) return;
       if (e.target.closest("a")) return;
-      /* allow flip click on active without drag capture (mouse only) */
       if (e.target.closest(".service-flip.is-active") && e.pointerType === "mouse") {
-        pauseAuto(5000);
+        resumeAutoSoon(5000);
         return;
       }
       dragging = true;
       dragMoved = false;
       lastX = e.clientX ?? e.touches?.[0]?.clientX ?? 0;
       vel = 0;
-      film.classList.add("is-dragging", "is-paused");
-      pauseAuto(5000);
+      auto = false;
+      film.classList.add("is-dragging");
+      syncPausedClass();
       try {
         film.setPointerCapture?.(e.pointerId);
       } catch (_) {}
@@ -887,7 +901,6 @@
       const dx = x - lastX;
       lastX = x;
       if (Math.abs(dx) > 3) dragMoved = true;
-      /* Content follows the finger (drag right → cards move right) */
       offset -= dx / (metrics().spacing * 1.05);
       while (offset > 0.5) {
         offset -= 1;
@@ -917,8 +930,25 @@
         film.addEventListener("click", block, true);
       }
       snap();
-      pauseAuto(4200);
+      /* Mobile + desktop: always return to auto after a short pause */
+      resumeAutoSoon(2600);
     };
+
+    /* Desktop: pause while mouse rests on the stage */
+    if (finePointer) {
+      film.addEventListener("pointerenter", () => {
+        hovering = true;
+        syncPausedClass();
+      });
+      film.addEventListener("pointerleave", () => {
+        hovering = false;
+        if (!dragging && !anyFlipped() && !reduceMotion) {
+          auto = true;
+          autoAcc = 0;
+        }
+        syncPausedClass();
+      });
+    }
 
     film.addEventListener("pointerdown", onDown);
     window.addEventListener("pointermove", onMove);
@@ -947,17 +977,18 @@
           const i = cards.indexOf(card);
           index = i;
           offset = 0;
+          autoAcc = 0;
           paint();
-          pauseAuto(4500);
+          resumeAutoSoon(3600);
           return;
         }
-        /* active: flip via delegated handler; lock auto */
-        pauseAuto(6000);
+        /* flipped card pauses auto until unflipped */
         requestAnimationFrame(() => {
-          locked = anyFlipped();
-          if (locked) {
+          if (anyFlipped()) {
             auto = false;
-            film.classList.add("is-paused");
+            syncPausedClass();
+          } else {
+            resumeAutoSoon(2000);
           }
         });
       });
@@ -972,6 +1003,8 @@
         const visible = entries.some((e) => e.isIntersecting);
         if (visible && !raf) {
           lastT = 0;
+          autoAcc = 0;
+          if (!reduceMotion && !hovering && !anyFlipped()) auto = true;
           raf = requestAnimationFrame(tick);
         }
         if (!visible && raf) {
