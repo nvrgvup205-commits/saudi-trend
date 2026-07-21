@@ -1481,31 +1481,6 @@
     }
   })();
 
-  /* ── Lazy Google Maps (avoid first-paint hit) ── */
-  (() => {
-    const frame = document.querySelector(".site-close__map-frame iframe[data-src]");
-    if (!frame) return;
-    const load = () => {
-      if (frame.dataset.loaded) return;
-      frame.dataset.loaded = "1";
-      frame.src = frame.getAttribute("data-src");
-    };
-    if ("IntersectionObserver" in window) {
-      const io = new IntersectionObserver(
-        (entries) => {
-          if (entries.some((e) => e.isIntersecting)) {
-            load();
-            io.disconnect();
-          }
-        },
-        { rootMargin: "240px 0px" }
-      );
-      io.observe(frame);
-    } else {
-      load();
-    }
-  })();
-
   /* ── Back to top ── */
   const backTop = document.getElementById("back-top");
   window.addEventListener("scroll", () => {
