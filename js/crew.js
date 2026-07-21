@@ -3,7 +3,7 @@
   const eyeFollowMouse = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
   const isMobileMQ = window.matchMedia("(max-width: 720px)");
 
-  /* ── Why-us: desktop rotator / mobile side drawer ── */
+  /* ── Why-us: desktop rotator / mobile full sheet with sequential reveal ── */
   const skillEl = document.getElementById("hero-skill");
   const whyWrap = document.getElementById("why-wrap");
   const whyUs = document.getElementById("why-us");
@@ -13,6 +13,7 @@
   let skillIndex = 0;
   let skillTimer = 0;
   let whyOpen = false;
+  let whyRevealTimers = [];
   const skillsFor = () =>
     window.ST_I18N
       ? window.ST_I18N.skills(window.ST_I18N.getLang())
@@ -49,6 +50,11 @@
     skillEl.textContent = skills[skillIndex % skills.length];
   };
 
+  const clearWhyReveal = () => {
+    whyRevealTimers.forEach((id) => clearTimeout(id));
+    whyRevealTimers = [];
+  };
+
   const fillWhyList = () => {
     if (!whyList) return;
     const skills = skillsFor();
@@ -59,6 +65,20 @@
         return li;
       })
     );
+  };
+
+  const revealWhyList = () => {
+    if (!whyList) return;
+    clearWhyReveal();
+    const items = [...whyList.children];
+    items.forEach((li) => li.classList.remove("is-in"));
+    /* Staggered reveal — light CSS only, no heavy animation libs */
+    items.forEach((li, i) => {
+      const id = window.setTimeout(() => {
+        li.classList.add("is-in");
+      }, 70 + i * 95);
+      whyRevealTimers.push(id);
+    });
   };
 
   const lockSkillLineWidth = () => {
@@ -90,10 +110,19 @@
 
   const setWhyOpen = (open) => {
     whyOpen = !!open;
-    document.body.classList.toggle("why-drawer-open", whyOpen);
+    document.body.classList.toggle("why-sheet-open", whyOpen);
+    document.body.classList.toggle("why-drawer-open", whyOpen); /* compat */
     whyWrap?.classList.toggle("is-open", whyOpen);
     whyTab?.setAttribute("aria-expanded", whyOpen ? "true" : "false");
     if (whyUs) whyUs.setAttribute("aria-modal", whyOpen ? "true" : "false");
+    if (whyOpen) {
+      fillWhyList();
+      /* next frame so CSS opacity:0 applies before stagger */
+      requestAnimationFrame(() => revealWhyList());
+    } else {
+      clearWhyReveal();
+      whyList?.querySelectorAll(".is-in").forEach((li) => li.classList.remove("is-in"));
+    }
   };
 
   const stopSkillTimer = () => {
@@ -134,12 +163,13 @@
       return;
     }
     /* Desktop: classic floating rotator */
+    clearWhyReveal();
     if (skillEl) skillEl.hidden = false;
     if (whyList) whyList.hidden = true;
     if (whyTab) whyTab.hidden = true;
     if (whyClose) whyClose.hidden = true;
     setWhyOpen(false);
-    document.body.classList.remove("why-drawer-open");
+    document.body.classList.remove("why-drawer-open", "why-sheet-open");
     paintSkill();
     lockSkillLineWidth();
     startSkillTimer();
@@ -153,6 +183,7 @@
       skillIndex = 0;
       paintSkill();
       fillWhyList();
+      if (whyOpen) revealWhyList();
       lockSkillLineWidth();
     });
     window.addEventListener("resize", () => {
@@ -167,44 +198,20 @@
   }
 
   whyTab?.addEventListener("click", () => setWhyOpen(!whyOpen));
-  whyClose?.addEventListener("click", () => setWhyOpen(false));
+  whyClose?.addEventListener("click", (e) => {
+    e.stopPropagation();
+    setWhyOpen(false);
+  });
   document.addEventListener("click", (e) => {
     if (!whyOpen || !isMobileMQ.matches) return;
     if (whyUs?.contains(e.target) || whyTab?.contains(e.target)) return;
     setWhyOpen(false);
   });
-  /* Swipe tab / edge to open; swipe panel away to close */
-  (() => {
-    if (!whyTab || !whyUs) return;
-    let x0 = 0;
-    let y0 = 0;
-    const onStart = (e) => {
-      const t = e.touches?.[0];
-      if (!t) return;
-      x0 = t.clientX;
-      y0 = t.clientY;
-    };
-    const onEnd = (e) => {
-      const t = e.changedTouches?.[0];
-      if (!t) return;
-      const dx = t.clientX - x0;
-      const dy = t.clientY - y0;
-      if (Math.abs(dx) < 36 || Math.abs(dx) < Math.abs(dy) * 1.2) return;
-      const rtl = document.documentElement.dir !== "ltr";
-      if (!whyOpen) {
-        /* Pull from the side toward center */
-        if ((rtl && dx < -40) || (!rtl && dx > 40)) setWhyOpen(true);
-      } else if ((rtl && dx > 40) || (!rtl && dx < -40)) {
-        setWhyOpen(false);
-      }
-    };
-    whyTab.addEventListener("touchstart", onStart, { passive: true });
-    whyTab.addEventListener("touchend", onEnd, { passive: true });
-    whyUs.addEventListener("touchstart", onStart, { passive: true });
-    whyUs.addEventListener("touchend", onEnd, { passive: true });
-  })();
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && whyOpen) setWhyOpen(false);
+  });
 
-  /* Close Why drawer when the user scrolls back into reading the page */
+  /* Close Why sheet when the user scrolls the page */
   let whyScrollY = window.scrollY;
   window.addEventListener(
     "scroll",
