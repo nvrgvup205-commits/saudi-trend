@@ -3,11 +3,16 @@
   const eyeFollowMouse = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
   const isMobileMQ = window.matchMedia("(max-width: 720px)");
 
-  /* ── Why-us rotator (bilingual) ── */
+  /* ── Why-us: desktop rotator / mobile side drawer ── */
   const skillEl = document.getElementById("hero-skill");
   const whyWrap = document.getElementById("why-wrap");
   const whyUs = document.getElementById("why-us");
+  const whyTab = document.getElementById("why-tab");
+  const whyClose = document.getElementById("why-close");
+  const whyList = document.getElementById("why-list");
   let skillIndex = 0;
+  let skillTimer = 0;
+  let whyOpen = false;
   const skillsFor = () =>
     window.ST_I18N
       ? window.ST_I18N.skills(window.ST_I18N.getLang())
@@ -37,41 +42,71 @@
           "نضمن النتيجة المتفق عليها",
           "خدمة بعد المشروع… موجودة وما تختفي",
         ];
-  if (skillEl) {
-    const paintSkill = () => {
-      const skills = skillsFor();
-      skillEl.textContent = skills[skillIndex % skills.length];
-    };
-    /* Keep one-line card width stable across rotating phrases (laptop) */
-    const lockSkillLineWidth = () => {
-      if (!skillEl || isMobileMQ.matches) {
-        skillEl.style.minWidth = "";
-        return;
-      }
-      const skills = skillsFor();
-      const probe = document.createElement("span");
-      const cs = getComputedStyle(skillEl);
-      probe.style.cssText = [
-        "position:absolute",
-        "visibility:hidden",
-        "pointer-events:none",
-        "white-space:nowrap",
-        `font:${cs.font}`,
-        `letter-spacing:${cs.letterSpacing}`,
-        `text-transform:${cs.textTransform}`,
-      ].join(";");
-      document.body.appendChild(probe);
-      let maxW = 0;
-      for (const s of skills) {
-        probe.textContent = s;
-        maxW = Math.max(maxW, probe.offsetWidth);
-      }
-      probe.remove();
-      skillEl.style.minWidth = maxW ? `${Math.ceil(maxW)}px` : "";
-    };
-    paintSkill();
-    lockSkillLineWidth();
-    setInterval(() => {
+
+  const paintSkill = () => {
+    if (!skillEl) return;
+    const skills = skillsFor();
+    skillEl.textContent = skills[skillIndex % skills.length];
+  };
+
+  const fillWhyList = () => {
+    if (!whyList) return;
+    const skills = skillsFor();
+    whyList.replaceChildren(
+      ...skills.map((text) => {
+        const li = document.createElement("li");
+        li.textContent = text;
+        return li;
+      })
+    );
+  };
+
+  const lockSkillLineWidth = () => {
+    if (!skillEl || isMobileMQ.matches) {
+      skillEl.style.minWidth = "";
+      return;
+    }
+    const skills = skillsFor();
+    const probe = document.createElement("span");
+    const cs = getComputedStyle(skillEl);
+    probe.style.cssText = [
+      "position:absolute",
+      "visibility:hidden",
+      "pointer-events:none",
+      "white-space:nowrap",
+      `font:${cs.font}`,
+      `letter-spacing:${cs.letterSpacing}`,
+      `text-transform:${cs.textTransform}`,
+    ].join(";");
+    document.body.appendChild(probe);
+    let maxW = 0;
+    for (const s of skills) {
+      probe.textContent = s;
+      maxW = Math.max(maxW, probe.offsetWidth);
+    }
+    probe.remove();
+    skillEl.style.minWidth = maxW ? `${Math.ceil(maxW)}px` : "";
+  };
+
+  const setWhyOpen = (open) => {
+    whyOpen = !!open;
+    document.body.classList.toggle("why-drawer-open", whyOpen);
+    whyWrap?.classList.toggle("is-open", whyOpen);
+    whyTab?.setAttribute("aria-expanded", whyOpen ? "true" : "false");
+    if (whyUs) whyUs.setAttribute("aria-modal", whyOpen ? "true" : "false");
+  };
+
+  const stopSkillTimer = () => {
+    if (skillTimer) {
+      clearInterval(skillTimer);
+      skillTimer = 0;
+    }
+  };
+
+  const startSkillTimer = () => {
+    stopSkillTimer();
+    if (!skillEl || isMobileMQ.matches) return;
+    skillTimer = window.setInterval(() => {
       skillEl.classList.add("is-fading");
       setTimeout(() => {
         skillIndex = (skillIndex + 1) % skillsFor().length;
@@ -79,18 +114,110 @@
         skillEl.classList.remove("is-fading");
       }, 220);
     }, 2800);
+  };
+
+  const syncWhyMode = () => {
+    if (!whyWrap || !whyUs) return;
+    if (isMobileMQ.matches) {
+      stopSkillTimer();
+      fillWhyList();
+      if (skillEl) skillEl.hidden = true;
+      if (whyList) whyList.hidden = false;
+      if (whyTab) whyTab.hidden = false;
+      if (whyClose) whyClose.hidden = false;
+      whyUs.classList.remove("is-pinned");
+      whyWrap.style.height = "";
+      document.body.classList.remove("why-pinned");
+      whyUs.style.setProperty("--why-blur", "0px");
+      whyUs.style.setProperty("--why-fade", "1");
+      setWhyOpen(false);
+      return;
+    }
+    /* Desktop: classic floating rotator */
+    if (skillEl) skillEl.hidden = false;
+    if (whyList) whyList.hidden = true;
+    if (whyTab) whyTab.hidden = true;
+    if (whyClose) whyClose.hidden = true;
+    setWhyOpen(false);
+    document.body.classList.remove("why-drawer-open");
+    paintSkill();
+    lockSkillLineWidth();
+    startSkillTimer();
+  };
+
+  if (skillEl || whyList) {
+    paintSkill();
+    fillWhyList();
+    syncWhyMode();
     window.addEventListener("st:langchange", () => {
       skillIndex = 0;
       paintSkill();
+      fillWhyList();
       lockSkillLineWidth();
     });
-    window.addEventListener("resize", lockSkillLineWidth, { passive: true });
+    window.addEventListener("resize", () => {
+      lockSkillLineWidth();
+      syncWhyMode();
+    }, { passive: true });
     if (typeof isMobileMQ.addEventListener === "function") {
-      isMobileMQ.addEventListener("change", lockSkillLineWidth);
+      isMobileMQ.addEventListener("change", syncWhyMode);
     } else if (typeof isMobileMQ.addListener === "function") {
-      isMobileMQ.addListener(lockSkillLineWidth);
+      isMobileMQ.addListener(syncWhyMode);
     }
   }
+
+  whyTab?.addEventListener("click", () => setWhyOpen(!whyOpen));
+  whyClose?.addEventListener("click", () => setWhyOpen(false));
+  document.addEventListener("click", (e) => {
+    if (!whyOpen || !isMobileMQ.matches) return;
+    if (whyUs?.contains(e.target) || whyTab?.contains(e.target)) return;
+    setWhyOpen(false);
+  });
+  /* Swipe tab / edge to open; swipe panel away to close */
+  (() => {
+    if (!whyTab || !whyUs) return;
+    let x0 = 0;
+    let y0 = 0;
+    const onStart = (e) => {
+      const t = e.touches?.[0];
+      if (!t) return;
+      x0 = t.clientX;
+      y0 = t.clientY;
+    };
+    const onEnd = (e) => {
+      const t = e.changedTouches?.[0];
+      if (!t) return;
+      const dx = t.clientX - x0;
+      const dy = t.clientY - y0;
+      if (Math.abs(dx) < 36 || Math.abs(dx) < Math.abs(dy) * 1.2) return;
+      const rtl = document.documentElement.dir !== "ltr";
+      if (!whyOpen) {
+        /* Pull from the side toward center */
+        if ((rtl && dx < -40) || (!rtl && dx > 40)) setWhyOpen(true);
+      } else if ((rtl && dx > 40) || (!rtl && dx < -40)) {
+        setWhyOpen(false);
+      }
+    };
+    whyTab.addEventListener("touchstart", onStart, { passive: true });
+    whyTab.addEventListener("touchend", onEnd, { passive: true });
+    whyUs.addEventListener("touchstart", onStart, { passive: true });
+    whyUs.addEventListener("touchend", onEnd, { passive: true });
+  })();
+
+  /* Close Why drawer when the user scrolls back into reading the page */
+  let whyScrollY = window.scrollY;
+  window.addEventListener(
+    "scroll",
+    () => {
+      if (!isMobileMQ.matches || !whyOpen) {
+        whyScrollY = window.scrollY;
+        return;
+      }
+      if (Math.abs(window.scrollY - whyScrollY) > 28) setWhyOpen(false);
+      whyScrollY = window.scrollY;
+    },
+    { passive: true }
+  );
 
   /* Native OS cursor — brand tint via CSS; drop heavy custom cursor DOM */
   document.getElementById("cursor-trail")?.remove();
@@ -159,57 +286,25 @@
   function updateWhyPin() {
     if (!whyWrap || !whyUs || !header) return;
 
-    /* Laptop: stay fixed bottom-right — no header docking */
-    if (!isMobileMQ.matches) {
-      syncWhyMount();
+    /* Mobile: side drawer only — no pin/blur tracking */
+    if (isMobileMQ.matches) {
       whyUs.classList.remove("is-pinned");
       whyWrap.style.height = "";
       document.body.classList.remove("why-pinned");
-      whyBlurSmooth = 0;
-      whyFadeSmooth = 1;
       whyUs.style.setProperty("--why-blur", "0px");
       whyUs.style.setProperty("--why-fade", "1");
       return;
     }
 
-    const pinY = header.getBoundingClientRect().bottom + 6;
-    const pinned = whyUs.classList.contains("is-pinned");
-    let targetBlur = 0;
-    let targetFade = 1;
-
-    if (!pinned) {
-      const top = whyUs.getBoundingClientRect().top;
-      const dist = top - pinY;
-      if (dist < WHY_APPROACH) {
-        const t = clamp(1 - dist / WHY_APPROACH, 0, 1);
-        const soft = t * t * (3 - 2 * t);
-        targetBlur = soft * 7;
-        targetFade = lerp(1, 0.22, soft);
-      }
-      if (top <= pinY) {
-        whyWrap.style.height = `${whyUs.offsetHeight}px`;
-        whyUs.classList.add("is-pinned");
-        document.body.classList.add("why-pinned");
-        whyBlurSmooth = Math.max(whyBlurSmooth, 5);
-        whyFadeSmooth = Math.min(whyFadeSmooth, 0.3);
-      }
-    } else {
-      targetBlur = 0;
-      targetFade = 1;
-      if (whyWrap.getBoundingClientRect().top > pinY) {
-        whyUs.classList.remove("is-pinned");
-        whyWrap.style.height = "";
-        document.body.classList.remove("why-pinned");
-      }
-    }
-
-    whyBlurSmooth += (targetBlur - whyBlurSmooth) * 0.11;
-    whyFadeSmooth += (targetFade - whyFadeSmooth) * 0.1;
-    if (Math.abs(targetBlur - whyBlurSmooth) < 0.02) whyBlurSmooth = targetBlur;
-    if (Math.abs(targetFade - whyFadeSmooth) < 0.005) whyFadeSmooth = targetFade;
-
-    whyUs.style.setProperty("--why-blur", `${whyBlurSmooth.toFixed(2)}px`);
-    whyUs.style.setProperty("--why-fade", whyFadeSmooth.toFixed(3));
+    /* Laptop: stay fixed bottom-right — no header docking */
+    syncWhyMount();
+    whyUs.classList.remove("is-pinned");
+    whyWrap.style.height = "";
+    document.body.classList.remove("why-pinned");
+    whyBlurSmooth = 0;
+    whyFadeSmooth = 1;
+    whyUs.style.setProperty("--why-blur", "0px");
+    whyUs.style.setProperty("--why-fade", "1");
   }
 
   /* Adaptive pill contrast + mobile glass tint from colors behind */
@@ -791,6 +886,15 @@
     const track = document.getElementById("services-track");
     if (!film || !track) return;
 
+    /* Don't download every service image up front — hydrate when visible */
+    track.querySelectorAll(".flip-card__img[src]").forEach((img) => {
+      if (img.dataset.src) return;
+      img.dataset.src = img.getAttribute("src") || "";
+      img.removeAttribute("src");
+      img.setAttribute("loading", "lazy");
+      img.setAttribute("decoding", "async");
+    });
+
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
     const cards = [...track.querySelectorAll(".service-flip")];
@@ -866,6 +970,13 @@
         card.tabIndex = abs < 0.45 ? 0 : -1;
         card.setAttribute("aria-hidden", abs < 0.45 ? "false" : "true");
         if (abs >= 0.45) card.classList.remove("is-flipped");
+        /* Progressive image load — same look, less first-hit weight */
+        if (visible) {
+          const img = card.querySelector(".flip-card__img[data-src]");
+          if (img && !img.getAttribute("src")) {
+            img.src = img.dataset.src;
+          }
+        }
       });
     };
 
