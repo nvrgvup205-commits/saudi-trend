@@ -1435,7 +1435,7 @@ body.eye-docked .eye {
     right: max(0.55rem, env(safe-area-inset-right, 0px));
   }
 
-  /* Why Us — side news-strip drawer (mobile only) */
+  /* Why Us — full sheet like service cards (mobile only) */
   .why-tab:not([hidden]) {
     display: flex;
     position: fixed;
@@ -1477,10 +1477,12 @@ body.eye-docked .eye {
   .hero__skill-wrap {
     position: fixed !important;
     inset: 0 !important;
+    height: 0 !important;
+    overflow: visible !important;
     width: auto !important;
     max-width: none !important;
     margin: 0 !important;
-    z-index: 115;
+    z-index: 135;
     pointer-events: none;
     order: unset !important;
   }
@@ -1489,79 +1491,87 @@ body.eye-docked .eye {
     pointer-events: auto;
   }
 
+  .hero__skill-wrap.is-open {
+    height: auto !important;
+    pointer-events: auto;
+    display: grid;
+    place-items: center;
+    padding: max(0.85rem, env(safe-area-inset-top)) 0.85rem max(0.85rem, env(safe-area-inset-bottom));
+    background: rgba(2, 8, 6, 0.72);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
   .hero__skill,
   .hero__skill.is-pinned {
-    position: fixed !important;
-    top: 0 !important;
-    bottom: 0 !important;
-    right: 0 !important;
+    position: relative !important;
+    top: auto !important;
+    bottom: auto !important;
+    right: auto !important;
     left: auto !important;
-    width: min(86vw, 360px) !important;
+    width: min(100%, 520px) !important;
     max-width: none !important;
-    height: 100% !important;
+    height: auto !important;
+    max-height: min(88vh, 720px);
     margin: 0 !important;
-    padding: 1.1rem 1rem 1.35rem;
-    border-radius: 18px 0 0 18px !important;
+    padding: 1.25rem 1.15rem 1.4rem;
+    border-radius: 20px !important;
     text-align: right !important;
-    transform: translateX(104%) !important;
-    transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
-    z-index: 116 !important;
-    pointer-events: auto;
+    transform: none !important;
+    transition: none;
+    z-index: 136 !important;
+    pointer-events: none;
     overflow: auto;
     -webkit-overflow-scrolling: touch;
-    opacity: 1 !important;
+    opacity: 0 !important;
+    visibility: hidden;
     filter: none !important;
     --why-invert: 0 !important;
     --why-glass: 8, 22, 16;
-    background: rgba(8, 22, 16, 0.92);
-    backdrop-filter: blur(18px) saturate(1.2);
-    -webkit-backdrop-filter: blur(18px) saturate(1.2);
-    box-shadow:
-      -12px 0 36px rgba(0, 0, 0, 0.4),
-      0 0 0 1px rgba(118, 199, 183, 0.22),
-      inset 0 1px 0 rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(246, 186, 12, 0.32);
-    border-right: 0;
+    background:
+      linear-gradient(165deg, rgba(12, 36, 28, 0.96), rgba(6, 18, 14, 0.98));
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+    border: 1px solid rgba(64, 162, 51, 0.35);
+  }
+
+  .hero__skill-wrap.is-open .hero__skill {
+    pointer-events: auto;
+    opacity: 1 !important;
+    visibility: visible;
   }
 
   html[dir="ltr"] .hero__skill,
   html[dir="ltr"] .hero__skill.is-pinned {
-    right: auto !important;
-    left: 0 !important;
-    border-radius: 0 18px 18px 0 !important;
-    transform: translateX(-104%) !important;
     text-align: left !important;
-    border-right: 1px solid rgba(246, 186, 12, 0.32);
-    border-left: 0;
-    box-shadow:
-      12px 0 36px rgba(0, 0, 0, 0.4),
-      0 0 0 1px rgba(118, 199, 183, 0.22);
-  }
-
-  .hero__skill-wrap.is-open .hero__skill {
-    transform: translateX(0) !important;
   }
 
   .why-close:not([hidden]) {
     display: grid;
     place-items: center;
-    position: sticky;
-    top: 0;
-    float: left;
-    width: 36px;
-    height: 36px;
-    margin: 0 0 0.6rem 0;
+    position: fixed;
+    top: max(0.7rem, env(safe-area-inset-top));
+    inset-inline-start: 0.85rem;
+    z-index: 137;
+    float: none;
+    width: 42px;
+    height: 42px;
+    margin: 0;
     border: 0;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.14);
     color: #fff;
-    font-size: 1.35rem;
+    font-size: 1.5rem;
     line-height: 1;
     cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
   }
 
-  html[dir="ltr"] .why-close {
-    float: right;
+  .hero__skill-wrap.is-open .why-close:not([hidden]) {
+    opacity: 1;
+    pointer-events: auto;
   }
 
   .hero__skill-label {
@@ -1596,17 +1606,26 @@ body.eye-docked .eye {
     font-weight: 700;
     line-height: 1.55;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.28s ease, transform 0.28s ease;
+  }
+
+  .why-list li.is-in {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  body.why-sheet-open,
+  body.why-drawer-open {
+    overflow: hidden;
   }
 
   body.why-drawer-open::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    z-index: 114;
-    background: rgba(0, 0, 0, 0.35);
-    pointer-events: auto;
+    display: none;
   }
 }
+
 
 .hero__skill-label {
   display: inline-block;
