@@ -429,11 +429,6 @@ body.menu-open {
   50% { opacity: 1; transform: scale(1.08); }
 }
 
-/* Keep keyframe harmless if unused after cursor removal */
-  0%, 100% { transform: scale(0.9); opacity: 0.75; }
-  50% { transform: scale(1.15); opacity: 1; }
-}
-
 img {
   max-width: 100%;
   display: block;
@@ -1369,7 +1364,7 @@ body.eye-docked .eye {
 /* Floating WhatsApp icons — compact, always available */
 .wa-dock {
   position: fixed;
-  z-index: 58;
+  z-index: 120;
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
@@ -1404,27 +1399,212 @@ body.eye-docked .eye {
   background: linear-gradient(145deg, #2fe47a, #0e7a6c);
 }
 
+.why-tab,
+.why-close,
+.why-list {
+  display: none;
+}
+
+.why-tab[hidden],
+.why-close[hidden],
+.why-list[hidden] {
+  display: none !important;
+}
+
 @media (max-width: 720px) {
   .wa-dock {
     left: max(0.55rem, env(safe-area-inset-left, 0px));
     bottom: max(0.7rem, env(safe-area-inset-bottom, 0px));
     gap: 0.35rem;
+    z-index: 130;
   }
 
   .wa-fab {
-    width: 36px;
-    height: 36px;
+    width: 40px;
+    height: 40px;
     box-shadow: 0 6px 14px rgba(18, 140, 126, 0.28);
   }
 
   .wa-fab svg {
-    width: 17px;
-    height: 17px;
+    width: 18px;
+    height: 18px;
   }
 
   html[dir="ltr"] .wa-dock {
     left: auto;
     right: max(0.55rem, env(safe-area-inset-right, 0px));
+  }
+
+  /* Why Us — side news-strip drawer (mobile only) */
+  .why-tab:not([hidden]) {
+    display: flex;
+    position: fixed;
+    top: 42%;
+    right: 0;
+    z-index: 110;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    min-height: 7.5rem;
+    padding: 0.7rem 0.38rem;
+    border: 0;
+    border-radius: 12px 0 0 12px;
+    background: linear-gradient(180deg, rgba(246, 186, 12, 0.95), rgba(64, 162, 51, 0.92));
+    color: #0a1210;
+    font-family: inherit;
+    font-weight: 800;
+    font-size: 0.82rem;
+    letter-spacing: 0.04em;
+    box-shadow: -4px 8px 22px rgba(0, 0, 0, 0.35);
+    pointer-events: auto;
+  }
+
+  html[dir="ltr"] .why-tab {
+    right: auto;
+    left: 0;
+    transform: none;
+    border-radius: 0 12px 12px 0;
+    writing-mode: vertical-lr;
+    box-shadow: 4px 8px 22px rgba(0, 0, 0, 0.35);
+  }
+
+  .why-tab__label {
+    display: inline-block;
+  }
+
+  .hero__skill-wrap {
+    position: fixed !important;
+    inset: 0 !important;
+    width: auto !important;
+    max-width: none !important;
+    margin: 0 !important;
+    z-index: 115;
+    pointer-events: none;
+    order: unset !important;
+  }
+
+  .hero__skill-wrap .why-tab {
+    pointer-events: auto;
+  }
+
+  .hero__skill,
+  .hero__skill.is-pinned {
+    position: fixed !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    right: 0 !important;
+    left: auto !important;
+    width: min(86vw, 360px) !important;
+    max-width: none !important;
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 1.1rem 1rem 1.35rem;
+    border-radius: 18px 0 0 18px !important;
+    text-align: right !important;
+    transform: translateX(104%) !important;
+    transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+    z-index: 116 !important;
+    pointer-events: auto;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    opacity: 1 !important;
+    filter: none !important;
+    --why-invert: 0 !important;
+    --why-glass: 8, 22, 16;
+    background: rgba(8, 22, 16, 0.92);
+    backdrop-filter: blur(18px) saturate(1.2);
+    -webkit-backdrop-filter: blur(18px) saturate(1.2);
+    box-shadow:
+      -12px 0 36px rgba(0, 0, 0, 0.4),
+      0 0 0 1px rgba(118, 199, 183, 0.22),
+      inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(246, 186, 12, 0.32);
+    border-right: 0;
+  }
+
+  html[dir="ltr"] .hero__skill,
+  html[dir="ltr"] .hero__skill.is-pinned {
+    right: auto !important;
+    left: 0 !important;
+    border-radius: 0 18px 18px 0 !important;
+    transform: translateX(-104%) !important;
+    text-align: left !important;
+    border-right: 1px solid rgba(246, 186, 12, 0.32);
+    border-left: 0;
+    box-shadow:
+      12px 0 36px rgba(0, 0, 0, 0.4),
+      0 0 0 1px rgba(118, 199, 183, 0.22);
+  }
+
+  .hero__skill-wrap.is-open .hero__skill {
+    transform: translateX(0) !important;
+  }
+
+  .why-close:not([hidden]) {
+    display: grid;
+    place-items: center;
+    position: sticky;
+    top: 0;
+    float: left;
+    width: 36px;
+    height: 36px;
+    margin: 0 0 0.6rem 0;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+    font-size: 1.35rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  html[dir="ltr"] .why-close {
+    float: right;
+  }
+
+  .hero__skill-label {
+    font-size: 0.9rem;
+    background: #f6ba0c !important;
+    color: #0a1210 !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .hero__skill-text {
+    display: none !important;
+  }
+
+  .why-list:not([hidden]) {
+    display: grid;
+    gap: 0.55rem;
+    list-style: none;
+    margin: 0.85rem 0 0;
+    padding: 0;
+    clear: both;
+  }
+
+  .why-list li {
+    margin: 0;
+    padding: 0.7rem 0.8rem;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #f5fbf8;
+    font-size: 0.95rem;
+    font-weight: 700;
+    line-height: 1.55;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
+  }
+
+  body.why-drawer-open::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 114;
+    background: rgba(0, 0, 0, 0.35);
+    pointer-events: auto;
   }
 }
 
@@ -1618,6 +1798,8 @@ body.eye-docked .eye {
 /* Services */
 .services {
   padding: 5rem 0 4rem;
+  content-visibility: auto;
+  contain-intrinsic-size: 920px;
   background:
     radial-gradient(ellipse at top, rgba(25, 90, 72, 0.14), transparent 55%),
     linear-gradient(180deg, rgba(12, 45, 38, 0.2), rgba(8, 28, 24, 0.08));
@@ -1981,7 +2163,7 @@ body.eye-docked .eye {
     height: 400px;
   }
   .film-stage .service-flip.flip-card {
-    width: min(210px, 62vw);
+    width: min(190px, 46vw);
   }
   .film-stage__nav {
     width: 42px;
@@ -2063,7 +2245,6 @@ body.eye-docked .eye {
   inset: 0;
   transform-style: preserve-3d;
   transform: rotateX(6deg) rotateY(var(--ring-rot, 0deg));
-  will-change: transform;
   z-index: 1;
 }
 
@@ -3174,10 +3355,10 @@ body.eye-docked .eye {
     display: none !important;
   }
 
-  /* Why-us stays readable above the dissolving eye */
+  /* Why-us is a side drawer — don't cover WhatsApp */
   .hero__skill,
   .hero__skill.is-pinned {
-    z-index: 90 !important;
+    /* z-index set in drawer rules */
   }
 
   .eye:not(.is-docked) {
@@ -3301,70 +3482,13 @@ body.eye-docked .eye {
     visibility: hidden;
   }
 
+  /* Why Us handled by side drawer above — neutralize old in-flow / pinned card */
   .hero__skill-wrap {
-    position: relative !important;
-    left: auto !important;
-    right: auto !important;
-    bottom: auto !important;
-    top: auto !important;
-    max-width: 100% !important;
-    width: 100%;
-    margin: 0 !important;
-    align-self: center !important;
-    order: 3;
-  }
-
-  .hero__skill {
-    position: relative !important;
-    width: 100%;
-    margin: 0 !important;
-    text-align: center !important;
-    padding: 0.7rem 0.85rem 0.85rem;
-    border-radius: 1.25rem;
-    /* Frosted glass — blur over page, not a solid black slab */
-    --why-invert: 0 !important;
-    --why-glass: 8, 22, 16;
-    background: rgba(8, 22, 16, 0.42);
-    backdrop-filter: blur(22px) saturate(1.25);
-    -webkit-backdrop-filter: blur(22px) saturate(1.25);
-    box-shadow:
-      0 12px 28px rgba(0, 0, 0, 0.28),
-      0 0 0 1px rgba(118, 199, 183, 0.22),
-      inset 0 1px 0 rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(246, 186, 12, 0.32);
+    /* keep fixed drawer host from the earlier mobile Why block */
   }
 
   .hero__skill.is-pinned {
-    position: fixed !important;
-    width: min(92vw, 420px);
-    background: rgba(8, 22, 16, 0.48);
-    backdrop-filter: blur(26px) saturate(1.3);
-    -webkit-backdrop-filter: blur(26px) saturate(1.3);
-  }
-
-  .hero__skill-label {
-    font-size: 0.88rem;
-    background: #f6ba0c !important;
-    color: #0a1210 !important;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35) !important;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-  }
-
-  .hero__skill-text {
-    font-size: 1.08rem;
-    min-height: 2.4em;
-    padding-inline: 0.5rem;
-    color: #f5fbf8 !important;
-    text-shadow:
-      0 1px 2px rgba(0, 0, 0, 0.85),
-      0 4px 16px rgba(0, 0, 0, 0.55) !important;
-    font-weight: 800;
-  }
-
-  .hero__skill.is-pinned .hero__skill-text {
-    text-shadow:
-      0 1px 2px rgba(0, 0, 0, 0.9),
-      0 4px 18px rgba(0, 0, 0, 0.65) !important;
+    /* drawer styles win via earlier rules + !important */
   }
 
   .hero__circuit,
@@ -3469,7 +3593,7 @@ body.eye-docked .eye {
   }
 
   .film-stage .service-flip.flip-card {
-    width: min(200px, 64vw);
+    width: min(176px, 44vw);
   }
 
   .service-flip.flip-card {

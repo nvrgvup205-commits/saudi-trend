@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Tajawal:wght@400;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/crew.css?v=57">
+  <link rel="stylesheet" href="css/crew.css?v=58">
 </head>
 <body class="has-custom-cursor has-hero-eye">
   <div class="ambient-field" id="ambient-field" aria-hidden="true">
@@ -114,9 +114,14 @@
         <div class="hero__eye-anchor" id="eye-anchor" aria-hidden="true"></div>
 
         <div class="hero__skill-wrap" id="why-wrap">
-          <div class="hero__skill" id="why-us">
-            <span class="hero__skill-label" data-i18n="hero.why">لماذا نحن</span>
+          <button type="button" class="why-tab" id="why-tab" aria-expanded="false" aria-controls="why-us" data-i18n-aria="why.tab" hidden>
+            <span class="why-tab__label" data-i18n="hero.why">لماذا نحن</span>
+          </button>
+          <div class="hero__skill" id="why-us" role="dialog" aria-labelledby="why-title">
+            <button type="button" class="why-close" id="why-close" aria-label="إغلاق" data-i18n-aria="why.close" hidden>×</button>
+            <span class="hero__skill-label" id="why-title" data-i18n="hero.why">لماذا نحن</span>
             <p class="hero__skill-text" id="hero-skill">ضمانات ذهبية على جودة التنفيذ</p>
+            <ul class="why-list" id="why-list" hidden></ul>
           </div>
         </div>
       </div>
@@ -860,7 +865,7 @@
     </a>
   </div>
 
-  <script defer src="js/i18n.js?v=15"></script>
-  <script defer src="js/crew.js?v=57"></script>
+  <script defer src="js/i18n.js?v=16"></script>
+  <script defer src="js/crew.js?v=58"></script>
 </body>
 </html>
