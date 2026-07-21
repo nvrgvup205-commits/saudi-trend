@@ -1326,6 +1326,7 @@
     let curMx = 0.5;
     let curMy = 0.5;
     let raf = 0;
+    let running = true;
 
     const maxScroll = () => Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
 
@@ -1334,6 +1335,10 @@
     };
 
     const tick = () => {
+      if (!running || document.hidden) {
+        raf = 0;
+        return;
+      }
       curScroll += (targetScroll - curScroll) * 0.06;
       curMx += (targetMx - curMx) * 0.05;
       curMy += (targetMy - curMy) * 0.05;
@@ -1343,10 +1348,27 @@
       raf = requestAnimationFrame(tick);
     };
 
+    const start = () => {
+      if (raf || document.hidden) return;
+      running = true;
+      raf = requestAnimationFrame(tick);
+    };
+
     readScroll();
-    raf = requestAnimationFrame(tick);
+    start();
     window.addEventListener("scroll", readScroll, { passive: true });
     window.addEventListener("resize", readScroll, { passive: true });
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) {
+        running = false;
+        if (raf) cancelAnimationFrame(raf);
+        raf = 0;
+        document.documentElement.classList.add("is-bg-paused");
+      } else {
+        document.documentElement.classList.remove("is-bg-paused");
+        start();
+      }
+    });
 
     const fine = window.matchMedia("(pointer: fine)").matches;
     if (fine) {
@@ -1358,6 +1380,31 @@
         },
         { passive: true }
       );
+    }
+  })();
+
+  /* ── Lazy Google Maps (avoid first-paint hit) ── */
+  (() => {
+    const frame = document.querySelector(".site-close__map-frame iframe[data-src]");
+    if (!frame) return;
+    const load = () => {
+      if (frame.dataset.loaded) return;
+      frame.dataset.loaded = "1";
+      frame.src = frame.getAttribute("data-src");
+    };
+    if ("IntersectionObserver" in window) {
+      const io = new IntersectionObserver(
+        (entries) => {
+          if (entries.some((e) => e.isIntersecting)) {
+            load();
+            io.disconnect();
+          }
+        },
+        { rootMargin: "240px 0px" }
+      );
+      io.observe(frame);
+    } else {
+      load();
     }
   })();
 

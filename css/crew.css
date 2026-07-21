@@ -89,11 +89,12 @@ body {
   width: min(58vw, 520px);
   height: min(58vw, 520px);
   border-radius: 50%;
-  filter: blur(44px);
+  filter: blur(28px);
   opacity: 0.72;
   mix-blend-mode: screen;
   will-change: transform, opacity;
   animation: auroraBreathe 14s ease-in-out infinite;
+  contain: layout paint;
 }
 
 .ambient-field__aurora--a {
@@ -282,8 +283,9 @@ body {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse 80% 75% at 50% 40%, transparent 45%, rgba(3, 8, 6, 0.28) 100%);
-  opacity: 0.55;
+    radial-gradient(ellipse 85% 80% at 50% 40%, transparent 52%, rgba(3, 8, 6, 0.16) 100%);
+  opacity: 0.4;
+  pointer-events: none;
 }
 
 @keyframes ambientBaseShift {
@@ -350,8 +352,8 @@ body {
 
 @media (max-width: 720px) {
   .ambient-field__aurora {
-    filter: blur(40px);
-    opacity: 0.42;
+    filter: blur(22px);
+    opacity: 0.36;
   }
   .ambient-field__beam {
     opacity: 0.14;
@@ -359,11 +361,30 @@ body {
   .ambient-field__glyphs {
     opacity: 0.38;
   }
+  .ambient-field__motifs {
+    display: none;
+  }
 }
 
 main {
   position: relative;
   z-index: 1;
+}
+
+/* Skip offscreen layout work for heavy sections */
+.featured,
+.services,
+.portfolio,
+.cta-band,
+.site-close,
+.site-footer {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 720px;
+}
+
+html.is-bg-paused .ambient-field,
+html.is-bg-paused .ambient-field * {
+  animation-play-state: paused !important;
 }
 
 body.menu-open {
@@ -1710,19 +1731,19 @@ body.eye-docked .eye {
   position: absolute;
   top: 1.4rem;
   bottom: 1.4rem;
-  width: 2.2rem;
+  width: 1.4rem;
   z-index: 6;
   pointer-events: none;
 }
 
 .film-strip.film-stage::before {
   inset-inline-start: 0;
-  background: linear-gradient(to left, transparent, rgba(5, 10, 10, 0.45));
+  background: linear-gradient(to left, transparent, rgba(5, 10, 10, 0.16));
 }
 
 .film-strip.film-stage::after {
   inset-inline-end: 0;
-  background: linear-gradient(to right, transparent, rgba(5, 10, 10, 0.45));
+  background: linear-gradient(to right, transparent, rgba(5, 10, 10, 0.16));
 }
 
 .film-strip__edge {
