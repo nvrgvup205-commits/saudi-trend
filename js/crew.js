@@ -249,6 +249,12 @@
   let whyContrastTick = 0;
   function updateWhyContrast() {
     if (!whyUs || !whyLabel) return;
+    /* Mobile: fixed high-contrast panel in CSS — skip adaptive tint */
+    if (isMobileMQ.matches) {
+      whyUs.style.setProperty("--why-invert", "0");
+      whyUs.style.setProperty("--why-glass", "5, 12, 9");
+      return;
+    }
     whyContrastTick = (whyContrastTick + 1) % 4; // every 4th frame
     if (whyContrastTick !== 0) return;
     const sample = sampleBackdrop(whyLabel);
@@ -259,7 +265,7 @@
     if (Math.abs(target - whyInvertSmooth) < 0.002) whyInvertSmooth = target;
     whyUs.style.setProperty("--why-invert", whyInvertSmooth.toFixed(4));
 
-    /* Glass tint follows colors passing behind (mobile + laptop) */
+    /* Glass tint follows colors passing behind (laptop) */
     whyGlass.r += (sample.r - whyGlass.r) * 0.055;
     whyGlass.g += (sample.g - whyGlass.g) * 0.055;
     whyGlass.b += (sample.b - whyGlass.b) * 0.055;
