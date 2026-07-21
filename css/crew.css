@@ -2291,20 +2291,23 @@ body.svc-sheet-open {
   outline-offset: 2px;
 }
 
-.film-stage .service-flip .flip-card__hint {
-  /* Suggest tap-to-open instead of flip */
-}
 
 @media (max-width: 820px) {
   .film-stage__scene {
-    height: 400px;
+    height: 360px;
+    perspective: none;
   }
   .film-stage .service-flip.flip-card {
-    width: min(190px, 46vw);
+    width: min(200px, 52vw);
   }
   .film-stage__nav {
     width: 42px;
     height: 42px;
+  }
+  .svc-sheet__panel {
+    width: min(100%, 100%);
+    max-height: 90vh;
+    border-radius: 18px;
   }
 }
 
