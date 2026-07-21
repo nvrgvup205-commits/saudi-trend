@@ -746,15 +746,20 @@
     let offset = 0;
     let vel = 0;
     let dragging = false;
+    let pending = false;
+    let axis = null; /* null | "x" | "y" — allow vertical page scroll */
     let dragMoved = false;
     let hovering = false;
     let lastX = 0;
+    let startX = 0;
+    let startY = 0;
     let lastT = 0;
     let raf = 0;
     let auto = !reduceMotion;
     let holdTimer = 0;
     let autoAcc = 0;
     const AUTO_MS = 3200;
+    const AXIS_SLOP = 10;
 
     const wrapIndex = (i) => ((i % n) + n) % n;
 
@@ -884,22 +889,46 @@
         resumeAutoSoon(5000);
         return;
       }
-      dragging = true;
+      /* Don't capture yet — wait to see if gesture is horizontal or vertical scroll */
+      pending = true;
+      dragging = false;
+      axis = null;
       dragMoved = false;
-      lastX = e.clientX ?? e.touches?.[0]?.clientX ?? 0;
+      startX = e.clientX ?? e.touches?.[0]?.clientX ?? 0;
+      startY = e.clientY ?? e.touches?.[0]?.clientY ?? 0;
+      lastX = startX;
       vel = 0;
-      auto = false;
-      film.classList.add("is-dragging");
-      syncPausedClass();
-      try {
-        film.setPointerCapture?.(e.pointerId);
-      } catch (_) {}
     };
 
     const onMove = (e) => {
-      if (!dragging) return;
+      if (!pending && !dragging) return;
       const x = e.clientX ?? e.touches?.[0]?.clientX;
+      const y = e.clientY ?? e.touches?.[0]?.clientY;
       if (x == null) return;
+
+      if (axis === null && pending) {
+        const dx0 = x - startX;
+        const dy0 = (y ?? startY) - startY;
+        if (Math.hypot(dx0, dy0) < AXIS_SLOP) return;
+        /* Vertical intent → let the page scroll; do not hijack */
+        if (Math.abs(dy0) > Math.abs(dx0) * 1.05) {
+          axis = "y";
+          pending = false;
+          return;
+        }
+        axis = "x";
+        pending = false;
+        dragging = true;
+        auto = false;
+        film.classList.add("is-dragging");
+        syncPausedClass();
+        try {
+          film.setPointerCapture?.(e.pointerId);
+        } catch (_) {}
+      }
+
+      if (axis !== "x" || !dragging) return;
+
       const dx = x - lastX;
       lastX = x;
       if (Math.abs(dx) > 2) dragMoved = true;
@@ -919,12 +948,16 @@
     };
 
     const onUp = (e) => {
-      if (!dragging) return;
+      if (!pending && !dragging) return;
+      const wasDragging = dragging && axis === "x";
+      pending = false;
       dragging = false;
+      axis = null;
       film.classList.remove("is-dragging");
       try {
         film.releasePointerCapture?.(e.pointerId);
       } catch (_) {}
+      if (!wasDragging) return;
       if (dragMoved) {
         const block = (ev) => {
           ev.preventDefault();
