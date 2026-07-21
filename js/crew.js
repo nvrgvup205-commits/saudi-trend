@@ -903,21 +903,18 @@
       const dx = x - lastX;
       lastX = x;
       if (Math.abs(dx) > 2) dragMoved = true;
-      /*
-        Finger-follow (physical screen axes):
-        drag right (dx>0) → cards must move right → x increases → center decreases → offset decreases.
-      */
+      /* Inverted per user feedback — drag direction flipped */
       const step = dx / Math.max(90, metrics().spacing * 0.92);
-      offset -= step;
+      offset += step;
       while (offset > 0.5) {
         offset -= 1;
-        index = wrapIndex(index - 1);
+        index = wrapIndex(index + 1);
       }
       while (offset < -0.5) {
         offset += 1;
-        index = wrapIndex(index + 1);
+        index = wrapIndex(index - 1);
       }
-      vel = -step * 0.55;
+      vel = step * 0.55;
       paint();
     };
 
