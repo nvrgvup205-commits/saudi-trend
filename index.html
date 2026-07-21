@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Tajawal:wght@400;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/crew.css?v=55">
+  <link rel="stylesheet" href="css/crew.css?v=56">
 </head>
 <body class="has-custom-cursor has-hero-eye">
   <div class="ambient-field" id="ambient-field" aria-hidden="true">
@@ -681,25 +681,34 @@
       </div>
     </section>
 
-    <!-- Map teaser before footer -->
+    <!-- Map teaser before footer — static preview (no live Maps iframe) -->
     <section class="site-close" id="location" aria-label="موقعنا">
       <div class="container site-close__inner">
         <div class="site-close__map">
           <div class="site-close__map-frame">
-            <iframe
-              title="سعودي ترند على خريطة جوجل — الرياض"
-              data-src="https://maps.google.com/maps?q=%D8%B3%D8%B9%D9%88%D8%AF%D9%8A+%D8%AA%D8%B1%D9%8A%D9%86%D8%AF+%D8%AD%D9%8A+%D8%A7%D9%84%D9%8A%D8%B1%D9%85%D9%88%D9%83+%D8%A7%D9%84%D8%B1%D9%8A%D8%A7%D8%B6&z=15&hl=ar&output=embed"
+            <img
+              class="site-close__map-img"
+              src="assets/map-riyadh.webp"
+              alt="موقع سعودي ترند — حي اليرموك، الرياض"
+              width="540"
+              height="300"
               loading="lazy"
-              referrerpolicy="no-referrer-when-downgrade"
-              allowfullscreen
-            ></iframe>
+              decoding="async"
+              data-i18n-alt="footer.mapAria"
+            >
           </div>
+          <a
+            class="btn btn--solid site-close__map-btn"
+            href="https://www.google.com/maps/search/?api=1&query=%D8%B3%D8%B9%D9%88%D8%AF%D9%8A+%D8%AA%D8%B1%D9%8A%D9%86%D8%AF+%D8%AD%D9%8A+%D8%A7%D9%84%D9%8A%D8%B1%D9%85%D9%88%D9%83+%D8%A7%D9%84%D8%B1%D9%8A%D8%A7%D8%B6"
+            target="_blank"
+            rel="noopener noreferrer"
+            data-i18n="footer.mapCta"
+          >افتح في Google Maps ↗</a>
         </div>
         <div class="site-close__rights">
           <img class="site-close__logo" src="assets/saudi-trend-logo.webp" alt="سعودي ترند" width="56" height="56">
           <strong data-i18n="footer.mapTitle">سعودي ترند — الرياض</strong>
           <p data-i18n="footer.address">حي اليرموك، شارع النجاح، الرياض، المملكة العربية السعودية</p>
-          <a class="site-close__map-link" href="https://www.google.com/maps/search/?api=1&query=%D8%B3%D8%B9%D9%88%D8%AF%D9%8A+%D8%AA%D8%B1%D9%8A%D9%86%D8%AF+%D8%AD%D9%8A+%D8%A7%D9%84%D9%8A%D8%B1%D9%85%D9%88%D9%83+%D8%A7%D9%84%D8%B1%D9%8A%D8%A7%D8%B6" target="_blank" rel="noopener noreferrer" data-i18n="footer.mapCta">افتح في Google Maps ↗</a>
         </div>
       </div>
     </section>
@@ -851,7 +860,7 @@
     </a>
   </div>
 
-  <script defer src="js/i18n.js?v=14"></script>
-  <script defer src="js/crew.js?v=55"></script>
+  <script defer src="js/i18n.js?v=15"></script>
+  <script defer src="js/crew.js?v=56"></script>
 </body>
 </html>
