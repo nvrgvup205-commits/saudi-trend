@@ -1,5 +1,6 @@
 (() => {
-  const prefersFine = window.matchMedia("(pointer: fine)").matches;
+  /* Mouse/trackpad only — tablets & phones use free eye motion */
+  const eyeFollowMouse = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
   const isMobileMQ = window.matchMedia("(max-width: 720px)");
 
   /* ── Why-us rotator (bilingual) ── */
@@ -91,53 +92,25 @@
     }
   }
 
-  /* ── Light cursor (no particle trail — performance) ── */
-  const cursor = document.getElementById("cursor");
-  const cursorRing = cursor?.querySelector(".cursor__ring");
-  const trailCanvas = document.getElementById("cursor-trail");
-  trailCanvas?.remove();
+  /* Native OS cursor — brand tint via CSS; drop heavy custom cursor DOM */
+  document.getElementById("cursor-trail")?.remove();
+  document.getElementById("cursor")?.remove();
+  document.body.classList.remove("has-custom-cursor");
+  document.body.classList.add("has-brand-cursor");
+
   let mx = window.innerWidth * 0.5;
   let my = window.innerHeight * 0.45;
-  let rx = mx;
-  let ry = my;
 
-  if (prefersFine && cursor) {
-    document.body.classList.add("has-custom-cursor");
-    window.addEventListener("mousemove", (e) => {
-      mx = e.clientX;
-      my = e.clientY;
-      cursor.classList.add("is-on");
-    }, { passive: true });
-    window.addEventListener("mousedown", () => cursor.classList.add("is-click"));
-    window.addEventListener("mouseup", () => cursor.classList.remove("is-click"));
-    document.querySelectorAll("a, button, .flip-card").forEach((el) => {
-      el.addEventListener("mouseenter", () => cursor.classList.add("is-hover"));
-      el.addEventListener("mouseleave", () => cursor.classList.remove("is-hover"));
-    });
-  } else {
-    document.body.classList.remove("has-custom-cursor");
-    cursor?.remove();
+  if (eyeFollowMouse) {
+    window.addEventListener(
+      "mousemove",
+      (e) => {
+        mx = e.clientX;
+        my = e.clientY;
+      },
+      { passive: true }
+    );
   }
-
-  /* Touch: eye looks toward tap / finger */
-  window.addEventListener(
-    "touchmove",
-    (e) => {
-      if (!e.touches[0]) return;
-      mx = e.touches[0].clientX;
-      my = e.touches[0].clientY;
-    },
-    { passive: true }
-  );
-  window.addEventListener(
-    "touchstart",
-    (e) => {
-      if (!e.touches[0]) return;
-      mx = e.touches[0].clientX;
-      my = e.touches[0].clientY;
-    },
-    { passive: true }
-  );
 
   /* ── Eye: desktop water-dive / mobile astral spell ── */
   const eye = document.getElementById("site-eye");
@@ -623,20 +596,32 @@
     updateEyeDockMobile(t, frozenEyeBox, to);
   }
 
-  /* Gentle idle look on mobile when no touch */
+  /* Mobile/tablet: free varying gaze (no touch tracking) */
   let idlePhase = 0;
 
   function tick(now = performance.now()) {
-    if (prefersFine && cursor) {
-      cursor.style.transform = `translate(${mx}px, ${my}px)`;
-      rx += (mx - rx) * 0.2;
-      ry += (my - ry) * 0.2;
-      if (cursorRing) cursorRing.style.transform = `translate(${rx - mx}px, ${ry - my}px)`;
-    } else if (!prefersFine && eye && !eye.classList.contains("is-docked")) {
+    if (!eyeFollowMouse && eye) {
       idlePhase = now * 0.001;
       const rect = eye.getBoundingClientRect();
-      mx = rect.left + rect.width / 2 + Math.sin(idlePhase) * rect.width * 0.55;
-      my = rect.top + rect.height / 2 + Math.cos(idlePhase * 0.8) * rect.height * 0.35;
+      if (rect.width > 0) {
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+        const amp = eye.classList.contains("is-docked") ? 0.38 : 0.62;
+        mx =
+          cx +
+          (Math.sin(idlePhase * 0.7) * 0.55 +
+            Math.sin(idlePhase * 1.35 + 1.2) * 0.35 +
+            Math.cos(idlePhase * 0.45 + 0.4) * 0.25) *
+            rect.width *
+            amp;
+        my =
+          cy +
+          (Math.cos(idlePhase * 0.55) * 0.4 +
+            Math.sin(idlePhase * 1.1 + 2.1) * 0.35 +
+            Math.cos(idlePhase * 0.9 + 0.8) * 0.2) *
+            rect.height *
+            amp;
+      }
     }
 
     updateEyeDock();
@@ -825,7 +810,8 @@
     let startY = 0;
     let lastT = 0;
     let raf = 0;
-    let auto = !reduceMotion;
+    /* Manual only — no autoplay until the user drags / taps nav */
+    let auto = false;
     let holdTimer = 0;
     let autoAcc = 0;
     const AUTO_MS = 3200;
@@ -884,18 +870,11 @@
       });
     };
 
-    const resumeAutoSoon = (ms = 2800) => {
-      if (reduceMotion) return;
+    const resumeAutoSoon = () => {
+      /* Autoplay disabled for performance — keep manual only */
       auto = false;
-      syncPausedClass();
       clearTimeout(holdTimer);
-      holdTimer = window.setTimeout(() => {
-        if (!dragging && !hovering && !anyFlipped()) {
-          auto = true;
-          autoAcc = 0;
-          syncPausedClass();
-        }
-      }, ms);
+      syncPausedClass();
     };
 
     const snap = () => {
@@ -912,8 +891,11 @@
       vel = 0;
       autoAcc = 0;
       paint();
-      resumeAutoSoon(3200);
+      resumeAutoSoon();
     };
+
+    const needsAnim = () =>
+      dragging || Math.abs(vel) > 0.001 || Math.abs(offset) > 0.001 || auto;
 
     const tick = (ts) => {
       if (!lastT) lastT = ts;
@@ -936,7 +918,6 @@
           offset *= Math.pow(0.82, dt);
           if (Math.abs(offset) < 0.02) snap();
         } else if (auto && !hovering && !flipped) {
-          /* Discrete auto-advance — works on mobile without interaction */
           autoAcc += dtMs;
           if (autoAcc >= AUTO_MS) {
             autoAcc = 0;
@@ -949,14 +930,26 @@
 
       syncPausedClass();
       paint();
-      raf = requestAnimationFrame(tick);
+      if (needsAnim()) {
+        raf = requestAnimationFrame(tick);
+      } else {
+        raf = 0;
+        lastT = 0;
+      }
+    };
+
+    const kick = () => {
+      if (!raf) {
+        lastT = 0;
+        raf = requestAnimationFrame(tick);
+      }
     };
 
     const onDown = (e) => {
       if (e.target.closest(".film-stage__nav")) return;
       if (e.target.closest("a")) return;
       if (e.target.closest(".service-flip.is-active") && e.pointerType === "mouse") {
-        resumeAutoSoon(5000);
+        resumeAutoSoon();
         return;
       }
       /* Don't capture yet — wait to see if gesture is horizontal or vertical scroll */
@@ -992,6 +985,7 @@
         auto = false;
         film.classList.add("is-dragging");
         syncPausedClass();
+        kick();
         try {
           film.setPointerCapture?.(e.pointerId);
         } catch (_) {}
@@ -1037,11 +1031,11 @@
         film.addEventListener("click", block, true);
       }
       snap();
-      /* Mobile + desktop: always return to auto after a short pause */
-      resumeAutoSoon(2600);
+      kick();
+      resumeAutoSoon();
     };
 
-    /* Desktop: pause while mouse rests on the stage */
+    /* Desktop: no autoplay on hover leave */
     if (finePointer) {
       film.addEventListener("pointerenter", () => {
         hovering = true;
@@ -1049,10 +1043,6 @@
       });
       film.addEventListener("pointerleave", () => {
         hovering = false;
-        if (!dragging && !anyFlipped() && !reduceMotion) {
-          auto = true;
-          autoAcc = 0;
-        }
         syncPausedClass();
       });
     }
@@ -1086,34 +1076,23 @@
           offset = 0;
           autoAcc = 0;
           paint();
-          resumeAutoSoon(3600);
+          resumeAutoSoon();
           return;
         }
-        /* flipped card pauses auto until unflipped */
         requestAnimationFrame(() => {
-          if (anyFlipped()) {
-            auto = false;
-            syncPausedClass();
-          } else {
-            resumeAutoSoon(2000);
-          }
+          auto = false;
+          syncPausedClass();
         });
       });
     });
 
     window.addEventListener("resize", paint);
     paint();
-    raf = requestAnimationFrame(tick);
+    syncPausedClass();
 
     const io = new IntersectionObserver(
       (entries) => {
         const visible = entries.some((e) => e.isIntersecting);
-        if (visible && !raf) {
-          lastT = 0;
-          autoAcc = 0;
-          if (!reduceMotion && !hovering && !anyFlipped()) auto = true;
-          raf = requestAnimationFrame(tick);
-        }
         if (!visible && raf) {
           cancelAnimationFrame(raf);
           raf = 0;
@@ -1145,7 +1124,8 @@
     let lastX = 0;
     let lastT = 0;
     let raf = 0;
-    let auto = !reduceMotion;
+    /* Manual only — no continuous auto-spin */
+    let auto = false;
     let holdTimer = 0;
     let frontIndex = 0;
 
@@ -1195,6 +1175,12 @@
       front.tabIndex = 0;
     };
 
+    const needsAnim = () => {
+      if (dragging || targetRot != null || Math.abs(vel) > 0.002 || auto) return true;
+      const target = -frontIndex * stepDeg;
+      return Math.abs(norm180(target - rot)) > 0.2;
+    };
+
     const tick = (ts) => {
       if (!lastT) lastT = ts;
       const dt = Math.min(32, ts - lastT) / 16.67;
@@ -1226,29 +1212,39 @@
       }
 
       paint();
-      raf = requestAnimationFrame(tick);
+      if (needsAnim()) {
+        raf = requestAnimationFrame(tick);
+      } else {
+        raf = 0;
+        lastT = 0;
+      }
     };
 
-    const pauseAuto = (ms = 3200) => {
+    const kick = () => {
+      if (!raf) {
+        lastT = 0;
+        raf = requestAnimationFrame(tick);
+      }
+    };
+
+    const pauseAuto = () => {
       auto = false;
       clearTimeout(holdTimer);
-      holdTimer = window.setTimeout(() => {
-        if (!dragging && !reduceMotion) auto = true;
-      }, ms);
     };
 
     const stepBy = (dir) => {
       const next = (frontIndex - dir + n) % n;
       targetRot = -next * stepDeg;
       vel = 0;
-      pauseAuto(4500);
+      pauseAuto();
+      kick();
     };
 
     const onDown = (e) => {
       if (e.target.closest(".partner-stage__nav")) return;
       /* Allow simple clicks on front page to open without starting a drag fight */
       if (e.target.closest(".partner-page.is-front") && e.pointerType !== "touch") {
-        pauseAuto(5000);
+        pauseAuto();
         return;
       }
       dragging = true;
@@ -1257,7 +1253,8 @@
       stage.classList.add("is-dragging");
       lastX = e.clientX ?? e.touches?.[0]?.clientX ?? 0;
       vel = 0;
-      pauseAuto(4500);
+      pauseAuto();
+      kick();
       if (e.pointerType !== "touch") stage.setPointerCapture?.(e.pointerId);
     };
 
@@ -1290,7 +1287,8 @@
         /* snap to nearest after drag */
         targetRot = -frontIndex * stepDeg;
       }
-      pauseAuto(4000);
+      pauseAuto();
+      kick();
     };
 
     stage.addEventListener("pointerdown", onDown);
@@ -1319,17 +1317,17 @@
           const i = pages.indexOf(page);
           targetRot = -i * stepDeg;
           vel = 0;
-          pauseAuto(4500);
+          pauseAuto();
+          kick();
           return;
         }
         /* front page: let the browser open the link (new tab) */
-        pauseAuto(5000);
+        pauseAuto();
       });
     });
 
     window.addEventListener("resize", paint);
     paint();
-    raf = requestAnimationFrame(tick);
 
     const io = new IntersectionObserver(
       (entries) => {
@@ -1338,9 +1336,6 @@
           cancelAnimationFrame(raf);
           raf = 0;
           lastT = 0;
-        } else if (vis && !raf) {
-          lastT = 0;
-          raf = requestAnimationFrame(tick);
         }
       },
       { threshold: 0.08 }
