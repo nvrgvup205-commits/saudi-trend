@@ -3664,7 +3664,7 @@ body.eye-docked .eye {
   padding: 1.5rem 0 0;
   position: relative;
   z-index: 1;
-  background: linear-gradient(180deg, transparent, rgba(5, 12, 9, 0.92) 70%);
+  background: linear-gradient(180deg, transparent, rgba(5, 12, 9, 0.35) 70%);
 }
 
 .site-close__inner {
