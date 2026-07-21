@@ -120,12 +120,40 @@
   let whyBlurSmooth = 0;
   let whyFadeSmooth = 1;
   const WHY_APPROACH = 96;
+  const whyHomeParent = whyWrap?.parentElement || null;
+  const whyHomeNext = whyWrap?.nextElementSibling || null;
+
+  /* Laptop: mount on <body> so fixed Why Us escapes main/footer stacking */
+  function syncWhyMount() {
+    if (!whyWrap) return;
+    if (!isMobileMQ.matches) {
+      if (whyWrap.parentElement !== document.body) {
+        document.body.appendChild(whyWrap);
+      }
+      whyWrap.classList.add("is-floating-layer");
+      return;
+    }
+    whyWrap.classList.remove("is-floating-layer");
+    if (!whyHomeParent || whyWrap.parentElement === whyHomeParent) return;
+    if (whyHomeNext && whyHomeNext.parentElement === whyHomeParent) {
+      whyHomeParent.insertBefore(whyWrap, whyHomeNext);
+    } else {
+      whyHomeParent.appendChild(whyWrap);
+    }
+  }
+  syncWhyMount();
+  if (typeof isMobileMQ.addEventListener === "function") {
+    isMobileMQ.addEventListener("change", syncWhyMount);
+  } else if (typeof isMobileMQ.addListener === "function") {
+    isMobileMQ.addListener(syncWhyMount);
+  }
 
   function updateWhyPin() {
     if (!whyWrap || !whyUs || !header) return;
 
     /* Laptop: stay fixed bottom-right — no header docking */
     if (!isMobileMQ.matches) {
+      syncWhyMount();
       whyUs.classList.remove("is-pinned");
       whyWrap.style.height = "";
       document.body.classList.remove("why-pinned");

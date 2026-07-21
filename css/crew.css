@@ -1321,13 +1321,15 @@ body.eye-docked .eye {
   }
 
   /* Laptop: Why Us stays fixed bottom-right while the page scrolls */
-  .hero__skill-wrap {
+  .hero__skill-wrap,
+  .hero__skill-wrap.is-floating-layer {
     position: fixed;
     right: max(1.35rem, 2.5vw);
     bottom: max(1.35rem, 3vh);
     left: auto;
     top: auto;
-    z-index: 90;
+    /* Above footer/map/header/WA — under nav overlay + cursor only */
+    z-index: 70;
     max-width: min(340px, 32vw);
     pointer-events: none;
   }
