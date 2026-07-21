@@ -828,17 +828,17 @@
 
     const metrics = () => {
       const w = window.innerWidth;
-      /* Lighter coverflow: less depth/tilt so it feels cleaner */
-      if (w < 640) return { spacing: 132, depth: 120, rot: 28, lift: 4, scaleStep: 0.07 };
-      if (w < 980) return { spacing: 158, depth: 150, rot: 32, lift: 6, scaleStep: 0.065 };
-      return { spacing: 186, depth: 170, rot: 34, lift: 8, scaleStep: 0.06 };
+      /* Resting coverflow: several cards visible without needing to tap arrows */
+      if (w < 640) return { spacing: 108, depth: 90, rot: 22, lift: 2, scaleStep: 0.06 };
+      if (w < 980) return { spacing: 148, depth: 120, rot: 26, lift: 4, scaleStep: 0.055 };
+      return { spacing: 178, depth: 140, rot: 28, lift: 5, scaleStep: 0.05 };
     };
 
     const anyFlipped = () => cards.some((c) => c.classList.contains("is-flipped"));
 
     const syncPausedClass = () => {
-      const paused = hovering || dragging || anyFlipped() || !auto;
-      film.classList.toggle("is-paused", paused);
+      /* Always paused for autoplay — keeps decorative strip still */
+      film.classList.add("is-paused");
     };
 
     const paint = () => {
@@ -848,21 +848,20 @@
       cards.forEach((card, i) => {
         const raw = shortest(center, i);
         const abs = Math.abs(raw);
-        /* x: positive = physical right on screen */
         const x = raw * m.spacing;
-        const z = 40 - abs * m.depth;
+        const z = 36 - abs * m.depth;
         const ry = raw * -m.rot;
-        const rx = abs * 2.2;
         const y = abs * m.lift;
-        const scale = Math.max(0.62, 1 - abs * m.scaleStep);
-        const visible = abs < 3.1;
+        const scale = Math.max(0.68, 1 - abs * m.scaleStep);
+        /* Keep ~5 cards in the agreed resting coverflow */
+        const visible = abs < 2.35;
 
-        card.style.transform = `translate(-50%, -50%) translate3d(${x}px, ${y}px, ${z}px) rotateY(${ry}deg) rotateX(${rx}deg) scale(${scale})`;
+        card.style.transform = `translate(-50%, -50%) translate3d(${x}px, ${y}px, ${z}px) rotateY(${ry}deg) scale(${scale})`;
         card.style.zIndex = String(Math.round(40 - abs * 8));
-        card.style.opacity = visible ? String(Math.max(0.28, 1 - abs * 0.22)) : "0";
+        card.style.opacity = visible ? String(Math.max(0.42, 1 - abs * 0.2)) : "0";
         card.style.visibility = visible ? "visible" : "hidden";
         card.classList.toggle("is-active", abs < 0.45);
-        card.classList.toggle("is-near", abs >= 0.45 && abs < 1.35);
+        card.classList.toggle("is-near", abs >= 0.45 && abs < 1.45);
         card.classList.toggle("is-popped", abs < 0.45);
         card.tabIndex = abs < 0.45 ? 0 : -1;
         card.setAttribute("aria-hidden", abs < 0.45 ? "false" : "true");
@@ -1089,10 +1088,18 @@
     window.addEventListener("resize", paint);
     paint();
     syncPausedClass();
+    /* Re-paint after layout so the resting coverflow (not a single card) is locked in */
+    requestAnimationFrame(() => {
+      paint();
+      syncPausedClass();
+    });
 
     const io = new IntersectionObserver(
       (entries) => {
         const visible = entries.some((e) => e.isIntersecting);
+        if (visible) {
+          paint();
+        }
         if (!visible && raf) {
           cancelAnimationFrame(raf);
           raf = 0;
@@ -1137,9 +1144,10 @@
 
     const radiusFor = () => {
       const w = window.innerWidth;
-      if (w < 640) return 250;
-      if (w < 980) return 300;
-      return 380;
+      /* Tighter ring so several partner pages stay visible at rest */
+      if (w < 640) return 200;
+      if (w < 980) return 250;
+      return 310;
     };
 
     const paint = () => {
@@ -1328,10 +1336,12 @@
 
     window.addEventListener("resize", paint);
     paint();
+    requestAnimationFrame(paint);
 
     const io = new IntersectionObserver(
       (entries) => {
         const vis = entries.some((e) => e.isIntersecting);
+        if (vis) paint();
         if (!vis && raf) {
           cancelAnimationFrame(raf);
           raf = 0;
