@@ -864,36 +864,40 @@
     const onDown = (e) => {
       if (e.target.closest(".film-stage__nav")) return;
       if (e.target.closest("a")) return;
-      /* allow flip click on active without drag capture */
-      if (e.target.closest(".service-flip.is-active") && e.pointerType !== "touch") {
+      /* allow flip click on active without drag capture (mouse only) */
+      if (e.target.closest(".service-flip.is-active") && e.pointerType === "mouse") {
         pauseAuto(5000);
         return;
       }
       dragging = true;
       dragMoved = false;
-      lastX = e.clientX;
+      lastX = e.clientX ?? e.touches?.[0]?.clientX ?? 0;
       vel = 0;
       film.classList.add("is-dragging", "is-paused");
       pauseAuto(5000);
-      if (e.pointerType !== "touch") film.setPointerCapture?.(e.pointerId);
+      try {
+        film.setPointerCapture?.(e.pointerId);
+      } catch (_) {}
     };
 
     const onMove = (e) => {
       if (!dragging) return;
-      const dx = e.clientX - lastX;
-      lastX = e.clientX;
+      const x = e.clientX ?? e.touches?.[0]?.clientX;
+      if (x == null) return;
+      const dx = x - lastX;
+      lastX = x;
       if (Math.abs(dx) > 3) dragMoved = true;
-      /* Finger-follow: drag right → content moves right */
-      offset += dx / (metrics().spacing * 1.05);
+      /* Content follows the finger (drag right → cards move right) */
+      offset -= dx / (metrics().spacing * 1.05);
       while (offset > 0.5) {
         offset -= 1;
-        index = wrapIndex(index + 1);
+        index = wrapIndex(index - 1);
       }
       while (offset < -0.5) {
         offset += 1;
-        index = wrapIndex(index - 1);
+        index = wrapIndex(index + 1);
       }
-      vel = dx / 400;
+      vel = -dx / 400;
       paint();
     };
 

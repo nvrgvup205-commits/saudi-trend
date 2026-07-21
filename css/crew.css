@@ -551,8 +551,9 @@ html[dir="ltr"] .nav-overlay__panel {
 }
 
 html[dir="ltr"] .back-top {
-  left: auto;
-  right: 1.1rem;
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
 }
 
 html[dir="ltr"] .portfolio__head,
@@ -591,8 +592,9 @@ html[dir="ltr"] .section-head__sub {
   }
 
   html[dir="ltr"] .back-top {
-    right: max(0.85rem, env(safe-area-inset-right));
-    left: auto;
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
   }
 
   .lang-switch__btn {
@@ -1530,7 +1532,7 @@ body.eye-docked .eye {
     0 22px 48px rgba(0, 0, 0, 0.35);
   overflow: hidden;
   cursor: grab;
-  touch-action: pan-y;
+  touch-action: none;
   user-select: none;
 }
 
@@ -2494,20 +2496,24 @@ body.eye-docked .eye {
   font-weight: 900;
 }
 
-/* Footer */
+/* Footer — above ambient field */
 .site-footer {
+  position: relative;
+  z-index: 2;
   margin-top: 0;
   padding: 0;
+  color: var(--white);
   background:
-    linear-gradient(180deg, #07140c 0%, #050c09 55%, #040a07 100%);
-  border-top: 1px solid rgba(64, 162, 51, 0.22);
+    linear-gradient(180deg, #0a1810 0%, #07140c 40%, #050c09 100%);
+  border-top: 1px solid rgba(64, 162, 51, 0.35);
+  box-shadow: 0 -20px 60px rgba(0, 0, 0, 0.35);
 }
 
 .footer-top {
   display: grid;
   grid-template-columns: 1.35fr 0.9fr 1.25fr 1.05fr;
   gap: 2rem 1.75rem;
-  padding: 3rem 0 2.25rem;
+  padding: 3.25rem 0 2.5rem;
 }
 
 .footer-col h4 {
@@ -3394,14 +3400,16 @@ body.eye-docked .eye {
   }
 
   .back-top {
-    left: max(0.75rem, env(safe-area-inset-left, 0px));
+    left: 50%;
     right: auto;
-    bottom: max(5.25rem, calc(env(safe-area-inset-bottom, 0px) + 4.5rem));
+    bottom: max(1rem, env(safe-area-inset-bottom, 0px));
+    transform: translateX(-50%);
   }
 
   html[dir="ltr"] .back-top {
-    left: auto;
-    right: max(0.75rem, env(safe-area-inset-right, 0px));
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
   }
 
   html[dir="ltr"] .hero__skill,
@@ -3492,7 +3500,7 @@ body.eye-docked .eye {
   padding: 1.5rem 0 0;
   position: relative;
   z-index: 1;
-  background: linear-gradient(180deg, transparent, rgba(5, 12, 9, 0.85));
+  background: linear-gradient(180deg, transparent, rgba(5, 12, 9, 0.92) 70%);
 }
 
 .site-close__inner {
