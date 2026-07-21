@@ -767,9 +767,10 @@
 
     const metrics = () => {
       const w = window.innerWidth;
-      if (w < 640) return { spacing: 118, depth: 160, rot: 38, lift: 10, scaleStep: 0.1 };
-      if (w < 980) return { spacing: 150, depth: 200, rot: 42, lift: 12, scaleStep: 0.09 };
-      return { spacing: 178, depth: 240, rot: 46, lift: 14, scaleStep: 0.085 };
+      /* Lighter coverflow: less depth/tilt so it feels cleaner */
+      if (w < 640) return { spacing: 132, depth: 120, rot: 28, lift: 4, scaleStep: 0.07 };
+      if (w < 980) return { spacing: 158, depth: 150, rot: 32, lift: 6, scaleStep: 0.065 };
+      return { spacing: 186, depth: 170, rot: 34, lift: 8, scaleStep: 0.06 };
     };
 
     const anyFlipped = () => cards.some((c) => c.classList.contains("is-flipped"));
@@ -786,17 +787,18 @@
       cards.forEach((card, i) => {
         const raw = shortest(center, i);
         const abs = Math.abs(raw);
+        /* x: positive = physical right on screen */
         const x = raw * m.spacing;
-        const z = 80 - abs * m.depth;
+        const z = 40 - abs * m.depth;
         const ry = raw * -m.rot;
-        const rx = abs * 4;
+        const rx = abs * 2.2;
         const y = abs * m.lift;
-        const scale = Math.max(0.55, 1 - abs * m.scaleStep);
-        const visible = abs < 3.2;
+        const scale = Math.max(0.62, 1 - abs * m.scaleStep);
+        const visible = abs < 3.1;
 
         card.style.transform = `translate(-50%, -50%) translate3d(${x}px, ${y}px, ${z}px) rotateY(${ry}deg) rotateX(${rx}deg) scale(${scale})`;
         card.style.zIndex = String(Math.round(40 - abs * 8));
-        card.style.opacity = visible ? String(Math.max(0.2, 1 - abs * 0.28)) : "0";
+        card.style.opacity = visible ? String(Math.max(0.28, 1 - abs * 0.22)) : "0";
         card.style.visibility = visible ? "visible" : "hidden";
         card.classList.toggle("is-active", abs < 0.45);
         card.classList.toggle("is-near", abs >= 0.45 && abs < 1.35);
@@ -900,19 +902,22 @@
       if (x == null) return;
       const dx = x - lastX;
       lastX = x;
-      if (Math.abs(dx) > 3) dragMoved = true;
-      /* Same finger-follow sign as partners ring: drag right → content follows */
-      const delta = dx / (metrics().spacing * 1.05);
-      offset += delta;
+      if (Math.abs(dx) > 2) dragMoved = true;
+      /*
+        Finger-follow (physical screen axes):
+        drag right (dx>0) → cards must move right → x increases → center decreases → offset decreases.
+      */
+      const step = dx / Math.max(90, metrics().spacing * 0.92);
+      offset -= step;
       while (offset > 0.5) {
         offset -= 1;
-        index = wrapIndex(index + 1);
+        index = wrapIndex(index - 1);
       }
       while (offset < -0.5) {
         offset += 1;
-        index = wrapIndex(index - 1);
+        index = wrapIndex(index + 1);
       }
-      vel = delta * 0.45;
+      vel = -step * 0.55;
       paint();
     };
 
