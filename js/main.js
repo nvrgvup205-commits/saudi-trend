@@ -83,7 +83,7 @@
       cursor.style.top = my + 'px';
 
       const now = performance.now();
-      if (now - lastDot > 48 && cursorDots) {
+      if (now - lastDot > 80 && cursorDots) {
         lastDot = now;
         const d = document.createElement('i');
         d.style.left = mx + 'px';
@@ -132,18 +132,26 @@
     let w = 0;
     let h = 0;
     let t = 0;
+    let dpr = 1;
     const ribbons = [];
+    let auroraRaf = 0;
 
     const resize = () => {
-      w = aurora.width = window.innerWidth;
-      h = aurora.height = window.innerHeight;
+      dpr = Math.min(window.devicePixelRatio || 1, 1.25);
+      w = window.innerWidth;
+      h = window.innerHeight;
+      aurora.width = Math.floor(w * dpr);
+      aurora.height = Math.floor(h * dpr);
+      aurora.style.width = w + 'px';
+      aurora.style.height = h + 'px';
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
 
     const seed = () => {
       ribbons.length = 0;
-      for (let i = 0; i < 5; i++) {
+      for (let i = 0; i < 4; i++) {
         ribbons.push({
-          y: h * (0.15 + i * 0.16),
+          y: h * (0.18 + i * 0.18),
           amp: 28 + i * 10,
           freq: 0.0012 + i * 0.00025,
           speed: 0.35 + i * 0.08,
@@ -154,6 +162,10 @@
     };
 
     const draw = () => {
+      if (document.hidden) {
+        auroraRaf = requestAnimationFrame(draw);
+        return;
+      }
       t += 0.008;
       ctx.clearRect(0, 0, w, h);
 
@@ -172,7 +184,7 @@
 
       ribbons.forEach((r) => {
         ctx.beginPath();
-        for (let x = 0; x <= w; x += 8) {
+        for (let x = 0; x <= w; x += 12) {
           const y =
             r.y +
             Math.sin(x * r.freq + t * r.speed) * r.amp +
@@ -188,7 +200,7 @@
       });
 
       // floating golden dust
-      for (let i = 0; i < 24; i++) {
+      for (let i = 0; i < 14; i++) {
         const px = (Math.sin(t * 0.4 + i * 1.7) * 0.5 + 0.5) * w;
         const py = ((t * 12 + i * 73) % (h + 40)) - 20;
         ctx.beginPath();
@@ -197,7 +209,7 @@
         ctx.fill();
       }
 
-      requestAnimationFrame(draw);
+      auroraRaf = requestAnimationFrame(draw);
     };
 
     resize();

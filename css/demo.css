@@ -472,6 +472,8 @@ body, body * { cursor: none !important; }
   opacity: 0; visibility: hidden; pointer-events: none;
   transform: scale(.97);
   transition: opacity .6s, visibility .6s, transform .7s var(--ease);
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 1000px;
 }
 .chamber.active {
   opacity: 1; visibility: visible; pointer-events: all;

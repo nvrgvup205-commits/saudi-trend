@@ -713,6 +713,8 @@ html[data-lang="en"] .lang-switch__en { color: var(--green-mid); }
   opacity: 0; visibility: hidden; pointer-events: none;
   transform: scale(.97);
   transition: opacity .9s var(--ease-slow), visibility .9s, transform 1s var(--ease-slow);
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 1000px;
 }
 .realm.active {
   opacity: 1; visibility: visible; pointer-events: all;

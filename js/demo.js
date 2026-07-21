@@ -37,7 +37,7 @@
       cursor.style.left = mx + 'px';
       cursor.style.top = my + 'px';
       const now = performance.now();
-      if (now - lastDot > 50 && cursorDots) {
+      if (now - lastDot > 80 && cursorDots) {
         lastDot = now;
         const d = document.createElement('i');
         d.style.left = mx + 'px';
@@ -110,8 +110,12 @@
       };
     }
 
+    let paused = false;
+    let linkStride = 1;
+
     function resize() {
-      dpr = Math.min(window.devicePixelRatio || 1, 1.6);
+      const mobile = window.innerWidth < 768;
+      dpr = Math.min(window.devicePixelRatio || 1, mobile ? 1 : 1.25);
       W = window.innerWidth; H = window.innerHeight;
       mindCanvas.width = Math.floor(W * dpr);
       mindCanvas.height = Math.floor(H * dpr);
@@ -122,7 +126,8 @@
     }
 
     function seed() {
-      const count = Math.min(95, Math.floor(W * H / 14000));
+      const dens = window.innerWidth < 768 ? 28000 : 22000;
+      const count = Math.min(55, Math.floor(W * H / dens));
       nodes = [];
       for (let i = 0; i < count; i++) {
         nodes.push({
@@ -177,9 +182,9 @@
       });
 
       rivers = [];
-      for (let i = 0; i < 5; i++) {
+      for (let i = 0; i < 3; i++) {
         rivers.push({
-          y: H * (0.15 + i * 0.16),
+          y: H * (0.2 + i * 0.25),
           phase: Math.random() * Math.PI * 2,
           amp: 18 + Math.random() * 28,
           speed: 0.35 + Math.random() * 0.45,
@@ -192,7 +197,7 @@
         { cx: W * 0.5, cy: H * 0.88, r: 55, spin: 0.32 }
       ];
       packets = [];
-      for (let i = 0; i < 24; i++) {
+      for (let i = 0; i < 12; i++) {
         packets.push({
           t: Math.random(),
           path: i % rivers.length,
@@ -299,8 +304,8 @@
         mctx.font = `700 ${Math.round(g.size)}px "IBM Plex Sans Arabic", Cairo, Tajawal, sans-serif`;
         mctx.textAlign = 'center';
         mctx.textBaseline = 'middle';
-        mctx.shadowColor = kindColor(g.kind, 0.5);
-        mctx.shadowBlur = 16;
+        mctx.shadowColor = kindColor(g.kind, 0.45);
+        mctx.shadowBlur = 8;
         mctx.fillStyle = kindColor(g.kind, alpha);
         mctx.fillText(g.text, 0, 0);
         mctx.restore();
@@ -310,6 +315,10 @@
     }
 
     function frame(now) {
+      if (paused || document.hidden) {
+        raf = requestAnimationFrame(frame);
+        return;
+      }
       const t = (now - t0) / 1000;
       mctx.clearRect(0, 0, W, H);
 
@@ -324,7 +333,9 @@
       drawRivers(t);
       drawRings(t);
 
-      // flow-field drifting nodes + synaptic links
+      // flow-field drifting nodes + synaptic links (stride keeps look, cuts O(n²))
+      linkStride = 1 - linkStride;
+      const linkEvery = 2;
       nodes.forEach((n, i) => {
         const ang = flowAngle(n.x, n.y, t);
         n.x += Math.cos(ang) * 0.55;
@@ -339,18 +350,20 @@
         mctx.fillStyle = kindColor(n.kind, n.a);
         mctx.fill();
 
-        for (let j = i + 1; j < nodes.length; j++) {
-          const q = nodes[j];
-          const dx = n.x - q.x, dy = n.y - q.y;
-          const d = Math.hypot(dx, dy);
-          if (d < 130) {
-            mctx.beginPath();
-            mctx.moveTo(n.x, n.y);
-            mctx.lineTo(q.x, q.y);
-            const mid = 0.5 * (1 - d / 130);
-            mctx.strokeStyle = kindColor(n.kind, mid * 0.55);
-            mctx.lineWidth = 0.8;
-            mctx.stroke();
+        if ((i + linkStride) % linkEvery === 0) {
+          for (let j = i + 1; j < nodes.length; j += 2) {
+            const q = nodes[j];
+            const dx = n.x - q.x, dy = n.y - q.y;
+            const d = Math.hypot(dx, dy);
+            if (d < 120) {
+              mctx.beginPath();
+              mctx.moveTo(n.x, n.y);
+              mctx.lineTo(q.x, q.y);
+              const mid = 0.5 * (1 - d / 120);
+              mctx.strokeStyle = kindColor(n.kind, mid * 0.55);
+              mctx.lineWidth = 0.8;
+              mctx.stroke();
+            }
           }
         }
       });
@@ -374,8 +387,13 @@
       raf = requestAnimationFrame(frame);
     }
 
+    function setPaused(v) { paused = !!v; }
+
     addEventListener('resize', resize);
-    return { start };
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) t0 = performance.now() - ((performance.now() - t0) % 100000);
+    });
+    return { start, setPaused };
   })();
 
   // Keep legacy particle canvas quiet (MindField owns the spectacle)
@@ -383,6 +401,31 @@
     canvas.width = 1; canvas.height = 1;
   }
   MindField.start();
+
+  /* Defer dive montage until first lobe interaction — biggest first-paint win */
+  const diveImgs = [...dive.querySelectorAll('.dive__img')];
+  let diveLoadPromise = null;
+  function ensureDiveImages() {
+    if (diveLoadPromise) return diveLoadPromise;
+    diveLoadPromise = Promise.all(diveImgs.map((img) => {
+      if (img.dataset.src && !img.getAttribute('src')) {
+        img.src = img.dataset.src;
+      }
+      if (img.complete && img.naturalWidth) return Promise.resolve(img);
+      return new Promise((resolve) => {
+        const done = () => resolve(img);
+        img.addEventListener('load', done, { once: true });
+        img.addEventListener('error', done, { once: true });
+      });
+    }));
+    return diveLoadPromise;
+  }
+  // Warm cache on first hover / focus of a lobe
+  lobes.forEach((lobe) => {
+    const warm = () => { ensureDiveImages(); };
+    lobe.addEventListener('pointerenter', warm, { once: true, passive: true });
+    lobe.addEventListener('focus', warm, { once: true });
+  });
 
   function intro() {
     const hookEl = document.getElementById('mind-hook');
@@ -499,6 +542,7 @@
     let modeSeed = 0;
     let zoomA = 1.08, zoomB = 1.14;
     let panA = 0, panB = 0;
+    let tick = 0;
 
     const MODES = [
       'dissolve',      // soft subconscious fade
@@ -512,7 +556,7 @@
     ];
 
     function resize() {
-      dpr = Math.min(window.devicePixelRatio || 1, 1.75);
+      dpr = Math.min(window.devicePixelRatio || 1, window.innerWidth < 768 ? 1 : 1.25);
       W = window.innerWidth;
       H = window.innerHeight;
       liquidCanvas.width = Math.floor(W * dpr);
@@ -523,8 +567,8 @@
       off.width = Math.floor(W * dpr);
       off.height = Math.floor(H * dpr);
       offCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      blur.width = Math.max(2, Math.floor(W * 0.28));
-      blur.height = Math.max(2, Math.floor(H * 0.28));
+      blur.width = Math.max(2, Math.floor(W * 0.22));
+      blur.height = Math.max(2, Math.floor(H * 0.22));
     }
 
     function coverDraw(ctx, img, zoom, pan, alpha) {
@@ -565,11 +609,26 @@
       }
 
       if (mode === 'depth') {
-        offCtx.filter = `blur(${(6 + m * 14).toFixed(2)}px) brightness(${0.55 - m * 0.1}) saturate(1.25)`;
-        coverDraw(offCtx, imgA, zoomA + t * 0.004, panA, alphaA);
-        offCtx.filter = `blur(${(20 - m * 14).toFixed(2)}px) brightness(${0.45 + m * 0.12}) saturate(1.35)`;
-        coverDraw(offCtx, imgB, zoomB + t * 0.005, panB, alphaB);
-        offCtx.filter = 'none';
+        // Cheap rack-focus: downscale acts as blur, preserves the mode look
+        const bw = Math.max(2, Math.floor(W * (0.35 - m * 0.2)));
+        const bh = Math.max(2, Math.floor(H * (0.35 - m * 0.2)));
+        blur.width = bw; blur.height = bh;
+        blurCtx.setTransform(1, 0, 0, 1, 0, 0);
+        blurCtx.clearRect(0, 0, bw, bh);
+        blurCtx.drawImage(imgA, 0, 0, bw, bh);
+        offCtx.globalAlpha = alphaA;
+        offCtx.drawImage(blur, 0, 0, W, H);
+        const bw2 = Math.max(2, Math.floor(W * (0.15 + m * 0.2)));
+        const bh2 = Math.max(2, Math.floor(H * (0.15 + m * 0.2)));
+        blur.width = bw2; blur.height = bh2;
+        blurCtx.clearRect(0, 0, bw2, bh2);
+        blurCtx.drawImage(imgB, 0, 0, bw2, bh2);
+        offCtx.globalAlpha = alphaB;
+        offCtx.drawImage(blur, 0, 0, W, H);
+        offCtx.globalAlpha = 1;
+        // restore blur buffer size used by soft depth plate
+        blur.width = Math.max(2, Math.floor(W * 0.22));
+        blur.height = Math.max(2, Math.floor(H * 0.22));
       } else if (mode === 'bloom') {
         coverDraw(offCtx, imgA, zoomA, panA, alphaA);
         offCtx.globalCompositeOperation = 'screen';
@@ -629,12 +688,13 @@
       liquidCtx.clearRect(0, 0, W, H);
       liquidCtx.drawImage(off, 0, 0, W, H);
 
-      // Soft professional depth under the editorial stage
-      blurCtx.clearRect(0, 0, blur.width, blur.height);
-      blurCtx.drawImage(liquidCanvas, 0, 0, blur.width, blur.height);
+      // Soft professional depth under the editorial stage (downscale only — no live blur filter)
+      if ((tick & 1) === 0) {
+        blurCtx.clearRect(0, 0, blur.width, blur.height);
+        blurCtx.drawImage(liquidCanvas, 0, 0, blur.width, blur.height);
+      }
       liquidCtx.save();
       liquidCtx.globalAlpha = 0.48;
-      liquidCtx.filter = 'blur(16px) brightness(0.78) saturate(0.9)';
       const lw = W * 0.72, lh = H * 0.34;
       const lx = (W - lw) / 2, ly = (H - lh) / 2;
       const rr = Math.min(28, lh * 0.18);
@@ -647,12 +707,12 @@
       liquidCtx.closePath();
       liquidCtx.clip();
       liquidCtx.drawImage(blur, 0, 0, W, H);
-      liquidCtx.filter = 'none';
       liquidCtx.restore();
     }
 
     function tickWaterSVG(now) {
       if (!waterTurb || !waterMap) return;
+      if ((tick & 1) === 1) return;
       const t = (now - t0) / 1000;
       // Gentle living depth — restrained for a premium read
       const fx = 0.007 + Math.sin(t * 0.28) * 0.002;
@@ -664,6 +724,11 @@
 
     function frame(now) {
       if (!running) return;
+      if (document.hidden) {
+        raf = requestAnimationFrame(frame);
+        return;
+      }
+      tick++;
       composite(now);
       tickWaterSVG(now);
       raf = requestAnimationFrame(frame);
@@ -762,15 +827,18 @@
     return tl;
   }
 
-  function openChamber(id, lobeEl) {
+  async function openChamber(id, lobeEl) {
     if (busy || active) return;
     busy = true;
     lobeEl.classList.add('is-opening');
     mind.classList.add('is-diving');
     document.body.classList.add('locked');
     if (window.SaudiSound) SaudiSound.enter();
+    if (MindField.setPaused) MindField.setPaused(true);
 
-    const imgs = [...dive.querySelectorAll('.dive__img')];
+    await ensureDiveImages();
+
+    const imgs = diveImgs;
     const eyebrow = dive.querySelector('.dive__eyebrow');
     const panel = dive.querySelector('.dive__panel');
     const titleText = lobeEl.dataset.hookTitle || 'نغوص في عقل أصحاب الأعمال';
@@ -858,6 +926,7 @@
     LiquidField.stop();
     const chamber = document.getElementById('chamber-' + id);
     if (!chamber) {
+      if (MindField.setPaused) MindField.setPaused(false);
       busy = false;
       return;
     }
@@ -902,6 +971,7 @@
         mind.classList.remove('hidden');
         document.body.classList.remove('locked');
         gsap.set(mind, { opacity: 1, clearProps: 'transform' });
+        if (MindField.setPaused) MindField.setPaused(false);
         gsap.fromTo('.lobe', { opacity: 0.4, scale: 0.96 }, {
           opacity: 1, scale: 1, stagger: 0.07, duration: 0.65, ease: 'power3.out'
         });

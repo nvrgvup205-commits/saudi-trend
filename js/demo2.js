@@ -90,7 +90,7 @@
       cursor.style.top = my + 'px';
 
       const now = performance.now();
-      if (now - lastDot > 50 && cursorDots) {
+      if (now - lastDot > 80 && cursorDots) {
         lastDot = now;
         const d = document.createElement('i');
         d.style.left = mx + 'px';
@@ -128,19 +128,25 @@
     });
   });
 
-  // Particles
+  // Particles — same look, cheaper loop
   let particles = [];
+  let particleRaf = 0;
+  let particleTick = 0;
   function resize() {
-    canvas.width = innerWidth;
-    canvas.height = innerHeight;
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.25);
+    canvas.width = Math.floor(innerWidth * dpr);
+    canvas.height = Math.floor(innerHeight * dpr);
+    canvas.style.width = innerWidth + 'px';
+    canvas.style.height = innerHeight + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
   function spawn() {
     particles = [];
-    const n = Math.min(40, Math.floor(innerWidth / 30));
+    const n = Math.min(28, Math.floor(innerWidth / 42));
     for (let i = 0; i < n; i++) {
       particles.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
+        x: Math.random() * innerWidth,
+        y: Math.random() * innerHeight,
         r: Math.random() * 1.6 + 0.3,
         vx: (Math.random() - 0.5) * 0.16,
         vy: (Math.random() - 0.5) * 0.16,
@@ -150,31 +156,39 @@
     }
   }
   function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    if (document.hidden) {
+      particleRaf = requestAnimationFrame(draw);
+      return;
+    }
+    particleTick++;
+    ctx.clearRect(0, 0, innerWidth, innerHeight);
+    const linkPass = (particleTick & 1) === 0;
     particles.forEach((pt, i) => {
       pt.x += pt.vx; pt.y += pt.vy;
-      if (pt.x < 0) pt.x = canvas.width;
-      if (pt.x > canvas.width) pt.x = 0;
-      if (pt.y < 0) pt.y = canvas.height;
-      if (pt.y > canvas.height) pt.y = 0;
+      if (pt.x < 0) pt.x = innerWidth;
+      if (pt.x > innerWidth) pt.x = 0;
+      if (pt.y < 0) pt.y = innerHeight;
+      if (pt.y > innerHeight) pt.y = 0;
       ctx.beginPath();
       ctx.arc(pt.x, pt.y, pt.r, 0, Math.PI * 2);
       ctx.fillStyle = pt.gold ? `rgba(212,175,55,${pt.a})` : `rgba(13,122,84,${pt.a})`;
       ctx.fill();
-      for (let j = i + 1; j < particles.length; j++) {
-        const q = particles[j];
-        const d = Math.hypot(pt.x - q.x, pt.y - q.y);
-        if (d < 100) {
-          ctx.beginPath();
-          ctx.moveTo(pt.x, pt.y);
-          ctx.lineTo(q.x, q.y);
-          ctx.strokeStyle = `rgba(212,175,55,${0.06 * (1 - d / 100)})`;
-          ctx.lineWidth = 0.5;
-          ctx.stroke();
+      if (linkPass && (i & 1) === 0) {
+        for (let j = i + 1; j < particles.length; j += 2) {
+          const q = particles[j];
+          const d = Math.hypot(pt.x - q.x, pt.y - q.y);
+          if (d < 90) {
+            ctx.beginPath();
+            ctx.moveTo(pt.x, pt.y);
+            ctx.lineTo(q.x, q.y);
+            ctx.strokeStyle = `rgba(212,175,55,${0.06 * (1 - d / 90)})`;
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+          }
         }
       }
     });
-    requestAnimationFrame(draw);
+    particleRaf = requestAnimationFrame(draw);
   }
   resize(); spawn(); draw();
   addEventListener('resize', () => { resize(); spawn(); });
