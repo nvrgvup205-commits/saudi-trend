@@ -903,9 +903,9 @@
       const dx = x - lastX;
       lastX = x;
       if (Math.abs(dx) > 2) dragMoved = true;
-      /* Inverted per user feedback — drag direction flipped */
+      /* Drag sign flipped again per user — finger right → content left */
       const step = dx / Math.max(90, metrics().spacing * 0.92);
-      offset += step;
+      offset -= step;
       while (offset > 0.5) {
         offset -= 1;
         index = wrapIndex(index + 1);
@@ -914,7 +914,7 @@
         offset += 1;
         index = wrapIndex(index - 1);
       }
-      vel = step * 0.55;
+      vel = -step * 0.55;
       paint();
     };
 
