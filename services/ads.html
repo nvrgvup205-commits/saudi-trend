@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="إدارة الحملات الإعلانية">
+  <meta name="theme-color" content="#0c2b23">
+  <title>إدارة الحملات الإعلانية | سعودي ترند</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700;800&family=Noto+Kufi+Arabic:wght@500;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/crew.css?v=26">
+  <link rel="stylesheet" href="../css/service.css?v=2">
+</head>
+<body class="has-custom-cursor eye-docked" data-page="ads">
+  <div class="cursor" id="cursor" aria-hidden="true">
+    <div class="cursor__glow"></div>
+    <div class="cursor__ring"></div>
+    <div class="cursor__dot"></div>
+  </div>
+  <canvas class="cursor-trail" id="cursor-trail" aria-hidden="true"></canvas>
+
+  <header class="site-header" id="top">
+    <div class="container site-header__inner">
+      <a class="logo" href="../index.html" data-i18n-aria="brand.name" aria-label="سعودي ترند">
+        <img class="logo__mark" src="../assets/saudi-trend-logo.png" alt="سعودي ترند" data-i18n-alt="brand.name">
+        <span class="logo__text">
+          <span class="logo__name" data-i18n="brand.nameHtml" data-i18n-html>سعودي <span>ترند</span></span>
+          <span class="logo__tag">Marketing & Advertising Agency</span>
+        </span>
+      </a>
+      <div class="header-eye-slot" id="eye-slot" aria-hidden="true"></div>
+      <div class="header-actions">
+        <button class="menu-toggle" id="menu-toggle" aria-label="فتح القائمة" data-i18n-aria="nav.open">
+          <span></span><span></span><span></span>
+        </button>
+        <a class="btn btn--works" href="../index.html#portfolio" data-i18n="nav.works">أعمالنا</a>
+        <a class="btn btn--solid btn--start" href="../index.html#contact" data-i18n="nav.start">ابدأ معنا الآن</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="eye" id="site-eye" aria-hidden="true">
+    <svg class="eye__defs" width="0" height="0" aria-hidden="true">
+      <defs>
+        <clipPath id="eye-almond" clipPathUnits="objectBoundingBox">
+          <path d="M0.02,0.5 C0.18,0.08 0.35,0.02 0.5,0.02 C0.65,0.02 0.82,0.08 0.98,0.5 C0.82,0.92 0.65,0.98 0.5,0.98 C0.35,0.98 0.18,0.92 0.02,0.5 Z"/>
+        </clipPath>
+      </defs>
+    </svg>
+    <div class="eye__sclera">
+      <div class="eye__ball" id="eye-ball">
+        <div class="eye__iris"></div>
+        <div class="eye__pupil"></div>
+        <div class="eye__shine"></div>
+      </div>
+      <div class="eye__lid eye__lid--top"></div>
+      <div class="eye__lid eye__lid--bottom"></div>
+      <div class="eye__water" aria-hidden="true"></div>
+    </div>
+  </div>
+  <div class="eye-ripple" id="eye-ripple" aria-hidden="true"><span></span><span></span><span></span></div>
+
+  <main>
+    <section class="service-hero">
+      <div class="container service-hero__grid">
+        <div>
+          <span class="service-hero__eyebrow" data-i18n="page.eyebrow">خدماتنا</span>
+          <h1 data-i18n="page.title">إدارة الحملات الإعلانية</h1>
+          <p data-i18n="page.desc"></p>
+          <a class="btn btn--teal" href="../index.html#contact" data-i18n="page.request">اطلب الخدمة</a>
+          <a class="btn" href="../index.html#services" style="margin-inline-start:.5rem" data-i18n="page.all">كل الخدمات</a>
+        </div>
+        <div class="service-hero__media">
+          <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80" alt="إدارة الحملات الإعلانية" loading="eager">
+        </div>
+      </div>
+    </section>
+
+    <section class="service-body">
+      <div class="container">
+        <div class="service-points">
+          <article class="service-point">
+            <h3 data-i18n="page.p1t"></h3>
+            <p data-i18n="page.p1d"></p>
+          </article>
+          <article class="service-point">
+            <h3 data-i18n="page.p2t"></h3>
+            <p data-i18n="page.p2d"></p>
+          </article>
+          <article class="service-point">
+            <h3 data-i18n="page.p3t"></h3>
+            <p data-i18n="page.p3d"></p>
+          </article>
+        </div>
+        <div class="service-more">
+          <h2 data-i18n="page.other">خدمات أخرى</h2>
+          <div class="service-more__links">
+          <a class="btn" href="web.html" data-i18n="svc.web.title">برمجة المواقع والمتاجر</a>
+          <a class="btn" href="systems.html" data-i18n="svc.systems.title">بناء الأنظمة البرمجية</a>
+          <a class="btn" href="automation.html" data-i18n="svc.automation.title">حلول الأتمتة</a>
+          <a class="btn" href="social.html" data-i18n="svc.social.title">إدارة السوشيال ميديا</a>
+          <a class="btn" href="seo.html" data-i18n="svc.seo.title">تهيئة محركات البحث</a>
+          <a class="btn" href="video.html" data-i18n="svc.video.title">الفيديو والموشن</a>
+          <a class="btn" href="branding.html" data-i18n="svc.branding.title">الهوية التجارية</a>
+          <a class="btn" href="marketing.html" data-i18n="svc.marketing.title">حلول تسويق شاملة</a>
+          <a class="btn" href="business.html" data-i18n="svc.business.title">تطوير الأعمال</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta-band" id="contact">
+      <div class="container">
+        <div class="cta-band__inner">
+          <h2 data-i18n="cta.title">هل تريد التحدث إلينا؟</h2>
+          <a class="btn btn--ghost-dark" href="mailto:sauditrendsa1@gmail.com" data-i18n="cta.btn">بدأ المحادثة ↗</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div class="footer-col footer-brand">
+        <a class="logo" href="../index.html">
+          <img class="logo__mark" src="../assets/saudi-trend-logo.png" alt="">
+          <span class="logo__text">
+            <span class="logo__name" data-i18n="brand.nameHtml" data-i18n-html>سعودي <span>ترند</span></span>
+            <span class="logo__tag">Marketing & Advertising Agency</span>
+          </span>
+        </a>
+        <p data-i18n="footer.blurb">شريكك في التسويق والهوية الرقمية وبرمجة المواقع والأنظمة والأتمتة وحلول الشركات — برؤية خليجية وتنفيذ احترافي.</p>
+      </div>
+      <div class="footer-col">
+        <h4 data-i18n="footer.links">روابط مفيدة</h4>
+        <ul>
+          <li><a href="../index.html" data-i18n="nav.home">الرئيسية</a></li>
+          <li><a href="../index.html#portfolio" data-i18n="nav.works">أعمالنا</a></li>
+          <li><a href="../index.html#services" data-i18n="nav.services">خدماتنا</a></li>
+          <li><a href="../index.html#contact" data-i18n="nav.contact">اتصل بنا</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4 data-i18n="footer.services">بعض الخدمات</h4>
+        <ul>
+          <li><a href="ads.html" data-i18n="svc.ads.title">إدارة الحملات الإعلانية</a></li>
+          <li><a href="web.html" data-i18n="svc.web.title">برمجة المواقع والمتاجر</a></li>
+          <li><a href="systems.html" data-i18n="svc.systems.title">بناء الأنظمة البرمجية</a></li>
+          <li><a href="automation.html" data-i18n="svc.automation.title">حلول الأتمتة</a></li>
+          <li><a href="social.html" data-i18n="svc.social.title">إدارة السوشيال ميديا</a></li>
+          <li><a href="seo.html" data-i18n="svc.seo.title">تهيئة محركات البحث</a></li>
+          <li><a href="video.html" data-i18n="svc.video.title">الفيديو والموشن</a></li>
+          <li><a href="branding.html" data-i18n="svc.branding.title">الهوية التجارية</a></li>
+          <li><a href="marketing.html" data-i18n="svc.marketing.title">حلول تسويق شاملة</a></li>
+          <li><a href="business.html" data-i18n="svc.business.title">تطوير الأعمال</a></li>
+        </ul>
+      </div>
+      <div class="footer-col footer-contact">
+        <h4 data-i18n="footer.contact">تواصل معنا</h4>
+        <ul>
+          <li data-i18n="footer.phone">رقم الهاتف: 0536542044 — 0532444356</li>
+          <li data-i18n="footer.email">البريد: sauditrendsa1@gmail.com</li>
+          <li data-i18n="footer.address">عنواننا: حي اليرموك، الرياض، المملكة العربية السعودية</li>
+        </ul>
+      </div>
+    </div>
+    <div class="copyright" data-i18n="footer.copy">حقوق النشر والنسخ © 2026 سعودي ترند. كل الحقوق محفوظة</div>
+  </footer>
+
+  <div class="nav-overlay" id="nav-overlay" aria-hidden="true">
+    <button class="nav-overlay__close" id="menu-close" aria-label="إغلاق" data-i18n-aria="nav.close">×</button>
+    <div class="nav-overlay__decor" aria-hidden="true" data-i18n="nav.explore">استكشف الصفحات</div>
+    <div class="nav-overlay__panel">
+      <a class="logo" href="../index.html">
+        <img class="logo__mark" src="../assets/saudi-trend-logo.png" alt="">
+        <span class="logo__text">
+          <span class="logo__name" data-i18n="brand.nameHtml" data-i18n-html>سعودي <span>ترند</span></span>
+          <span class="logo__tag">Marketing & Advertising Agency</span>
+        </span>
+      </a>
+      <ul class="nav-overlay__links">
+        <li><a href="../index.html" data-i18n="nav.home">الرئيسية</a></li>
+        <li><a href="../index.html#services" data-i18n="nav.services">خدماتنا</a></li>
+        <li><a href="../index.html#portfolio" data-i18n="nav.works">أعمالنا</a></li>
+        <li><a href="../index.html#contact" data-i18n="nav.contact">اتصل بنا</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <button class="back-top" id="back-top" aria-label="العودة للأعلى" data-i18n-aria="footer.top">↑</button>
+  <script src="../js/i18n.js?v=3"></script>
+  <script src="../js/crew.js?v=26"></script>
+</body>
+</html>
