@@ -883,17 +883,17 @@
       const dx = e.clientX - lastX;
       lastX = e.clientX;
       if (Math.abs(dx) > 3) dragMoved = true;
-      /* RTL page: drag right still feels natural for coverflow */
-      offset -= dx / (metrics().spacing * 1.05);
+      /* Finger-follow: drag right → content moves right */
+      offset += dx / (metrics().spacing * 1.05);
       while (offset > 0.5) {
         offset -= 1;
-        index = wrapIndex(index - 1);
+        index = wrapIndex(index + 1);
       }
       while (offset < -0.5) {
         offset += 1;
-        index = wrapIndex(index + 1);
+        index = wrapIndex(index - 1);
       }
-      vel = -dx / 400;
+      vel = dx / 400;
       paint();
     };
 
