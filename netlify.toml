@@ -7,6 +7,26 @@
     X-Frame-Options = "DENY"
     X-Content-Type-Options = "nosniff"
 
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/css/*"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/js/*"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
 [[redirects]]
   from = "/demo"
   to = "/demo.html"
@@ -15,4 +35,9 @@
 [[redirects]]
   from = "/demo2"
   to = "/demo2.html"
+  status = 200
+
+[[redirects]]
+  from = "/classic"
+  to = "/classic.html"
   status = 200
