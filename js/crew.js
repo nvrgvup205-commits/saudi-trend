@@ -41,7 +41,35 @@
       const skills = skillsFor();
       skillEl.textContent = skills[skillIndex % skills.length];
     };
+    /* Keep one-line card width stable across rotating phrases (laptop) */
+    const lockSkillLineWidth = () => {
+      if (!skillEl || isMobileMQ.matches) {
+        skillEl.style.minWidth = "";
+        return;
+      }
+      const skills = skillsFor();
+      const probe = document.createElement("span");
+      const cs = getComputedStyle(skillEl);
+      probe.style.cssText = [
+        "position:absolute",
+        "visibility:hidden",
+        "pointer-events:none",
+        "white-space:nowrap",
+        `font:${cs.font}`,
+        `letter-spacing:${cs.letterSpacing}`,
+        `text-transform:${cs.textTransform}`,
+      ].join(";");
+      document.body.appendChild(probe);
+      let maxW = 0;
+      for (const s of skills) {
+        probe.textContent = s;
+        maxW = Math.max(maxW, probe.offsetWidth);
+      }
+      probe.remove();
+      skillEl.style.minWidth = maxW ? `${Math.ceil(maxW)}px` : "";
+    };
     paintSkill();
+    lockSkillLineWidth();
     setInterval(() => {
       skillEl.classList.add("is-fading");
       setTimeout(() => {
@@ -53,7 +81,14 @@
     window.addEventListener("st:langchange", () => {
       skillIndex = 0;
       paintSkill();
+      lockSkillLineWidth();
     });
+    window.addEventListener("resize", lockSkillLineWidth, { passive: true });
+    if (typeof isMobileMQ.addEventListener === "function") {
+      isMobileMQ.addEventListener("change", lockSkillLineWidth);
+    } else if (typeof isMobileMQ.addListener === "function") {
+      isMobileMQ.addListener(lockSkillLineWidth);
+    }
   }
 
   /* ── Light cursor (no particle trail — performance) ── */
@@ -277,10 +312,11 @@
   let whyContrastTick = 0;
   function updateWhyContrast() {
     if (!whyUs || !whyLabel) return;
-    /* Mobile: fixed high-contrast panel in CSS — skip adaptive tint */
-    if (isMobileMQ.matches) {
+    /* Mobile + laptop floating card: keep classic white pill / white text */
+    if (isMobileMQ.matches || whyWrap?.classList.contains("is-floating-layer")) {
       whyUs.style.setProperty("--why-invert", "0");
-      whyUs.style.setProperty("--why-glass", "5, 12, 9");
+      whyUs.style.setProperty("--why-glass", "255, 255, 255");
+      whyInvertSmooth = 0;
       return;
     }
     whyContrastTick = (whyContrastTick + 1) % 4; // every 4th frame
@@ -293,7 +329,7 @@
     if (Math.abs(target - whyInvertSmooth) < 0.002) whyInvertSmooth = target;
     whyUs.style.setProperty("--why-invert", whyInvertSmooth.toFixed(4));
 
-    /* Glass tint follows colors passing behind (laptop) */
+    /* Glass tint follows colors passing behind (non-floating fallback) */
     whyGlass.r += (sample.r - whyGlass.r) * 0.055;
     whyGlass.g += (sample.g - whyGlass.g) * 0.055;
     whyGlass.b += (sample.b - whyGlass.b) * 0.055;
