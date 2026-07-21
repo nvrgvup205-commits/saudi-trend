@@ -2038,14 +2038,15 @@ body.eye-docked .eye {
   min-height: 0;
   margin: 0;
   transform-origin: center center;
-  transform-style: preserve-3d;
+  transform-style: flat;
   border-radius: 16px;
-  transition: opacity 0.25s ease, box-shadow 0.25s ease;
+  transition: opacity 0.2s ease, box-shadow 0.2s ease;
   filter: none;
   opacity: 0.45;
   pointer-events: none;
   z-index: 1;
   scroll-snap-align: none;
+  perspective: none;
 }
 
 .film-stage .service-flip .flip-card__face {
@@ -2156,6 +2157,142 @@ body.eye-docked .eye {
 .services__cta {
   text-align: center;
   margin-top: 0.5rem;
+}
+
+/* Service full-size sheet — replaces heavy 3D flip */
+.svc-sheet[hidden] {
+  display: none !important;
+}
+
+.svc-sheet {
+  position: fixed;
+  inset: 0;
+  z-index: 140;
+  display: grid;
+  place-items: center;
+  padding: max(0.85rem, env(safe-area-inset-top)) 0.85rem max(0.85rem, env(safe-area-inset-bottom));
+  background: rgba(2, 8, 6, 0.72);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.svc-sheet__close {
+  position: absolute;
+  top: max(0.7rem, env(safe-area-inset-top));
+  inset-inline-end: 0.85rem;
+  z-index: 2;
+  width: 42px;
+  height: 42px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.svc-sheet__panel {
+  width: min(100%, 520px);
+  max-height: min(88vh, 720px);
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 20px;
+  padding: 1.25rem 1.15rem 1.4rem;
+  background:
+    linear-gradient(165deg, rgba(12, 36, 28, 0.96), rgba(6, 18, 14, 0.98));
+  border: 1px solid rgba(64, 162, 51, 0.35);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+  color: #f5fbf8;
+}
+
+.svc-sheet__title {
+  margin: 0 0 0.85rem;
+  font-size: clamp(1.2rem, 4.5vw, 1.55rem);
+  font-weight: 900;
+  color: #fff;
+}
+
+.svc-sheet__content {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.svc-sheet__content .flip-card__back-kicker,
+.svc-sheet__content .service-flip__back-kicker {
+  display: inline-block;
+  width: fit-content;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  background: rgba(246, 186, 12, 0.18);
+  color: var(--brand-yellow);
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.svc-sheet__content strong {
+  display: block;
+  font-size: 1.05rem;
+  color: #fff;
+}
+
+.svc-sheet__content .service-flip__list,
+.svc-sheet__content ul {
+  margin: 0.2rem 0 0.5rem;
+  padding: 0 1.1rem 0 0;
+  list-style: disc;
+  color: rgba(245, 251, 248, 0.82);
+  font-size: 0.92rem;
+  line-height: 1.55;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.svc-sheet__content .flip-card__cta,
+.svc-sheet__content a {
+  display: inline-flex;
+  margin-top: 0.35rem;
+  padding: 0.7rem 1.1rem;
+  border-radius: 999px;
+  background: #fff;
+  color: #0a1210;
+  font-weight: 800;
+  text-decoration: none;
+  width: fit-content;
+}
+
+body.svc-sheet-open {
+  overflow: hidden;
+}
+
+/* Service cards in stage: front only (no 3D flip cost) */
+.film-stage .service-flip.flip-card {
+  perspective: none;
+}
+
+.film-stage .service-flip .flip-card__inner {
+  transform: none !important;
+  transition: none;
+  transform-style: flat;
+}
+
+.film-stage .service-flip .flip-card__back {
+  display: none !important;
+}
+
+.film-stage .service-flip .flip-card__front {
+  position: absolute;
+  inset: 0;
+  transform: none;
+}
+
+.film-stage .service-flip.is-sheet-open {
+  outline: 2px solid rgba(246, 186, 12, 0.65);
+  outline-offset: 2px;
+}
+
+.film-stage .service-flip .flip-card__hint {
+  /* Suggest tap-to-open instead of flip */
 }
 
 @media (max-width: 820px) {

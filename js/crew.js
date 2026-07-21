@@ -866,21 +866,21 @@
     requestAnimationFrame(step);
   })();
 
-  /* ── Flip cards (delegation so film-strip clones work) ── */
+  /* ── Flip cards (blog/work only — services use full sheet) ── */
   document.addEventListener("click", (e) => {
     const card = e.target.closest(".flip-card");
-    if (!card || e.target.closest("a")) return;
+    if (!card || card.classList.contains("service-flip") || e.target.closest("a")) return;
     card.classList.toggle("is-flipped");
   });
   document.addEventListener("keydown", (e) => {
     if (e.key !== "Enter" && e.key !== " ") return;
     const card = e.target.closest(".flip-card");
-    if (!card) return;
+    if (!card || card.classList.contains("service-flip")) return;
     e.preventDefault();
     card.classList.toggle("is-flipped");
   });
 
-  /* ── Services: 3D cinema projector coverflow (infinite) ── */
+  /* ── Services: light coverflow + full-size sheet ── */
   (() => {
     const film = document.getElementById("services-film");
     const track = document.getElementById("services-track");
@@ -895,18 +895,62 @@
       img.setAttribute("decoding", "async");
     });
 
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
     const cards = [...track.querySelectorAll(".service-flip")];
     const n = cards.length;
     if (!n) return;
+
+    const sheet = document.getElementById("svc-sheet");
+    const sheetPanel = document.getElementById("svc-sheet-panel");
+    const sheetClose = document.getElementById("svc-sheet-close");
+    let openCard = null;
+
+    const closeSheet = () => {
+      if (!sheet) return;
+      sheet.hidden = true;
+      document.body.classList.remove("svc-sheet-open");
+      openCard?.classList.remove("is-sheet-open");
+      openCard = null;
+    };
+
+    const openSheet = (card) => {
+      if (!sheet || !sheetPanel || !card) return;
+      if (openCard === card) {
+        closeSheet();
+        return;
+      }
+      const back = card.querySelector(".service-flip__back, .flip-card__back");
+      const title = card.querySelector(".flip-card__title")?.textContent?.trim() || "";
+      if (!back) return;
+      openCard?.classList.remove("is-sheet-open");
+      openCard = card;
+      card.classList.add("is-sheet-open");
+      sheetPanel.innerHTML = `
+        <h3 class="svc-sheet__title" id="svc-sheet-title">${title}</h3>
+        <div class="svc-sheet__content">${back.innerHTML}</div>
+      `;
+      sheet.hidden = false;
+      document.body.classList.add("svc-sheet-open");
+    };
+
+    sheetClose?.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      closeSheet();
+    });
+    sheet?.addEventListener("click", (e) => {
+      if (e.target === sheet) closeSheet();
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeSheet();
+    });
 
     let index = 0;
     let offset = 0;
     let vel = 0;
     let dragging = false;
     let pending = false;
-    let axis = null; /* null | "x" | "y" — allow vertical page scroll */
+    let axis = null;
     let dragMoved = false;
     let hovering = false;
     let lastX = 0;
@@ -914,11 +958,9 @@
     let startY = 0;
     let lastT = 0;
     let raf = 0;
-    /* Manual only — no autoplay until the user drags / taps nav */
     let auto = false;
     let holdTimer = 0;
     let autoAcc = 0;
-    const AUTO_MS = 3200;
     const AXIS_SLOP = 10;
 
     const wrapIndex = (i) => ((i % n) + n) % n;
@@ -932,56 +974,56 @@
 
     const metrics = () => {
       const w = window.innerWidth;
-      /* Resting coverflow: several cards visible without needing to tap arrows */
-      if (w < 640) return { spacing: 108, depth: 90, rot: 22, lift: 2, scaleStep: 0.06 };
-      if (w < 980) return { spacing: 148, depth: 120, rot: 26, lift: 4, scaleStep: 0.055 };
-      return { spacing: 178, depth: 140, rot: 28, lift: 5, scaleStep: 0.05 };
+      /* Lighter resting coverflow — less 3D math on phones */
+      if (w < 640) return { spacing: 118, depth: 0, rot: 0, lift: 0, scaleStep: 0.08, lite: true };
+      if (w < 980) return { spacing: 148, depth: 80, rot: 18, lift: 2, scaleStep: 0.055, lite: false };
+      return { spacing: 178, depth: 110, rot: 22, lift: 4, scaleStep: 0.05, lite: false };
     };
 
-    const anyFlipped = () => cards.some((c) => c.classList.contains("is-flipped"));
-
     const syncPausedClass = () => {
-      /* Always paused for autoplay — keeps decorative strip still */
       film.classList.add("is-paused");
     };
 
     const paint = () => {
       const m = metrics();
       const center = index + offset;
+      const visLimit = m.lite ? 1.55 : 2.35;
 
       cards.forEach((card, i) => {
         const raw = shortest(center, i);
         const abs = Math.abs(raw);
         const x = raw * m.spacing;
-        const z = 36 - abs * m.depth;
-        const ry = raw * -m.rot;
-        const y = abs * m.lift;
-        const scale = Math.max(0.68, 1 - abs * m.scaleStep);
-        /* Keep ~5 cards in the agreed resting coverflow */
-        const visible = abs < 2.35;
+        const visible = abs < visLimit;
+        const scale = Math.max(0.72, 1 - abs * m.scaleStep);
 
-        card.style.transform = `translate(-50%, -50%) translate3d(${x}px, ${y}px, ${z}px) rotateY(${ry}deg) scale(${scale})`;
+        if (m.lite) {
+          /* Flat 2D carousel — same look, far less GPU */
+          card.style.transform = `translate(-50%, -50%) translate3d(${x}px, 0, 0) scale(${scale})`;
+        } else {
+          const z = 28 - abs * m.depth;
+          const ry = raw * -m.rot;
+          const y = abs * m.lift;
+          card.style.transform = `translate(-50%, -50%) translate3d(${x}px, ${y}px, ${z}px) rotateY(${ry}deg) scale(${scale})`;
+        }
+
         card.style.zIndex = String(Math.round(40 - abs * 8));
-        card.style.opacity = visible ? String(Math.max(0.42, 1 - abs * 0.2)) : "0";
+        card.style.opacity = visible ? String(Math.max(0.45, 1 - abs * 0.22)) : "0";
         card.style.visibility = visible ? "visible" : "hidden";
         card.classList.toggle("is-active", abs < 0.45);
         card.classList.toggle("is-near", abs >= 0.45 && abs < 1.45);
         card.classList.toggle("is-popped", abs < 0.45);
+        card.classList.remove("is-flipped");
         card.tabIndex = abs < 0.45 ? 0 : -1;
         card.setAttribute("aria-hidden", abs < 0.45 ? "false" : "true");
-        if (abs >= 0.45) card.classList.remove("is-flipped");
-        /* Progressive image load — same look, less first-hit weight */
+
         if (visible) {
           const img = card.querySelector(".flip-card__img[data-src]");
-          if (img && !img.getAttribute("src")) {
-            img.src = img.dataset.src;
-          }
+          if (img && !img.getAttribute("src")) img.src = img.dataset.src;
         }
       });
     };
 
     const resumeAutoSoon = () => {
-      /* Autoplay disabled for performance — keep manual only */
       auto = false;
       clearTimeout(holdTimer);
       syncPausedClass();
@@ -995,6 +1037,7 @@
     };
 
     const stepBy = (dir) => {
+      closeSheet();
       cards.forEach((c) => c.classList.remove("is-flipped"));
       index = wrapIndex(index + dir);
       offset = 0;
@@ -1013,8 +1056,6 @@
       const dt = dtMs / 16.67;
       lastT = ts;
 
-      const flipped = anyFlipped();
-
       if (!dragging) {
         if (Math.abs(vel) > 0.001) {
           offset += vel * dt;
@@ -1027,22 +1068,13 @@
         } else if (Math.abs(offset) > 0.001) {
           offset *= Math.pow(0.82, dt);
           if (Math.abs(offset) < 0.02) snap();
-        } else if (auto && !hovering && !flipped) {
-          autoAcc += dtMs;
-          if (autoAcc >= AUTO_MS) {
-            autoAcc = 0;
-            index = wrapIndex(index + 1);
-            offset = 0;
-            cards.forEach((c) => c.classList.remove("is-flipped"));
-          }
         }
       }
 
       syncPausedClass();
       paint();
-      if (needsAnim()) {
-        raf = requestAnimationFrame(tick);
-      } else {
+      if (needsAnim()) raf = requestAnimationFrame(tick);
+      else {
         raf = 0;
         lastT = 0;
       }
@@ -1058,11 +1090,6 @@
     const onDown = (e) => {
       if (e.target.closest(".film-stage__nav")) return;
       if (e.target.closest("a")) return;
-      if (e.target.closest(".service-flip.is-active") && e.pointerType === "mouse") {
-        resumeAutoSoon();
-        return;
-      }
-      /* Don't capture yet — wait to see if gesture is horizontal or vertical scroll */
       pending = true;
       dragging = false;
       axis = null;
@@ -1083,7 +1110,6 @@
         const dx0 = x - startX;
         const dy0 = (y ?? startY) - startY;
         if (Math.hypot(dx0, dy0) < AXIS_SLOP) return;
-        /* Vertical intent → let the page scroll; do not hijack */
         if (Math.abs(dy0) > Math.abs(dx0) * 1.05) {
           axis = "y";
           pending = false;
@@ -1093,6 +1119,7 @@
         pending = false;
         dragging = true;
         auto = false;
+        closeSheet();
         film.classList.add("is-dragging");
         syncPausedClass();
         kick();
@@ -1106,7 +1133,6 @@
       const dx = x - lastX;
       lastX = x;
       if (Math.abs(dx) > 2) dragMoved = true;
-      /* Drag sign flipped again per user — finger right → content left */
       const step = dx / Math.max(90, metrics().spacing * 0.92);
       offset -= step;
       while (offset > 0.5) {
@@ -1145,7 +1171,6 @@
       resumeAutoSoon();
     };
 
-    /* Desktop: no autoplay on hover leave */
     if (finePointer) {
       film.addEventListener("pointerenter", () => {
         hovering = true;
@@ -1173,6 +1198,7 @@
 
     cards.forEach((card) => {
       card.addEventListener("click", (e) => {
+        if (e.target.closest("a")) return;
         if (dragMoved) {
           e.preventDefault();
           e.stopPropagation();
@@ -1181,25 +1207,26 @@
         if (!card.classList.contains("is-active")) {
           e.preventDefault();
           e.stopPropagation();
-          const i = cards.indexOf(card);
-          index = i;
+          closeSheet();
+          index = cards.indexOf(card);
           offset = 0;
           autoAcc = 0;
           paint();
           resumeAutoSoon();
           return;
         }
-        requestAnimationFrame(() => {
-          auto = false;
-          syncPausedClass();
-        });
+        e.preventDefault();
+        e.stopPropagation();
+        openSheet(card);
       });
     });
 
-    window.addEventListener("resize", paint);
+    window.addEventListener("resize", () => {
+      closeSheet();
+      paint();
+    });
     paint();
     syncPausedClass();
-    /* Re-paint after layout so the resting coverflow (not a single card) is locked in */
     requestAnimationFrame(() => {
       paint();
       syncPausedClass();
@@ -1208,13 +1235,14 @@
     const io = new IntersectionObserver(
       (entries) => {
         const visible = entries.some((e) => e.isIntersecting);
-        if (visible) {
-          paint();
-        }
-        if (!visible && raf) {
-          cancelAnimationFrame(raf);
-          raf = 0;
-          lastT = 0;
+        if (visible) paint();
+        else {
+          closeSheet();
+          if (raf) {
+            cancelAnimationFrame(raf);
+            raf = 0;
+            lastT = 0;
+          }
         }
       },
       { threshold: 0.1 }
