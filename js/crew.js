@@ -901,16 +901,18 @@
       const dx = x - lastX;
       lastX = x;
       if (Math.abs(dx) > 3) dragMoved = true;
-      offset -= dx / (metrics().spacing * 1.05);
+      /* Same finger-follow sign as partners ring: drag right → content follows */
+      const delta = dx / (metrics().spacing * 1.05);
+      offset += delta;
       while (offset > 0.5) {
         offset -= 1;
-        index = wrapIndex(index - 1);
+        index = wrapIndex(index + 1);
       }
       while (offset < -0.5) {
         offset += 1;
-        index = wrapIndex(index + 1);
+        index = wrapIndex(index - 1);
       }
-      vel = -dx / 400;
+      vel = delta * 0.45;
       paint();
     };
 
