@@ -1308,6 +1308,55 @@
   closeBtn?.addEventListener("click", closeMenu);
   overlay?.querySelectorAll("a").forEach((link) => link.addEventListener("click", closeMenu));
 
+  /* ── Ambient field: scroll + soft pointer reactivity ── */
+  (() => {
+    const field = document.getElementById("ambient-field");
+    if (!field) return;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) return;
+
+    let targetScroll = 0;
+    let curScroll = 0;
+    let targetMx = 0.5;
+    let targetMy = 0.5;
+    let curMx = 0.5;
+    let curMy = 0.5;
+    let raf = 0;
+
+    const maxScroll = () => Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+
+    const readScroll = () => {
+      targetScroll = window.scrollY / maxScroll();
+    };
+
+    const tick = () => {
+      curScroll += (targetScroll - curScroll) * 0.06;
+      curMx += (targetMx - curMx) * 0.05;
+      curMy += (targetMy - curMy) * 0.05;
+      field.style.setProperty("--amb-scroll", curScroll.toFixed(4));
+      field.style.setProperty("--amb-mx", curMx.toFixed(4));
+      field.style.setProperty("--amb-my", curMy.toFixed(4));
+      raf = requestAnimationFrame(tick);
+    };
+
+    readScroll();
+    raf = requestAnimationFrame(tick);
+    window.addEventListener("scroll", readScroll, { passive: true });
+    window.addEventListener("resize", readScroll, { passive: true });
+
+    const fine = window.matchMedia("(pointer: fine)").matches;
+    if (fine) {
+      window.addEventListener(
+        "pointermove",
+        (e) => {
+          targetMx = e.clientX / Math.max(1, window.innerWidth);
+          targetMy = e.clientY / Math.max(1, window.innerHeight);
+        },
+        { passive: true }
+      );
+    }
+  })();
+
   /* ── Back to top ── */
   const backTop = document.getElementById("back-top");
   window.addEventListener("scroll", () => {
