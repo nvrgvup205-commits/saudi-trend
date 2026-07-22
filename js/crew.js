@@ -1292,8 +1292,10 @@
   }, { passive: true });
   backTop?.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
 
-  /* ── Reveal on scroll ── */
-  const revealEls = document.querySelectorAll(".service-card, .flip-card, .cta-band__inner");
+  /* ── Reveal on scroll (never touch the services ribbon cards) ── */
+  const revealEls = [...document.querySelectorAll(".service-card, .flip-card, .cta-band__inner")].filter(
+    (el) => !el.closest("#services-film, .film-stage.is-ribbon")
+  );
   if ("IntersectionObserver" in window) {
     const io = new IntersectionObserver(
       (entries) => {
