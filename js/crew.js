@@ -3,57 +3,113 @@
   const eyeFollowMouse = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
   const isMobileMQ = window.matchMedia("(max-width: 720px)");
 
-  /* ── Why Us: TV news ticker crawl ── */
-  const whyTickerRun = document.getElementById("why-ticker-run");
-  const skillsFor = () =>
-    window.ST_I18N
-      ? window.ST_I18N.skills(window.ST_I18N.getLang())
-      : [
-          "أفكارنا غير… وهذا فرقنا",
-          "متمكّنين من شغلنا — مو كلام فاضي",
-          "ننفّذ أي فكرة… حرفيًا",
-          "عقود مرنة، والتفاوض لمصلحتك",
-          "القيمة أولًا — قبل أي رقم",
-          "نشتغل على مشروعك كأنه مشروعنا",
-          "نتائج تِبان… مو وعود تطير",
-          "عقود واضحة من أوّل يوم — بلا لخبطة",
-          "بنكتب اللي اتفقنا عليه… ونلتزم فيه",
-          "ضمانات ذهبية على جودة التنفيذ",
-          "لو فيه خلل منّا — نصلّحه، مو نتهرّب",
-          "مراحل العمل مضمونة بجدول واضح",
-          "تدفع على مراحل… وأنت مرتاح",
-          "حقوقك محفوظة في العقد — مو كلام طيب",
-          "نراجع العقد معك كلمة بكلمة",
-          "التزام بالمواعيد… هذا أساسنا",
-          "ضمان متابعة بعد التسليم",
-          "شفافية كاملة في التكاليف والبنود",
-          "ما في مفاجآت بعد التوقيع",
-          "ضمان ذهبي: شغل يستاهل اسمك",
-          "العقد يحميك… وإحنا نحترم توقيعنا",
-          "ضمانات مكتوبة — مو وعود بالهوا",
-          "نضمن النتيجة المتفق عليها",
-          "خدمة بعد المشروع… موجودة وما تختفي",
-        ];
-
-  const fillWhyTicker = () => {
-    if (!whyTickerRun) return;
-    const skills = skillsFor();
-    const frag = document.createDocumentFragment();
-    /* Duplicate once for a seamless CSS loop (50% travel) */
-    for (let pass = 0; pass < 2; pass++) {
-      skills.forEach((text) => {
-        const span = document.createElement("span");
-        span.className = "why-ticker__item";
-        span.textContent = text;
-        frag.appendChild(span);
-      });
-    }
-    whyTickerRun.replaceChildren(frag);
+  /* ── Why Us: one sentence rises bottom → top (same on all screens) ── */
+  const whyTicker = document.getElementById("why-ticker");
+  const whyLine = document.getElementById("why-ticker-line");
+  const WHY_FALLBACK = [
+    "أفكارنا غير… وهذا فرقنا",
+    "متمكّنين من شغلنا — مو كلام فاضي",
+    "ننفّذ أي فكرة… حرفيًا",
+    "عقود مرنة، والتفاوض لمصلحتك",
+    "القيمة أولًا — قبل أي رقم",
+    "نشتغل على مشروعك كأنه مشروعنا",
+    "نتائج تِبان… مو وعود تطير",
+    "عقود واضحة من أوّل يوم — بلا لخبطة",
+    "بنكتب اللي اتفقنا عليه… ونلتزم فيه",
+    "ضمانات ذهبية على جودة التنفيذ",
+    "لو فيه خلل منّا — نصلّحه، مو نتهرّب",
+    "مراحل العمل مضمونة بجدول واضح",
+    "تدفع على مراحل… وأنت مرتاح",
+    "حقوقك محفوظة في العقد — مو كلام طيب",
+    "نراجع العقد معك كلمة بكلمة",
+    "التزام بالمواعيد… هذا أساسنا",
+    "ضمان متابعة بعد التسليم",
+    "شفافية كاملة في التكاليف والبنود",
+    "ما في مفاجآت بعد التوقيع",
+    "ضمان ذهبي: شغل يستاهل اسمك",
+    "العقد يحميك… وإحنا نحترم توقيعنا",
+    "ضمانات مكتوبة — مو وعود بالهوا",
+    "نضمن النتيجة المتفق عليها",
+    "خدمة بعد المشروع… موجودة وما تختفي",
+  ];
+  const skillsFor = () => {
+    const fromI18n =
+      window.ST_I18N && typeof window.ST_I18N.skills === "function"
+        ? window.ST_I18N.skills(window.ST_I18N.getLang())
+        : null;
+    return fromI18n && fromI18n.length ? fromI18n : WHY_FALLBACK;
   };
 
-  if (whyTickerRun) {
-    fillWhyTicker();
-    window.addEventListener("st:langchange", fillWhyTicker);
+  let whyIndex = 0;
+  let whyTimer = 0;
+  let whyBusy = false;
+  const reduceWhyMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  const showWhyLine = (text, animateIn) => {
+    if (!whyLine) return;
+    whyLine.textContent = text;
+    whyLine.classList.remove("is-out");
+    if (!animateIn || reduceWhyMotion) {
+      whyLine.classList.add("is-in");
+      return;
+    }
+    whyLine.classList.remove("is-in");
+    /* force reflow so enter transition runs */
+    void whyLine.offsetWidth;
+    whyLine.classList.add("is-in");
+  };
+
+  const advanceWhy = () => {
+    if (!whyLine || whyBusy) return;
+    const skills = skillsFor();
+    if (!skills.length) return;
+    whyBusy = true;
+    whyTicker?.classList.add("is-changing");
+
+    const finishIn = () => {
+      whyIndex = (whyIndex + 1) % skills.length;
+      showWhyLine(skills[whyIndex], true);
+      window.setTimeout(() => {
+        whyTicker?.classList.remove("is-changing");
+        whyBusy = false;
+      }, 420);
+    };
+
+    if (reduceWhyMotion) {
+      finishIn();
+      return;
+    }
+
+    whyLine.classList.remove("is-in");
+    whyLine.classList.add("is-out");
+    window.setTimeout(finishIn, 380);
+  };
+
+  const startWhyRotate = () => {
+    if (whyTimer) window.clearInterval(whyTimer);
+    whyTimer = 0;
+    if (!whyLine) return;
+    const skills = skillsFor();
+    whyIndex = Math.max(0, skills.indexOf(whyLine.textContent.trim()));
+    if (whyIndex < 0) whyIndex = 0;
+    showWhyLine(skills[whyIndex] || WHY_FALLBACK[0], true);
+    whyTimer = window.setInterval(advanceWhy, 3200);
+  };
+
+  if (whyLine) {
+    startWhyRotate();
+    window.addEventListener("st:langchange", () => {
+      whyIndex = 0;
+      startWhyRotate();
+    });
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) {
+        if (whyTimer) window.clearInterval(whyTimer);
+        whyTimer = 0;
+      } else {
+        startWhyRotate();
+      }
+    });
   }
 
   /* Native OS cursor — brand tint via CSS; drop heavy custom cursor DOM */

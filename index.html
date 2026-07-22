@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="description" content="سعودي ترند — وكالة تسويق وحلول رقمية: هوية، مواقع، إعلانات، SEO، وموشن جرافيك">
-  <meta name="crew-build" content="61-ticker-lite">
+  <meta name="crew-build" content="62-why-vertical">
   <meta name="theme-color" content="#0a1f0c">
   <title>سعودي ترند | Marketing & Advertising Agency</title>
   <link rel="icon" href="assets/favicon.ico" sizes="any">
@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Tajawal:wght@400;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/crew.css?v=61">
+  <link rel="stylesheet" href="css/crew.css?v=62">
 </head>
 <body class="has-custom-cursor has-hero-eye">
   <!-- Static wash only — no animated layers / no JS rAF -->
@@ -745,11 +745,18 @@
     </div>
   </div>
 
-  <!-- Why Us — news ticker crawl (TV-style bottom bar) -->
+  <!-- Why Us — one sentence at a time, rises bottom → top -->
   <aside class="why-ticker" id="why-ticker" aria-label="لماذا نحن">
     <span class="why-ticker__label" data-i18n="hero.why">لماذا نحن</span>
-    <div class="why-ticker__viewport">
-      <div class="why-ticker__run" id="why-ticker-run"></div>
+    <div class="why-ticker__stage">
+      <span class="why-ticker__arrow" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 19V5"/><path d="M6 11l6-6 6 6"/>
+        </svg>
+      </span>
+      <div class="why-ticker__viewport">
+        <p class="why-ticker__line" id="why-ticker-line">ضمانات ذهبية على جودة التنفيذ</p>
+      </div>
     </div>
   </aside>
 
@@ -791,6 +798,6 @@
   </div>
 
   <script defer src="js/i18n.js?v=16"></script>
-  <script defer src="js/crew.js?v=61"></script>
+  <script defer src="js/crew.js?v=62"></script>
 </body>
 </html>
