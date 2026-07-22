@@ -1068,12 +1068,21 @@
       });
     });
 
+    let pressPage = null;
+    const openPartner = (page) => {
+      const href = page?.getAttribute("href");
+      if (!href) return;
+      pauseAuto();
+      window.open(href, "_blank", "noopener,noreferrer");
+    };
+
     const onDown = (e) => {
       if (e.target.closest(".partner-stage__nav")) return;
       /* Always own the gesture so the browser never starts an image drag */
       if (e.pointerType !== "touch") e.preventDefault();
       dragging = true;
       dragMoved = false;
+      pressPage = e.target.closest(".partner-page");
       targetRot = null;
       stage.classList.add("is-dragging");
       lastX = e.clientX ?? e.touches?.[0]?.clientX ?? 0;
@@ -1104,15 +1113,29 @@
       try {
         stage.releasePointerCapture?.(e.pointerId);
       } catch (_) {}
+
+      const page = pressPage;
+      pressPage = null;
+
       if (dragMoved) {
-        const block = (ev) => {
-          ev.preventDefault();
-          ev.stopPropagation();
-          stage.removeEventListener("click", block, true);
-        };
-        stage.addEventListener("click", block, true);
-        /* snap to nearest after drag */
+        /* snap to nearest after drag — don't open links */
         targetRot = -frontIndex * stepDeg;
+        pauseAuto();
+        kick();
+        return;
+      }
+
+      /* Clean tap: pointerup opens (click is often suppressed after preventDefault) */
+      if (page) {
+        if (page.classList.contains("is-front")) {
+          openPartner(page);
+        } else {
+          const i = pages.indexOf(page);
+          if (i >= 0) {
+            targetRot = -i * stepDeg;
+            vel = 0;
+          }
+        }
       }
       pauseAuto();
       kick();
@@ -1133,16 +1156,13 @@
       btn.addEventListener("pointerdown", (e) => e.stopPropagation());
     });
 
+    /* Fallback for keyboard / assistive activation */
     pages.forEach((page) => {
       page.addEventListener("click", (e) => {
-        if (dragMoved) {
-          e.preventDefault();
-          e.stopPropagation();
-          return;
-        }
+        e.preventDefault();
+        e.stopPropagation();
+        if (dragMoved) return;
         if (!page.classList.contains("is-front")) {
-          e.preventDefault();
-          e.stopPropagation();
           const i = pages.indexOf(page);
           targetRot = -i * stepDeg;
           vel = 0;
@@ -1150,12 +1170,19 @@
           kick();
           return;
         }
-        /* Front page: open the partner site reliably */
+        openPartner(page);
+      });
+      page.addEventListener("keydown", (e) => {
+        if (e.key !== "Enter" && e.key !== " ") return;
         e.preventDefault();
-        e.stopPropagation();
-        pauseAuto();
-        const href = page.getAttribute("href");
-        if (href) window.open(href, "_blank", "noopener,noreferrer");
+        if (page.classList.contains("is-front")) openPartner(page);
+        else {
+          const i = pages.indexOf(page);
+          targetRot = -i * stepDeg;
+          vel = 0;
+          pauseAuto();
+          kick();
+        }
       });
     });
 
