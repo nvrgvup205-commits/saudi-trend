@@ -616,18 +616,19 @@
     card.classList.toggle("is-flipped");
   });
 
-  /* ── Services: all cards visible in a grid + full-size sheet ── */
+  /* ── Services: infinite full-bleed ribbon + water side blur ── */
   (() => {
     const film = document.getElementById("services-film");
     const track = document.getElementById("services-track");
     if (!film || !track) return;
 
-    film.classList.add("is-grid", "is-paused");
+    film.classList.add("is-ribbon", "is-paused");
+    film.classList.remove("is-grid");
 
     const cards = [...track.querySelectorAll(".service-flip")];
-    if (!cards.length) return;
+    const n = cards.length;
+    if (!n) return;
 
-    /* Ensure every service image is loaded — all cards are visible */
     track.querySelectorAll(".flip-card__img").forEach((img) => {
       const src = img.getAttribute("src") || img.dataset.src || "";
       if (src) {
@@ -637,6 +638,7 @@
       img.setAttribute("loading", "lazy");
       img.setAttribute("decoding", "async");
       img.setAttribute("draggable", "false");
+      img.draggable = false;
     });
 
     const sheet = document.getElementById("svc-sheet");
@@ -684,21 +686,239 @@
       if (e.key === "Escape") closeSheet();
     });
 
+    let index = 0;
+    let offset = 0;
+    let vel = 0;
+    let dragging = false;
+    let pending = false;
+    let axis = null;
+    let dragMoved = false;
+    let lastX = 0;
+    let startX = 0;
+    let startY = 0;
+    let lastT = 0;
+    let raf = 0;
+    const AXIS_SLOP = 10;
+
+    const wrapIndex = (i) => ((i % n) + n) % n;
+    const shortest = (from, to) => {
+      let d = to - from;
+      while (d > n / 2) d -= n;
+      while (d < -n / 2) d += n;
+      return d;
+    };
+
+    const spacingFor = () => {
+      const w = window.innerWidth;
+      if (w < 640) return Math.max(150, w * 0.42);
+      if (w < 980) return Math.max(180, w * 0.24);
+      return Math.max(220, Math.min(260, w * 0.16));
+    };
+
+    const paint = () => {
+      const spacing = spacingFor();
+      const center = index + offset;
+
+      cards.forEach((card, i) => {
+        const raw = shortest(center, i);
+        const abs = Math.abs(raw);
+        const x = raw * spacing;
+        const scale = Math.max(0.72, 1 - abs * 0.08);
+        const blur = abs < 0.35 ? 0 : Math.min(9, abs * 3.6);
+        const opacity = Math.max(0.28, 1 - abs * 0.2);
+
+        card.style.transform = `translate(-50%, -50%) translate3d(${x}px, 0, 0) scale(${scale})`;
+        card.style.zIndex = String(Math.round(40 - abs * 8));
+        card.style.opacity = String(opacity);
+        card.style.visibility = abs > 3.2 ? "hidden" : "visible";
+        card.style.filter = blur ? `blur(${blur.toFixed(1)}px) saturate(0.94)` : "none";
+        card.classList.toggle("is-active", abs < 0.45);
+        card.classList.toggle("is-near", abs >= 0.45 && abs < 1.55);
+        card.classList.remove("is-flipped", "is-popped");
+        card.tabIndex = abs < 0.45 ? 0 : -1;
+        card.setAttribute("aria-hidden", abs < 0.45 ? "false" : "true");
+      });
+    };
+
+    const snap = () => {
+      index = wrapIndex(Math.round(index + offset));
+      offset = 0;
+      vel = 0;
+      paint();
+    };
+
+    const stepBy = (dir) => {
+      closeSheet();
+      index = wrapIndex(index + dir);
+      offset = 0;
+      vel = 0;
+      paint();
+    };
+
+    const needsAnim = () =>
+      dragging || Math.abs(vel) > 0.001 || Math.abs(offset) > 0.001;
+
+    const tick = (ts) => {
+      if (!lastT) lastT = ts;
+      const dt = Math.min(32, ts - lastT) / 16.67;
+      lastT = ts;
+
+      if (!dragging) {
+        if (Math.abs(vel) > 0.001) {
+          offset += vel * dt;
+          vel *= Math.pow(0.9, dt);
+          if (Math.abs(offset) >= 1) {
+            index = wrapIndex(index + Math.round(offset));
+            offset -= Math.round(offset);
+          }
+          if (Math.abs(vel) < 0.002) snap();
+        } else if (Math.abs(offset) > 0.001) {
+          offset *= Math.pow(0.82, dt);
+          if (Math.abs(offset) < 0.02) snap();
+        }
+      }
+
+      paint();
+      if (needsAnim()) raf = requestAnimationFrame(tick);
+      else {
+        raf = 0;
+        lastT = 0;
+      }
+    };
+
+    const kick = () => {
+      if (!raf) {
+        lastT = 0;
+        raf = requestAnimationFrame(tick);
+      }
+    };
+
+    film.addEventListener("dragstart", (e) => e.preventDefault());
+
+    const onDown = (e) => {
+      if (e.target.closest(".film-stage__nav")) return;
+      if (e.target.closest("a")) return;
+      if (e.pointerType !== "touch") e.preventDefault();
+      pending = true;
+      dragging = false;
+      axis = null;
+      dragMoved = false;
+      startX = e.clientX ?? 0;
+      startY = e.clientY ?? 0;
+      lastX = startX;
+      vel = 0;
+    };
+
+    const onMove = (e) => {
+      if (!pending && !dragging) return;
+      const x = e.clientX;
+      const y = e.clientY;
+      if (x == null) return;
+
+      if (axis === null && pending) {
+        const dx0 = x - startX;
+        const dy0 = y - startY;
+        if (Math.hypot(dx0, dy0) < AXIS_SLOP) return;
+        if (Math.abs(dy0) > Math.abs(dx0) * 1.05) {
+          axis = "y";
+          pending = false;
+          return;
+        }
+        axis = "x";
+        pending = false;
+        dragging = true;
+        closeSheet();
+        film.classList.add("is-dragging");
+        kick();
+        try {
+          film.setPointerCapture?.(e.pointerId);
+        } catch (_) {}
+      }
+
+      if (axis !== "x" || !dragging) return;
+      const dx = x - lastX;
+      lastX = x;
+      if (Math.abs(dx) > 2) dragMoved = true;
+      const step = dx / Math.max(90, spacingFor() * 0.9);
+      offset -= step;
+      while (offset > 0.5) {
+        offset -= 1;
+        index = wrapIndex(index + 1);
+      }
+      while (offset < -0.5) {
+        offset += 1;
+        index = wrapIndex(index - 1);
+      }
+      vel = -step * 0.55;
+      paint();
+    };
+
+    const onUp = (e) => {
+      if (!pending && !dragging) return;
+      const wasDragging = dragging && axis === "x";
+      pending = false;
+      dragging = false;
+      axis = null;
+      film.classList.remove("is-dragging");
+      try {
+        film.releasePointerCapture?.(e.pointerId);
+      } catch (_) {}
+      if (!wasDragging) return;
+      if (dragMoved) {
+        const block = (ev) => {
+          ev.preventDefault();
+          ev.stopPropagation();
+          film.removeEventListener("click", block, true);
+        };
+        film.addEventListener("click", block, true);
+      }
+      snap();
+      kick();
+    };
+
+    film.addEventListener("pointerdown", onDown);
+    window.addEventListener("pointermove", onMove);
+    window.addEventListener("pointerup", onUp);
+    window.addEventListener("pointercancel", onUp);
+
+    film.querySelectorAll(".film-stage__nav").forEach((btn) => {
+      btn.addEventListener("pointerdown", (e) => e.stopPropagation());
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        stepBy(Number(btn.getAttribute("data-dir") || 1));
+      });
+    });
+
     cards.forEach((card) => {
-      card.classList.add("is-active");
-      card.classList.remove("is-flipped", "is-near", "is-popped");
-      card.style.transform = "";
-      card.style.opacity = "1";
-      card.style.visibility = "visible";
-      card.style.zIndex = "";
-      card.tabIndex = 0;
-      card.setAttribute("aria-hidden", "false");
       card.addEventListener("click", (e) => {
         if (e.target.closest("a")) return;
+        if (dragMoved) {
+          e.preventDefault();
+          e.stopPropagation();
+          return;
+        }
+        if (!card.classList.contains("is-active")) {
+          e.preventDefault();
+          e.stopPropagation();
+          closeSheet();
+          index = cards.indexOf(card);
+          offset = 0;
+          paint();
+          return;
+        }
         e.preventDefault();
+        e.stopPropagation();
         openSheet(card);
       });
     });
+
+    window.addEventListener("resize", () => {
+      closeSheet();
+      paint();
+    });
+    paint();
+    requestAnimationFrame(paint);
   })();
 
   /* ── Partners: 3D standing pages, infinite ring ── */
