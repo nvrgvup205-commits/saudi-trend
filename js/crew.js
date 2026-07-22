@@ -3,228 +3,114 @@
   const eyeFollowMouse = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
   const isMobileMQ = window.matchMedia("(max-width: 720px)");
 
-  /* ── Why-us: desktop rotator / mobile full sheet with sequential reveal ── */
-  const skillEl = document.getElementById("hero-skill");
-  const whyWrap = document.getElementById("why-wrap");
-  const whyUs = document.getElementById("why-us");
-  const whyTab = document.getElementById("why-tab");
-  const whyClose = document.getElementById("why-close");
-  const whyList = document.getElementById("why-list");
-  let skillIndex = 0;
-  let skillTimer = 0;
-  let whyOpen = false;
-  let whyRevealTimers = [];
-  const skillsFor = () =>
-    window.ST_I18N
-      ? window.ST_I18N.skills(window.ST_I18N.getLang())
-      : [
-          "أفكارنا غير… وهذا فرقنا",
-          "متمكّنين من شغلنا — مو كلام فاضي",
-          "ننفّذ أي فكرة… حرفيًا",
-          "عقود مرنة، والتفاوض لمصلحتك",
-          "القيمة أولًا — قبل أي رقم",
-          "نشتغل على مشروعك كأنه مشروعنا",
-          "نتائج تِبان… مو وعود تطير",
-          "عقود واضحة من أوّل يوم — بلا لخبطة",
-          "بنكتب اللي اتفقنا عليه… ونلتزم فيه",
-          "ضمانات ذهبية على جودة التنفيذ",
-          "لو فيه خلل منّا — نصلّحه، مو نتهرّب",
-          "مراحل العمل مضمونة بجدول واضح",
-          "تدفع على مراحل… وأنت مرتاح",
-          "حقوقك محفوظة في العقد — مو كلام طيب",
-          "نراجع العقد معك كلمة بكلمة",
-          "التزام بالمواعيد… هذا أساسنا",
-          "ضمان متابعة بعد التسليم",
-          "شفافية كاملة في التكاليف والبنود",
-          "ما في مفاجآت بعد التوقيع",
-          "ضمان ذهبي: شغل يستاهل اسمك",
-          "العقد يحميك… وإحنا نحترم توقيعنا",
-          "ضمانات مكتوبة — مو وعود بالهوا",
-          "نضمن النتيجة المتفق عليها",
-          "خدمة بعد المشروع… موجودة وما تختفي",
-        ];
-
-  const paintSkill = () => {
-    if (!skillEl) return;
-    const skills = skillsFor();
-    skillEl.textContent = skills[skillIndex % skills.length];
+  /* ── Why Us: one sentence rises bottom → top (same on all screens) ── */
+  const whyTicker = document.getElementById("why-ticker");
+  const whyLine = document.getElementById("why-ticker-line");
+  const WHY_FALLBACK = [
+    "أفكارنا غير… وهذا فرقنا",
+    "متمكّنين من شغلنا — مو كلام فاضي",
+    "ننفّذ أي فكرة… حرفيًا",
+    "عقود مرنة، والتفاوض لمصلحتك",
+    "القيمة أولًا — قبل أي رقم",
+    "نشتغل على مشروعك كأنه مشروعنا",
+    "نتائج تِبان… مو وعود تطير",
+    "عقود واضحة من أوّل يوم — بلا لخبطة",
+    "بنكتب اللي اتفقنا عليه… ونلتزم فيه",
+    "ضمانات ذهبية على جودة التنفيذ",
+    "لو فيه خلل منّا — نصلّحه، مو نتهرّب",
+    "مراحل العمل مضمونة بجدول واضح",
+    "تدفع على مراحل… وأنت مرتاح",
+    "حقوقك محفوظة في العقد — مو كلام طيب",
+    "نراجع العقد معك كلمة بكلمة",
+    "التزام بالمواعيد… هذا أساسنا",
+    "ضمان متابعة بعد التسليم",
+    "شفافية كاملة في التكاليف والبنود",
+    "ما في مفاجآت بعد التوقيع",
+    "ضمان ذهبي: شغل يستاهل اسمك",
+    "العقد يحميك… وإحنا نحترم توقيعنا",
+    "ضمانات مكتوبة — مو وعود بالهوا",
+    "نضمن النتيجة المتفق عليها",
+    "خدمة بعد المشروع… موجودة وما تختفي",
+  ];
+  const skillsFor = () => {
+    const fromI18n =
+      window.ST_I18N && typeof window.ST_I18N.skills === "function"
+        ? window.ST_I18N.skills(window.ST_I18N.getLang())
+        : null;
+    return fromI18n && fromI18n.length ? fromI18n : WHY_FALLBACK;
   };
 
-  const clearWhyReveal = () => {
-    whyRevealTimers.forEach((id) => clearTimeout(id));
-    whyRevealTimers = [];
-  };
+  let whyIndex = 0;
+  let whyTimer = 0;
+  let whyBusy = false;
+  const reduceWhyMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  const fillWhyList = () => {
-    if (!whyList) return;
-    const skills = skillsFor();
-    whyList.replaceChildren(
-      ...skills.map((text) => {
-        const li = document.createElement("li");
-        li.textContent = text;
-        return li;
-      })
-    );
-  };
-
-  const revealWhyList = () => {
-    if (!whyList) return;
-    clearWhyReveal();
-    const items = [...whyList.children];
-    items.forEach((li) => li.classList.remove("is-in"));
-    /* Staggered reveal — light CSS only, no heavy animation libs */
-    items.forEach((li, i) => {
-      const id = window.setTimeout(() => {
-        li.classList.add("is-in");
-      }, 70 + i * 95);
-      whyRevealTimers.push(id);
-    });
-  };
-
-  const lockSkillLineWidth = () => {
-    if (!skillEl || isMobileMQ.matches) {
-      skillEl.style.minWidth = "";
+  const showWhyLine = (text, animateIn) => {
+    if (!whyLine) return;
+    whyLine.textContent = text;
+    whyLine.classList.remove("is-out");
+    if (!animateIn || reduceWhyMotion) {
+      whyLine.classList.add("is-in");
       return;
     }
+    whyLine.classList.remove("is-in");
+    /* force reflow so enter transition runs */
+    void whyLine.offsetWidth;
+    whyLine.classList.add("is-in");
+  };
+
+  const advanceWhy = () => {
+    if (!whyLine || whyBusy) return;
     const skills = skillsFor();
-    const probe = document.createElement("span");
-    const cs = getComputedStyle(skillEl);
-    probe.style.cssText = [
-      "position:absolute",
-      "visibility:hidden",
-      "pointer-events:none",
-      "white-space:nowrap",
-      `font:${cs.font}`,
-      `letter-spacing:${cs.letterSpacing}`,
-      `text-transform:${cs.textTransform}`,
-    ].join(";");
-    document.body.appendChild(probe);
-    let maxW = 0;
-    for (const s of skills) {
-      probe.textContent = s;
-      maxW = Math.max(maxW, probe.offsetWidth);
-    }
-    probe.remove();
-    skillEl.style.minWidth = maxW ? `${Math.ceil(maxW)}px` : "";
-  };
+    if (!skills.length) return;
+    whyBusy = true;
+    whyTicker?.classList.add("is-changing");
 
-  const setWhyOpen = (open) => {
-    whyOpen = !!open;
-    document.body.classList.toggle("why-sheet-open", whyOpen);
-    document.body.classList.toggle("why-drawer-open", whyOpen); /* compat */
-    whyWrap?.classList.toggle("is-open", whyOpen);
-    whyTab?.setAttribute("aria-expanded", whyOpen ? "true" : "false");
-    if (whyUs) whyUs.setAttribute("aria-modal", whyOpen ? "true" : "false");
-    if (whyOpen) {
-      fillWhyList();
-      /* next frame so CSS opacity:0 applies before stagger */
-      requestAnimationFrame(() => revealWhyList());
-    } else {
-      clearWhyReveal();
-      whyList?.querySelectorAll(".is-in").forEach((li) => li.classList.remove("is-in"));
-    }
-  };
+    const finishIn = () => {
+      whyIndex = (whyIndex + 1) % skills.length;
+      showWhyLine(skills[whyIndex], true);
+      window.setTimeout(() => {
+        whyTicker?.classList.remove("is-changing");
+        whyBusy = false;
+      }, 420);
+    };
 
-  const stopSkillTimer = () => {
-    if (skillTimer) {
-      clearInterval(skillTimer);
-      skillTimer = 0;
-    }
-  };
-
-  const startSkillTimer = () => {
-    stopSkillTimer();
-    if (!skillEl || isMobileMQ.matches) return;
-    skillTimer = window.setInterval(() => {
-      skillEl.classList.add("is-fading");
-      setTimeout(() => {
-        skillIndex = (skillIndex + 1) % skillsFor().length;
-        paintSkill();
-        skillEl.classList.remove("is-fading");
-      }, 220);
-    }, 2800);
-  };
-
-  const syncWhyMode = () => {
-    if (!whyWrap || !whyUs) return;
-    if (isMobileMQ.matches) {
-      stopSkillTimer();
-      fillWhyList();
-      if (skillEl) skillEl.hidden = true;
-      if (whyList) whyList.hidden = false;
-      if (whyTab) whyTab.hidden = false;
-      if (whyClose) whyClose.hidden = false;
-      whyUs.classList.remove("is-pinned");
-      whyWrap.style.height = "";
-      document.body.classList.remove("why-pinned");
-      whyUs.style.setProperty("--why-blur", "0px");
-      whyUs.style.setProperty("--why-fade", "1");
-      setWhyOpen(false);
+    if (reduceWhyMotion) {
+      finishIn();
       return;
     }
-    /* Desktop: classic floating rotator */
-    clearWhyReveal();
-    if (skillEl) skillEl.hidden = false;
-    if (whyList) whyList.hidden = true;
-    if (whyTab) whyTab.hidden = true;
-    if (whyClose) whyClose.hidden = true;
-    setWhyOpen(false);
-    document.body.classList.remove("why-drawer-open", "why-sheet-open");
-    paintSkill();
-    lockSkillLineWidth();
-    startSkillTimer();
+
+    whyLine.classList.remove("is-in");
+    whyLine.classList.add("is-out");
+    window.setTimeout(finishIn, 380);
   };
 
-  if (skillEl || whyList) {
-    paintSkill();
-    fillWhyList();
-    syncWhyMode();
+  const startWhyRotate = () => {
+    if (whyTimer) window.clearInterval(whyTimer);
+    whyTimer = 0;
+    if (!whyLine) return;
+    const skills = skillsFor();
+    whyIndex = Math.max(0, skills.indexOf(whyLine.textContent.trim()));
+    if (whyIndex < 0) whyIndex = 0;
+    showWhyLine(skills[whyIndex] || WHY_FALLBACK[0], true);
+    whyTimer = window.setInterval(advanceWhy, 3200);
+  };
+
+  if (whyLine) {
+    startWhyRotate();
     window.addEventListener("st:langchange", () => {
-      skillIndex = 0;
-      paintSkill();
-      fillWhyList();
-      if (whyOpen) revealWhyList();
-      lockSkillLineWidth();
+      whyIndex = 0;
+      startWhyRotate();
     });
-    window.addEventListener("resize", () => {
-      lockSkillLineWidth();
-      syncWhyMode();
-    }, { passive: true });
-    if (typeof isMobileMQ.addEventListener === "function") {
-      isMobileMQ.addEventListener("change", syncWhyMode);
-    } else if (typeof isMobileMQ.addListener === "function") {
-      isMobileMQ.addListener(syncWhyMode);
-    }
-  }
-
-  whyTab?.addEventListener("click", () => setWhyOpen(!whyOpen));
-  whyClose?.addEventListener("click", (e) => {
-    e.stopPropagation();
-    setWhyOpen(false);
-  });
-  document.addEventListener("click", (e) => {
-    if (!whyOpen || !isMobileMQ.matches) return;
-    if (whyUs?.contains(e.target) || whyTab?.contains(e.target)) return;
-    setWhyOpen(false);
-  });
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && whyOpen) setWhyOpen(false);
-  });
-
-  /* Close Why sheet when the user scrolls the page */
-  let whyScrollY = window.scrollY;
-  window.addEventListener(
-    "scroll",
-    () => {
-      if (!isMobileMQ.matches || !whyOpen) {
-        whyScrollY = window.scrollY;
-        return;
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) {
+        if (whyTimer) window.clearInterval(whyTimer);
+        whyTimer = 0;
+      } else {
+        startWhyRotate();
       }
-      if (Math.abs(window.scrollY - whyScrollY) > 28) setWhyOpen(false);
-      whyScrollY = window.scrollY;
-    },
-    { passive: true }
-  );
+    });
+  }
 
   /* Native OS cursor — brand tint via CSS; drop heavy custom cursor DOM */
   document.getElementById("cursor-trail")?.remove();
@@ -258,161 +144,6 @@
   const hero = document.querySelector(".hero");
   const hasHeroEye = document.body.classList.contains("has-hero-eye") && !!hero;
 
-  /* Mobile only: approach blur → pin centered under header */
-  let whyBlurSmooth = 0;
-  let whyFadeSmooth = 1;
-  const WHY_APPROACH = 96;
-  const whyHomeParent = whyWrap?.parentElement || null;
-  const whyHomeNext = whyWrap?.nextElementSibling || null;
-
-  /* Laptop: mount on <body> so fixed Why Us escapes main/footer stacking */
-  function syncWhyMount() {
-    if (!whyWrap) return;
-    if (!isMobileMQ.matches) {
-      if (whyWrap.parentElement !== document.body) {
-        document.body.appendChild(whyWrap);
-      }
-      whyWrap.classList.add("is-floating-layer");
-      return;
-    }
-    whyWrap.classList.remove("is-floating-layer");
-    if (!whyHomeParent || whyWrap.parentElement === whyHomeParent) return;
-    if (whyHomeNext && whyHomeNext.parentElement === whyHomeParent) {
-      whyHomeParent.insertBefore(whyWrap, whyHomeNext);
-    } else {
-      whyHomeParent.appendChild(whyWrap);
-    }
-  }
-  syncWhyMount();
-  if (typeof isMobileMQ.addEventListener === "function") {
-    isMobileMQ.addEventListener("change", syncWhyMount);
-  } else if (typeof isMobileMQ.addListener === "function") {
-    isMobileMQ.addListener(syncWhyMount);
-  }
-
-  function updateWhyPin() {
-    if (!whyWrap || !whyUs || !header) return;
-
-    /* Mobile: side drawer only — no pin/blur tracking */
-    if (isMobileMQ.matches) {
-      whyUs.classList.remove("is-pinned");
-      whyWrap.style.height = "";
-      document.body.classList.remove("why-pinned");
-      whyUs.style.setProperty("--why-blur", "0px");
-      whyUs.style.setProperty("--why-fade", "1");
-      return;
-    }
-
-    /* Laptop: stay fixed bottom-right — no header docking */
-    syncWhyMount();
-    whyUs.classList.remove("is-pinned");
-    whyWrap.style.height = "";
-    document.body.classList.remove("why-pinned");
-    whyBlurSmooth = 0;
-    whyFadeSmooth = 1;
-    whyUs.style.setProperty("--why-blur", "0px");
-    whyUs.style.setProperty("--why-fade", "1");
-  }
-
-  /* Adaptive pill contrast + mobile glass tint from colors behind */
-  let whyInvertSmooth = 0;
-  let whyGlass = { r: 14, g: 42, b: 34 };
-  const whyLabel = whyUs?.querySelector(".hero__skill-label");
-
-  function parseRgba(str) {
-    if (!str || str === "transparent") return null;
-    const m = str.match(/rgba?\((\d+)[,\s]+(\d+)[,\s]+(\d+)(?:[,\s/]+([\d.]+))?/i);
-    if (!m) return null;
-    return {
-      r: +m[1],
-      g: +m[2],
-      b: +m[3],
-      a: m[4] === undefined ? 1 : +m[4],
-    };
-  }
-
-  function lumaOf(rgb) {
-    return (0.2126 * rgb.r + 0.7152 * rgb.g + 0.0722 * rgb.b) / 255;
-  }
-
-  function sampleBackdrop(el) {
-    const fallback = { r: 12, g: 40, b: 32, luma: 0.12 };
-    if (!el) return fallback;
-    const r = el.getBoundingClientRect();
-    if (r.width < 2 || r.height < 2) return fallback;
-    const pts = [
-      [r.left + r.width * 0.5, r.top + r.height * 0.5],
-      [r.left + r.width * 0.18, r.top + r.height * 0.5],
-      [r.left + r.width * 0.82, r.top + r.height * 0.5],
-      [r.left + r.width * 0.5, r.top + 3],
-      [r.left + r.width * 0.5, r.bottom - 3],
-    ];
-    let sr = 0;
-    let sg = 0;
-    let sb = 0;
-    let sl = 0;
-    let n = 0;
-    for (const [x, y] of pts) {
-      if (x < 0 || y < 0 || x > window.innerWidth || y > window.innerHeight) continue;
-      const stack = document.elementsFromPoint(x, y);
-      for (const node of stack) {
-        if (!node || node === whyUs || whyUs.contains(node)) continue;
-        if (node === eye || eye?.contains(node)) continue;
-        if (node.classList?.contains("eye-ripple")) continue;
-        const cs = getComputedStyle(node);
-        const bg = parseRgba(cs.backgroundColor);
-        if (bg && bg.a > 0.12) {
-          sr += bg.r;
-          sg += bg.g;
-          sb += bg.b;
-          sl += lumaOf(bg);
-          n += 1;
-          break;
-        }
-        const fg = parseRgba(cs.color);
-        if (fg && fg.a > 0.5 && lumaOf(fg) > 0.82 && (cs.fontWeight >= 600 || node.matches("button, .btn, .featured__badge"))) {
-          sr += fg.r;
-          sg += fg.g;
-          sb += fg.b;
-          sl += 0.88;
-          n += 1;
-          break;
-        }
-      }
-    }
-    if (!n) return fallback;
-    return { r: sr / n, g: sg / n, b: sb / n, luma: sl / n };
-  }
-
-  let whyContrastTick = 0;
-  function updateWhyContrast() {
-    if (!whyUs || !whyLabel) return;
-    /* Mobile + laptop floating card: keep classic white pill / white text */
-    if (isMobileMQ.matches || whyWrap?.classList.contains("is-floating-layer")) {
-      whyUs.style.setProperty("--why-invert", "0");
-      whyUs.style.setProperty("--why-glass", "255, 255, 255");
-      whyInvertSmooth = 0;
-      return;
-    }
-    whyContrastTick = (whyContrastTick + 1) % 4; // every 4th frame
-    if (whyContrastTick !== 0) return;
-    const sample = sampleBackdrop(whyLabel);
-    let target = 0;
-    if (sample.luma > 0.55) target = 1;
-    else if (sample.luma > 0.38) target = (sample.luma - 0.38) / (0.55 - 0.38);
-    whyInvertSmooth += (target - whyInvertSmooth) * 0.045;
-    if (Math.abs(target - whyInvertSmooth) < 0.002) whyInvertSmooth = target;
-    whyUs.style.setProperty("--why-invert", whyInvertSmooth.toFixed(4));
-
-    /* Glass tint follows colors passing behind (non-floating fallback) */
-    whyGlass.r += (sample.r - whyGlass.r) * 0.055;
-    whyGlass.g += (sample.g - whyGlass.g) * 0.055;
-    whyGlass.b += (sample.b - whyGlass.b) * 0.055;
-    whyUs.style.setProperty(
-      "--why-glass",
-      `${Math.round(whyGlass.r)}, ${Math.round(whyGlass.g)}, ${Math.round(whyGlass.b)}`
-    );
-  }
   const MAX_LOOK = 0.32;
   const DIVE_END = 0.48;
 
@@ -727,8 +458,6 @@
     }
 
     updateEyeDock();
-    updateWhyPin();
-    updateWhyContrast();
 
     if (eye && ball) {
       const rect = eye.getBoundingClientRect();
@@ -887,25 +616,30 @@
     card.classList.toggle("is-flipped");
   });
 
-  /* ── Services: light coverflow + full-size sheet ── */
+  /* ── Services: infinite full-bleed ribbon + water side blur ── */
   (() => {
     const film = document.getElementById("services-film");
     const track = document.getElementById("services-track");
     if (!film || !track) return;
 
-    /* Don't download every service image up front — hydrate when visible */
-    track.querySelectorAll(".flip-card__img[src]").forEach((img) => {
-      if (img.dataset.src) return;
-      img.dataset.src = img.getAttribute("src") || "";
-      img.removeAttribute("src");
-      img.setAttribute("loading", "lazy");
-      img.setAttribute("decoding", "async");
-    });
+    film.classList.add("is-ribbon", "is-paused");
+    film.classList.remove("is-grid");
 
-    const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
     const cards = [...track.querySelectorAll(".service-flip")];
     const n = cards.length;
     if (!n) return;
+
+    track.querySelectorAll(".flip-card__img").forEach((img) => {
+      const src = img.getAttribute("src") || img.dataset.src || "";
+      if (src) {
+        img.dataset.src = src;
+        if (!img.getAttribute("src")) img.src = src;
+      }
+      img.setAttribute("loading", "lazy");
+      img.setAttribute("decoding", "async");
+      img.setAttribute("draggable", "false");
+      img.draggable = false;
+    });
 
     const sheet = document.getElementById("svc-sheet");
     const sheetPanel = document.getElementById("svc-sheet-panel");
@@ -959,19 +693,14 @@
     let pending = false;
     let axis = null;
     let dragMoved = false;
-    let hovering = false;
     let lastX = 0;
     let startX = 0;
     let startY = 0;
     let lastT = 0;
     let raf = 0;
-    let auto = false;
-    let holdTimer = 0;
-    let autoAcc = 0;
     const AXIS_SLOP = 10;
 
     const wrapIndex = (i) => ((i % n) + n) % n;
-
     const shortest = (from, to) => {
       let d = to - from;
       while (d > n / 2) d -= n;
@@ -979,61 +708,49 @@
       return d;
     };
 
-    const metrics = () => {
+    const spacingFor = () => {
       const w = window.innerWidth;
-      /* Lighter resting coverflow — less 3D math on phones */
-      if (w < 640) return { spacing: 118, depth: 0, rot: 0, lift: 0, scaleStep: 0.08, lite: true };
-      if (w < 980) return { spacing: 148, depth: 80, rot: 18, lift: 2, scaleStep: 0.055, lite: false };
-      return { spacing: 178, depth: 110, rot: 22, lift: 4, scaleStep: 0.05, lite: false };
-    };
-
-    const syncPausedClass = () => {
-      film.classList.add("is-paused");
+      /* Tight enough that ~5 cards sit across the viewport */
+      if (w < 640) return Math.min(168, w * 0.48);
+      if (w < 980) return Math.min(188, w * 0.22);
+      return Math.min(210, w * 0.145);
     };
 
     const paint = () => {
-      const m = metrics();
+      const spacing = spacingFor();
       const center = index + offset;
-      const visLimit = m.lite ? 1.55 : 2.35;
 
       cards.forEach((card, i) => {
         const raw = shortest(center, i);
         const abs = Math.abs(raw);
-        const x = raw * m.spacing;
-        const visible = abs < visLimit;
-        const scale = Math.max(0.72, 1 - abs * m.scaleStep);
+        const x = raw * spacing;
+        /* Soft cinematic depth — several cards visible across the strip */
+        const scale = Math.max(0.82, 1.04 - abs * 0.07);
+        const y = abs * 4;
+        const ry = raw * -6;
+        const opacity = abs < 0.4 ? 1 : Math.max(0.55, 1 - abs * 0.12);
+        let blur = 0;
+        if (abs >= 0.4 && abs < 1.2) blur = 0.25 + (abs - 0.4) * 0.7;
+        else if (abs >= 1.2) blur = Math.min(2.6, 0.9 + (abs - 1.2) * 1.1);
+        const bright = abs < 0.4 ? 1.05 : Math.max(0.78, 1 - abs * 0.1);
+        const sat = abs < 0.4 ? 1.08 : Math.max(0.82, 1 - abs * 0.08);
 
-        if (m.lite) {
-          /* Flat 2D carousel — same look, far less GPU */
-          card.style.transform = `translate(-50%, -50%) translate3d(${x}px, 0, 0) scale(${scale})`;
-        } else {
-          const z = 28 - abs * m.depth;
-          const ry = raw * -m.rot;
-          const y = abs * m.lift;
-          card.style.transform = `translate(-50%, -50%) translate3d(${x}px, ${y}px, ${z}px) rotateY(${ry}deg) scale(${scale})`;
-        }
-
-        card.style.zIndex = String(Math.round(40 - abs * 8));
-        card.style.opacity = visible ? String(Math.max(0.45, 1 - abs * 0.22)) : "0";
-        card.style.visibility = visible ? "visible" : "hidden";
+        card.style.transform =
+          `translate(-50%, -50%) translate3d(${x}px, ${y}px, 0) rotateY(${ry}deg) scale(${scale})`;
+        card.style.zIndex = String(Math.round(50 - abs * 10));
+        card.style.opacity = String(opacity);
+        card.style.visibility = abs > 3.6 ? "hidden" : "visible";
+        card.style.filter =
+          abs < 0.4
+            ? `brightness(${bright}) saturate(${sat})`
+            : `blur(${blur.toFixed(2)}px) brightness(${bright.toFixed(2)}) saturate(${sat.toFixed(2)})`;
         card.classList.toggle("is-active", abs < 0.45);
-        card.classList.toggle("is-near", abs >= 0.45 && abs < 1.45);
-        card.classList.toggle("is-popped", abs < 0.45);
-        card.classList.remove("is-flipped");
+        card.classList.toggle("is-near", abs >= 0.45 && abs < 1.7);
+        card.classList.toggle("is-far", abs >= 1.7);
+        card.classList.remove("is-flipped", "is-popped");
         card.tabIndex = abs < 0.45 ? 0 : -1;
         card.setAttribute("aria-hidden", abs < 0.45 ? "false" : "true");
-
-        if (visible) {
-          const img = card.querySelector(".flip-card__img[data-src]");
-          if (img && !img.getAttribute("src")) img.src = img.dataset.src;
-        }
       });
-    };
-
-    const resumeAutoSoon = () => {
-      auto = false;
-      clearTimeout(holdTimer);
-      syncPausedClass();
     };
 
     const snap = () => {
@@ -1045,22 +762,18 @@
 
     const stepBy = (dir) => {
       closeSheet();
-      cards.forEach((c) => c.classList.remove("is-flipped"));
       index = wrapIndex(index + dir);
       offset = 0;
       vel = 0;
-      autoAcc = 0;
       paint();
-      resumeAutoSoon();
     };
 
     const needsAnim = () =>
-      dragging || Math.abs(vel) > 0.001 || Math.abs(offset) > 0.001 || auto;
+      dragging || Math.abs(vel) > 0.001 || Math.abs(offset) > 0.001;
 
     const tick = (ts) => {
       if (!lastT) lastT = ts;
-      const dtMs = Math.min(32, ts - lastT);
-      const dt = dtMs / 16.67;
+      const dt = Math.min(32, ts - lastT) / 16.67;
       lastT = ts;
 
       if (!dragging) {
@@ -1078,7 +791,6 @@
         }
       }
 
-      syncPausedClass();
       paint();
       if (needsAnim()) raf = requestAnimationFrame(tick);
       else {
@@ -1094,28 +806,31 @@
       }
     };
 
+    film.addEventListener("dragstart", (e) => e.preventDefault());
+
     const onDown = (e) => {
       if (e.target.closest(".film-stage__nav")) return;
       if (e.target.closest("a")) return;
+      if (e.pointerType !== "touch") e.preventDefault();
       pending = true;
       dragging = false;
       axis = null;
       dragMoved = false;
-      startX = e.clientX ?? e.touches?.[0]?.clientX ?? 0;
-      startY = e.clientY ?? e.touches?.[0]?.clientY ?? 0;
+      startX = e.clientX ?? 0;
+      startY = e.clientY ?? 0;
       lastX = startX;
       vel = 0;
     };
 
     const onMove = (e) => {
       if (!pending && !dragging) return;
-      const x = e.clientX ?? e.touches?.[0]?.clientX;
-      const y = e.clientY ?? e.touches?.[0]?.clientY;
+      const x = e.clientX;
+      const y = e.clientY;
       if (x == null) return;
 
       if (axis === null && pending) {
         const dx0 = x - startX;
-        const dy0 = (y ?? startY) - startY;
+        const dy0 = y - startY;
         if (Math.hypot(dx0, dy0) < AXIS_SLOP) return;
         if (Math.abs(dy0) > Math.abs(dx0) * 1.05) {
           axis = "y";
@@ -1125,10 +840,8 @@
         axis = "x";
         pending = false;
         dragging = true;
-        auto = false;
         closeSheet();
         film.classList.add("is-dragging");
-        syncPausedClass();
         kick();
         try {
           film.setPointerCapture?.(e.pointerId);
@@ -1136,11 +849,10 @@
       }
 
       if (axis !== "x" || !dragging) return;
-
       const dx = x - lastX;
       lastX = x;
       if (Math.abs(dx) > 2) dragMoved = true;
-      const step = dx / Math.max(90, metrics().spacing * 0.92);
+      const step = dx / Math.max(90, spacingFor() * 0.9);
       offset -= step;
       while (offset > 0.5) {
         offset -= 1;
@@ -1175,19 +887,7 @@
       }
       snap();
       kick();
-      resumeAutoSoon();
     };
-
-    if (finePointer) {
-      film.addEventListener("pointerenter", () => {
-        hovering = true;
-        syncPausedClass();
-      });
-      film.addEventListener("pointerleave", () => {
-        hovering = false;
-        syncPausedClass();
-      });
-    }
 
     film.addEventListener("pointerdown", onDown);
     window.addEventListener("pointermove", onMove);
@@ -1217,9 +917,7 @@
           closeSheet();
           index = cards.indexOf(card);
           offset = 0;
-          autoAcc = 0;
           paint();
-          resumeAutoSoon();
           return;
         }
         e.preventDefault();
@@ -1233,28 +931,7 @@
       paint();
     });
     paint();
-    syncPausedClass();
-    requestAnimationFrame(() => {
-      paint();
-      syncPausedClass();
-    });
-
-    const io = new IntersectionObserver(
-      (entries) => {
-        const visible = entries.some((e) => e.isIntersecting);
-        if (visible) paint();
-        else {
-          closeSheet();
-          if (raf) {
-            cancelAnimationFrame(raf);
-            raf = 0;
-            lastT = 0;
-          }
-        }
-      },
-      { threshold: 0.1 }
-    );
-    io.observe(film);
+    requestAnimationFrame(paint);
   })();
 
   /* ── Partners: 3D standing pages, infinite ring ── */
@@ -1394,22 +1071,40 @@
       kick();
     };
 
+    /* Kill native image-drag ghost that steals the carousel gesture */
+    stage.addEventListener("dragstart", (e) => e.preventDefault());
+    pages.forEach((page) => {
+      page.setAttribute("draggable", "false");
+      page.querySelectorAll("img").forEach((img) => {
+        img.setAttribute("draggable", "false");
+        img.draggable = false;
+      });
+    });
+
+    let pressPage = null;
+    const openPartner = (page) => {
+      const href = page?.getAttribute("href");
+      if (!href) return;
+      pauseAuto();
+      window.open(href, "_blank", "noopener,noreferrer");
+    };
+
     const onDown = (e) => {
       if (e.target.closest(".partner-stage__nav")) return;
-      /* Allow simple clicks on front page to open without starting a drag fight */
-      if (e.target.closest(".partner-page.is-front") && e.pointerType !== "touch") {
-        pauseAuto();
-        return;
-      }
+      /* Always own the gesture so the browser never starts an image drag */
+      if (e.pointerType !== "touch") e.preventDefault();
       dragging = true;
       dragMoved = false;
+      pressPage = e.target.closest(".partner-page");
       targetRot = null;
       stage.classList.add("is-dragging");
       lastX = e.clientX ?? e.touches?.[0]?.clientX ?? 0;
       vel = 0;
       pauseAuto();
       kick();
-      if (e.pointerType !== "touch") stage.setPointerCapture?.(e.pointerId);
+      try {
+        stage.setPointerCapture?.(e.pointerId);
+      } catch (_) {}
     };
 
     const onMove = (e) => {
@@ -1431,15 +1126,29 @@
       try {
         stage.releasePointerCapture?.(e.pointerId);
       } catch (_) {}
+
+      const page = pressPage;
+      pressPage = null;
+
       if (dragMoved) {
-        const block = (ev) => {
-          ev.preventDefault();
-          ev.stopPropagation();
-          stage.removeEventListener("click", block, true);
-        };
-        stage.addEventListener("click", block, true);
-        /* snap to nearest after drag */
+        /* snap to nearest after drag — don't open links */
         targetRot = -frontIndex * stepDeg;
+        pauseAuto();
+        kick();
+        return;
+      }
+
+      /* Clean tap: pointerup opens (click is often suppressed after preventDefault) */
+      if (page) {
+        if (page.classList.contains("is-front")) {
+          openPartner(page);
+        } else {
+          const i = pages.indexOf(page);
+          if (i >= 0) {
+            targetRot = -i * stepDeg;
+            vel = 0;
+          }
+        }
       }
       pauseAuto();
       kick();
@@ -1460,14 +1169,13 @@
       btn.addEventListener("pointerdown", (e) => e.stopPropagation());
     });
 
+    /* Fallback for keyboard / assistive activation */
     pages.forEach((page) => {
       page.addEventListener("click", (e) => {
-        if (dragMoved) {
-          e.preventDefault();
-          return;
-        }
+        e.preventDefault();
+        e.stopPropagation();
+        if (dragMoved) return;
         if (!page.classList.contains("is-front")) {
-          e.preventDefault();
           const i = pages.indexOf(page);
           targetRot = -i * stepDeg;
           vel = 0;
@@ -1475,8 +1183,19 @@
           kick();
           return;
         }
-        /* front page: let the browser open the link (new tab) */
-        pauseAuto();
+        openPartner(page);
+      });
+      page.addEventListener("keydown", (e) => {
+        if (e.key !== "Enter" && e.key !== " ") return;
+        e.preventDefault();
+        if (page.classList.contains("is-front")) openPartner(page);
+        else {
+          const i = pages.indexOf(page);
+          targetRot = -i * stepDeg;
+          vel = 0;
+          pauseAuto();
+          kick();
+        }
       });
     });
 
@@ -1566,77 +1285,6 @@
   closeBtn?.addEventListener("click", closeMenu);
   overlay?.querySelectorAll("a").forEach((link) => link.addEventListener("click", closeMenu));
 
-  /* ── Ambient field: scroll + soft pointer reactivity ── */
-  (() => {
-    const field = document.getElementById("ambient-field");
-    if (!field) return;
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduce) return;
-
-    let targetScroll = 0;
-    let curScroll = 0;
-    let targetMx = 0.5;
-    let targetMy = 0.5;
-    let curMx = 0.5;
-    let curMy = 0.5;
-    let raf = 0;
-    let running = true;
-
-    const maxScroll = () => Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
-
-    const readScroll = () => {
-      targetScroll = window.scrollY / maxScroll();
-    };
-
-    const tick = () => {
-      if (!running || document.hidden) {
-        raf = 0;
-        return;
-      }
-      curScroll += (targetScroll - curScroll) * 0.06;
-      curMx += (targetMx - curMx) * 0.05;
-      curMy += (targetMy - curMy) * 0.05;
-      field.style.setProperty("--amb-scroll", curScroll.toFixed(4));
-      field.style.setProperty("--amb-mx", curMx.toFixed(4));
-      field.style.setProperty("--amb-my", curMy.toFixed(4));
-      raf = requestAnimationFrame(tick);
-    };
-
-    const start = () => {
-      if (raf || document.hidden) return;
-      running = true;
-      raf = requestAnimationFrame(tick);
-    };
-
-    readScroll();
-    start();
-    window.addEventListener("scroll", readScroll, { passive: true });
-    window.addEventListener("resize", readScroll, { passive: true });
-    document.addEventListener("visibilitychange", () => {
-      if (document.hidden) {
-        running = false;
-        if (raf) cancelAnimationFrame(raf);
-        raf = 0;
-        document.documentElement.classList.add("is-bg-paused");
-      } else {
-        document.documentElement.classList.remove("is-bg-paused");
-        start();
-      }
-    });
-
-    const fine = window.matchMedia("(pointer: fine)").matches;
-    if (fine) {
-      window.addEventListener(
-        "pointermove",
-        (e) => {
-          targetMx = e.clientX / Math.max(1, window.innerWidth);
-          targetMy = e.clientY / Math.max(1, window.innerHeight);
-        },
-        { passive: true }
-      );
-    }
-  })();
-
   /* ── Back to top ── */
   const backTop = document.getElementById("back-top");
   window.addEventListener("scroll", () => {
@@ -1644,8 +1292,10 @@
   }, { passive: true });
   backTop?.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
 
-  /* ── Reveal on scroll ── */
-  const revealEls = document.querySelectorAll(".service-card, .flip-card, .cta-band__inner");
+  /* ── Reveal on scroll (never touch the services ribbon cards) ── */
+  const revealEls = [...document.querySelectorAll(".service-card, .flip-card, .cta-band__inner")].filter(
+    (el) => !el.closest("#services-film, .film-stage.is-ribbon")
+  );
   if ("IntersectionObserver" in window) {
     const io = new IntersectionObserver(
       (entries) => {
@@ -1653,9 +1303,7 @@
           if (entry.isIntersecting) {
             entry.target.style.transition = "0.55s ease";
             entry.target.style.opacity = "1";
-            if (!entry.target.classList.contains("blog-card")) {
-              entry.target.style.transform = "none";
-            }
+            entry.target.style.transform = "none";
             io.unobserve(entry.target);
           }
         });
@@ -1664,7 +1312,7 @@
     );
     revealEls.forEach((el) => {
       el.style.opacity = "0";
-      if (!el.classList.contains("blog-card")) el.style.transform = "translateY(18px)";
+      el.style.transform = "translateY(18px)";
       io.observe(el);
     });
   }
