@@ -3736,8 +3736,8 @@ body.svc-sheet-open {
   }
 
   .featured__visual--photo {
-    min-height: 0;
-    width: min(100%, calc(min(56vh, 22rem) * 4 / 3));
+    min-height: 0 !important;
+    width: min(100%, calc(min(52vh, 20rem) * 3 / 2));
     border-radius: 18px;
   }
 
@@ -3964,16 +3964,21 @@ body.svc-sheet-open {
 
 
 .featured__visual--photo {
-  /* Template frame: match source assets (640×480 → 4:3). Never stretch. */
-  aspect-ratio: 4 / 3;
-  width: min(100%, 42rem, calc(min(68vh, 34rem) * 4 / 3));
+  /* Template frame locked to asset ratio (1200×800 → 3:2). Never stretch. */
+  --feat-ratio: 3 / 2;
+  aspect-ratio: var(--feat-ratio);
+  width: min(100%, 42rem, calc(min(70vh, 36rem) * 3 / 2));
   height: auto;
-  min-height: 0;
+  min-height: 0 !important;
+  max-height: none;
   margin-inline: auto;
   padding: 0;
   display: block;
+  align-self: center;
+  justify-self: center;
   background: #0a140e;
   place-items: unset;
+  overflow: hidden;
 }
 
 .featured__visual--photo::before,
@@ -3981,12 +3986,25 @@ body.svc-sheet-open {
   display: none;
 }
 
+.featured__visual--photo picture {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
 .featured__photo {
+  /* Intrinsic ratio drives layout — never force a mismatched height. */
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
+  min-width: 0;
   min-height: 0;
+  max-width: none;
+  max-height: none;
+  aspect-ratio: var(--feat-ratio, 3 / 2);
   object-fit: cover;
   object-position: center center;
   display: block;
