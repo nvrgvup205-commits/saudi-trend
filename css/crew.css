@@ -3735,6 +3735,12 @@ body.svc-sheet-open {
     border-radius: 18px;
   }
 
+  .featured__visual--photo {
+    min-height: 0;
+    width: min(100%, calc(min(56vh, 22rem) * 4 / 3));
+    border-radius: 18px;
+  }
+
   .featured__icon-wrap {
     width: min(180px, 58%);
   }
@@ -3958,9 +3964,16 @@ body.svc-sheet-open {
 
 
 .featured__visual--photo {
+  /* Template frame: match source assets (640×480 → 4:3). Never stretch. */
+  aspect-ratio: 4 / 3;
+  width: min(100%, 42rem, calc(min(68vh, 34rem) * 4 / 3));
+  height: auto;
+  min-height: 0;
+  margin-inline: auto;
   padding: 0;
   display: block;
   background: #0a140e;
+  place-items: unset;
 }
 
 .featured__visual--photo::before,
@@ -3969,11 +3982,13 @@ body.svc-sheet-open {
 }
 
 .featured__photo {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
-  min-height: 420px;
+  min-height: 0;
   object-fit: cover;
-  object-position: center;
+  object-position: center center;
   display: block;
   transition: transform 0.6s ease;
 }
@@ -4102,7 +4117,11 @@ body.svc-sheet-open {
     width: 100%;
     justify-content: center;
   }
+  .featured__visual--photo {
+    min-height: 0;
+  }
+
   .featured__photo {
-    min-height: 240px;
+    min-height: 0;
   }
 }
