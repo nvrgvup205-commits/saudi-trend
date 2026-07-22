@@ -710,9 +710,10 @@
 
     const spacingFor = () => {
       const w = window.innerWidth;
-      if (w < 640) return Math.max(150, w * 0.42);
-      if (w < 980) return Math.max(180, w * 0.24);
-      return Math.max(220, Math.min(260, w * 0.16));
+      /* Tight enough that ~5 cards sit across the viewport */
+      if (w < 640) return Math.min(168, w * 0.48);
+      if (w < 980) return Math.min(188, w * 0.22);
+      return Math.min(210, w * 0.145);
     };
 
     const paint = () => {
@@ -723,30 +724,29 @@
         const raw = shortest(center, i);
         const abs = Math.abs(raw);
         const x = raw * spacing;
-        /* Soft cinematic depth — neighbors stay readable */
-        const scale = Math.max(0.78, 1.05 - abs * 0.1);
-        const y = abs * 6;
-        const ry = raw * -9; /* subtle turn away from center */
-        const opacity = abs < 0.4 ? 1 : Math.max(0.42, 1 - abs * 0.18);
-        /* Near: almost sharp. Far: gentle mist — never wipe out neighbors */
+        /* Soft cinematic depth — several cards visible across the strip */
+        const scale = Math.max(0.82, 1.04 - abs * 0.07);
+        const y = abs * 4;
+        const ry = raw * -6;
+        const opacity = abs < 0.4 ? 1 : Math.max(0.55, 1 - abs * 0.12);
         let blur = 0;
-        if (abs >= 0.4 && abs < 1.15) blur = 0.35 + (abs - 0.4) * 0.9; /* ~0.35–1px */
-        else if (abs >= 1.15) blur = Math.min(3.2, 1.1 + (abs - 1.15) * 1.4);
-        const bright = abs < 0.4 ? 1.05 : Math.max(0.72, 1 - abs * 0.12);
-        const sat = abs < 0.4 ? 1.08 : Math.max(0.78, 1 - abs * 0.1);
+        if (abs >= 0.4 && abs < 1.2) blur = 0.25 + (abs - 0.4) * 0.7;
+        else if (abs >= 1.2) blur = Math.min(2.6, 0.9 + (abs - 1.2) * 1.1);
+        const bright = abs < 0.4 ? 1.05 : Math.max(0.78, 1 - abs * 0.1);
+        const sat = abs < 0.4 ? 1.08 : Math.max(0.82, 1 - abs * 0.08);
 
         card.style.transform =
           `translate(-50%, -50%) translate3d(${x}px, ${y}px, 0) rotateY(${ry}deg) scale(${scale})`;
         card.style.zIndex = String(Math.round(50 - abs * 10));
         card.style.opacity = String(opacity);
-        card.style.visibility = abs > 3.2 ? "hidden" : "visible";
+        card.style.visibility = abs > 3.6 ? "hidden" : "visible";
         card.style.filter =
           abs < 0.4
             ? `brightness(${bright}) saturate(${sat})`
             : `blur(${blur.toFixed(2)}px) brightness(${bright.toFixed(2)}) saturate(${sat.toFixed(2)})`;
         card.classList.toggle("is-active", abs < 0.45);
-        card.classList.toggle("is-near", abs >= 0.45 && abs < 1.55);
-        card.classList.toggle("is-far", abs >= 1.55);
+        card.classList.toggle("is-near", abs >= 0.45 && abs < 1.7);
+        card.classList.toggle("is-far", abs >= 1.7);
         card.classList.remove("is-flipped", "is-popped");
         card.tabIndex = abs < 0.45 ? 0 : -1;
         card.setAttribute("aria-hidden", abs < 0.45 ? "false" : "true");
