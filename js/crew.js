@@ -3,17 +3,8 @@
   const eyeFollowMouse = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
   const isMobileMQ = window.matchMedia("(max-width: 720px)");
 
-  /* ── Why-us: desktop rotator / mobile full sheet with sequential reveal ── */
-  const skillEl = document.getElementById("hero-skill");
-  const whyWrap = document.getElementById("why-wrap");
-  const whyUs = document.getElementById("why-us");
-  const whyTab = document.getElementById("why-tab");
-  const whyClose = document.getElementById("why-close");
-  const whyList = document.getElementById("why-list");
-  let skillIndex = 0;
-  let skillTimer = 0;
-  let whyOpen = false;
-  let whyRevealTimers = [];
+  /* ── Why Us: TV news ticker crawl ── */
+  const whyTickerRun = document.getElementById("why-ticker-run");
   const skillsFor = () =>
     window.ST_I18N
       ? window.ST_I18N.skills(window.ST_I18N.getLang())
@@ -44,187 +35,26 @@
           "خدمة بعد المشروع… موجودة وما تختفي",
         ];
 
-  const paintSkill = () => {
-    if (!skillEl) return;
+  const fillWhyTicker = () => {
+    if (!whyTickerRun) return;
     const skills = skillsFor();
-    skillEl.textContent = skills[skillIndex % skills.length];
-  };
-
-  const clearWhyReveal = () => {
-    whyRevealTimers.forEach((id) => clearTimeout(id));
-    whyRevealTimers = [];
-  };
-
-  const fillWhyList = () => {
-    if (!whyList) return;
-    const skills = skillsFor();
-    whyList.replaceChildren(
-      ...skills.map((text) => {
-        const li = document.createElement("li");
-        li.textContent = text;
-        return li;
-      })
-    );
-  };
-
-  const revealWhyList = () => {
-    if (!whyList) return;
-    clearWhyReveal();
-    const items = [...whyList.children];
-    items.forEach((li) => li.classList.remove("is-in"));
-    /* Staggered reveal — light CSS only, no heavy animation libs */
-    items.forEach((li, i) => {
-      const id = window.setTimeout(() => {
-        li.classList.add("is-in");
-      }, 70 + i * 95);
-      whyRevealTimers.push(id);
-    });
-  };
-
-  const lockSkillLineWidth = () => {
-    if (!skillEl || isMobileMQ.matches) {
-      skillEl.style.minWidth = "";
-      return;
+    const frag = document.createDocumentFragment();
+    /* Duplicate once for a seamless CSS loop (50% travel) */
+    for (let pass = 0; pass < 2; pass++) {
+      skills.forEach((text) => {
+        const span = document.createElement("span");
+        span.className = "why-ticker__item";
+        span.textContent = text;
+        frag.appendChild(span);
+      });
     }
-    const skills = skillsFor();
-    const probe = document.createElement("span");
-    const cs = getComputedStyle(skillEl);
-    probe.style.cssText = [
-      "position:absolute",
-      "visibility:hidden",
-      "pointer-events:none",
-      "white-space:nowrap",
-      `font:${cs.font}`,
-      `letter-spacing:${cs.letterSpacing}`,
-      `text-transform:${cs.textTransform}`,
-    ].join(";");
-    document.body.appendChild(probe);
-    let maxW = 0;
-    for (const s of skills) {
-      probe.textContent = s;
-      maxW = Math.max(maxW, probe.offsetWidth);
-    }
-    probe.remove();
-    skillEl.style.minWidth = maxW ? `${Math.ceil(maxW)}px` : "";
+    whyTickerRun.replaceChildren(frag);
   };
 
-  const setWhyOpen = (open) => {
-    whyOpen = !!open;
-    document.body.classList.toggle("why-sheet-open", whyOpen);
-    document.body.classList.toggle("why-drawer-open", whyOpen); /* compat */
-    whyWrap?.classList.toggle("is-open", whyOpen);
-    whyTab?.setAttribute("aria-expanded", whyOpen ? "true" : "false");
-    if (whyUs) whyUs.setAttribute("aria-modal", whyOpen ? "true" : "false");
-    if (whyOpen) {
-      fillWhyList();
-      /* next frame so CSS opacity:0 applies before stagger */
-      requestAnimationFrame(() => revealWhyList());
-    } else {
-      clearWhyReveal();
-      whyList?.querySelectorAll(".is-in").forEach((li) => li.classList.remove("is-in"));
-    }
-  };
-
-  const stopSkillTimer = () => {
-    if (skillTimer) {
-      clearInterval(skillTimer);
-      skillTimer = 0;
-    }
-  };
-
-  const startSkillTimer = () => {
-    stopSkillTimer();
-    if (!skillEl || isMobileMQ.matches) return;
-    skillTimer = window.setInterval(() => {
-      skillEl.classList.add("is-fading");
-      setTimeout(() => {
-        skillIndex = (skillIndex + 1) % skillsFor().length;
-        paintSkill();
-        skillEl.classList.remove("is-fading");
-      }, 220);
-    }, 2800);
-  };
-
-  const syncWhyMode = () => {
-    if (!whyWrap || !whyUs) return;
-    if (isMobileMQ.matches) {
-      stopSkillTimer();
-      fillWhyList();
-      if (skillEl) skillEl.hidden = true;
-      if (whyList) whyList.hidden = false;
-      if (whyTab) whyTab.hidden = false;
-      if (whyClose) whyClose.hidden = false;
-      whyUs.classList.remove("is-pinned");
-      whyWrap.style.height = "";
-      document.body.classList.remove("why-pinned");
-      whyUs.style.setProperty("--why-blur", "0px");
-      whyUs.style.setProperty("--why-fade", "1");
-      setWhyOpen(false);
-      return;
-    }
-    /* Desktop: classic floating rotator */
-    clearWhyReveal();
-    if (skillEl) skillEl.hidden = false;
-    if (whyList) whyList.hidden = true;
-    if (whyTab) whyTab.hidden = true;
-    if (whyClose) whyClose.hidden = true;
-    setWhyOpen(false);
-    document.body.classList.remove("why-drawer-open", "why-sheet-open");
-    paintSkill();
-    lockSkillLineWidth();
-    startSkillTimer();
-  };
-
-  if (skillEl || whyList) {
-    paintSkill();
-    fillWhyList();
-    syncWhyMode();
-    window.addEventListener("st:langchange", () => {
-      skillIndex = 0;
-      paintSkill();
-      fillWhyList();
-      if (whyOpen) revealWhyList();
-      lockSkillLineWidth();
-    });
-    window.addEventListener("resize", () => {
-      lockSkillLineWidth();
-      syncWhyMode();
-    }, { passive: true });
-    if (typeof isMobileMQ.addEventListener === "function") {
-      isMobileMQ.addEventListener("change", syncWhyMode);
-    } else if (typeof isMobileMQ.addListener === "function") {
-      isMobileMQ.addListener(syncWhyMode);
-    }
+  if (whyTickerRun) {
+    fillWhyTicker();
+    window.addEventListener("st:langchange", fillWhyTicker);
   }
-
-  whyTab?.addEventListener("click", () => setWhyOpen(!whyOpen));
-  whyClose?.addEventListener("click", (e) => {
-    e.stopPropagation();
-    setWhyOpen(false);
-  });
-  document.addEventListener("click", (e) => {
-    if (!whyOpen || !isMobileMQ.matches) return;
-    if (whyUs?.contains(e.target) || whyTab?.contains(e.target)) return;
-    setWhyOpen(false);
-  });
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && whyOpen) setWhyOpen(false);
-  });
-
-  /* Close Why sheet when the user scrolls the page */
-  let whyScrollY = window.scrollY;
-  window.addEventListener(
-    "scroll",
-    () => {
-      if (!isMobileMQ.matches || !whyOpen) {
-        whyScrollY = window.scrollY;
-        return;
-      }
-      if (Math.abs(window.scrollY - whyScrollY) > 28) setWhyOpen(false);
-      whyScrollY = window.scrollY;
-    },
-    { passive: true }
-  );
 
   /* Native OS cursor — brand tint via CSS; drop heavy custom cursor DOM */
   document.getElementById("cursor-trail")?.remove();
@@ -258,161 +88,6 @@
   const hero = document.querySelector(".hero");
   const hasHeroEye = document.body.classList.contains("has-hero-eye") && !!hero;
 
-  /* Mobile only: approach blur → pin centered under header */
-  let whyBlurSmooth = 0;
-  let whyFadeSmooth = 1;
-  const WHY_APPROACH = 96;
-  const whyHomeParent = whyWrap?.parentElement || null;
-  const whyHomeNext = whyWrap?.nextElementSibling || null;
-
-  /* Laptop: mount on <body> so fixed Why Us escapes main/footer stacking */
-  function syncWhyMount() {
-    if (!whyWrap) return;
-    if (!isMobileMQ.matches) {
-      if (whyWrap.parentElement !== document.body) {
-        document.body.appendChild(whyWrap);
-      }
-      whyWrap.classList.add("is-floating-layer");
-      return;
-    }
-    whyWrap.classList.remove("is-floating-layer");
-    if (!whyHomeParent || whyWrap.parentElement === whyHomeParent) return;
-    if (whyHomeNext && whyHomeNext.parentElement === whyHomeParent) {
-      whyHomeParent.insertBefore(whyWrap, whyHomeNext);
-    } else {
-      whyHomeParent.appendChild(whyWrap);
-    }
-  }
-  syncWhyMount();
-  if (typeof isMobileMQ.addEventListener === "function") {
-    isMobileMQ.addEventListener("change", syncWhyMount);
-  } else if (typeof isMobileMQ.addListener === "function") {
-    isMobileMQ.addListener(syncWhyMount);
-  }
-
-  function updateWhyPin() {
-    if (!whyWrap || !whyUs || !header) return;
-
-    /* Mobile: side drawer only — no pin/blur tracking */
-    if (isMobileMQ.matches) {
-      whyUs.classList.remove("is-pinned");
-      whyWrap.style.height = "";
-      document.body.classList.remove("why-pinned");
-      whyUs.style.setProperty("--why-blur", "0px");
-      whyUs.style.setProperty("--why-fade", "1");
-      return;
-    }
-
-    /* Laptop: stay fixed bottom-right — no header docking */
-    syncWhyMount();
-    whyUs.classList.remove("is-pinned");
-    whyWrap.style.height = "";
-    document.body.classList.remove("why-pinned");
-    whyBlurSmooth = 0;
-    whyFadeSmooth = 1;
-    whyUs.style.setProperty("--why-blur", "0px");
-    whyUs.style.setProperty("--why-fade", "1");
-  }
-
-  /* Adaptive pill contrast + mobile glass tint from colors behind */
-  let whyInvertSmooth = 0;
-  let whyGlass = { r: 14, g: 42, b: 34 };
-  const whyLabel = whyUs?.querySelector(".hero__skill-label");
-
-  function parseRgba(str) {
-    if (!str || str === "transparent") return null;
-    const m = str.match(/rgba?\((\d+)[,\s]+(\d+)[,\s]+(\d+)(?:[,\s/]+([\d.]+))?/i);
-    if (!m) return null;
-    return {
-      r: +m[1],
-      g: +m[2],
-      b: +m[3],
-      a: m[4] === undefined ? 1 : +m[4],
-    };
-  }
-
-  function lumaOf(rgb) {
-    return (0.2126 * rgb.r + 0.7152 * rgb.g + 0.0722 * rgb.b) / 255;
-  }
-
-  function sampleBackdrop(el) {
-    const fallback = { r: 12, g: 40, b: 32, luma: 0.12 };
-    if (!el) return fallback;
-    const r = el.getBoundingClientRect();
-    if (r.width < 2 || r.height < 2) return fallback;
-    const pts = [
-      [r.left + r.width * 0.5, r.top + r.height * 0.5],
-      [r.left + r.width * 0.18, r.top + r.height * 0.5],
-      [r.left + r.width * 0.82, r.top + r.height * 0.5],
-      [r.left + r.width * 0.5, r.top + 3],
-      [r.left + r.width * 0.5, r.bottom - 3],
-    ];
-    let sr = 0;
-    let sg = 0;
-    let sb = 0;
-    let sl = 0;
-    let n = 0;
-    for (const [x, y] of pts) {
-      if (x < 0 || y < 0 || x > window.innerWidth || y > window.innerHeight) continue;
-      const stack = document.elementsFromPoint(x, y);
-      for (const node of stack) {
-        if (!node || node === whyUs || whyUs.contains(node)) continue;
-        if (node === eye || eye?.contains(node)) continue;
-        if (node.classList?.contains("eye-ripple")) continue;
-        const cs = getComputedStyle(node);
-        const bg = parseRgba(cs.backgroundColor);
-        if (bg && bg.a > 0.12) {
-          sr += bg.r;
-          sg += bg.g;
-          sb += bg.b;
-          sl += lumaOf(bg);
-          n += 1;
-          break;
-        }
-        const fg = parseRgba(cs.color);
-        if (fg && fg.a > 0.5 && lumaOf(fg) > 0.82 && (cs.fontWeight >= 600 || node.matches("button, .btn, .featured__badge"))) {
-          sr += fg.r;
-          sg += fg.g;
-          sb += fg.b;
-          sl += 0.88;
-          n += 1;
-          break;
-        }
-      }
-    }
-    if (!n) return fallback;
-    return { r: sr / n, g: sg / n, b: sb / n, luma: sl / n };
-  }
-
-  let whyContrastTick = 0;
-  function updateWhyContrast() {
-    if (!whyUs || !whyLabel) return;
-    /* Mobile + laptop floating card: keep classic white pill / white text */
-    if (isMobileMQ.matches || whyWrap?.classList.contains("is-floating-layer")) {
-      whyUs.style.setProperty("--why-invert", "0");
-      whyUs.style.setProperty("--why-glass", "255, 255, 255");
-      whyInvertSmooth = 0;
-      return;
-    }
-    whyContrastTick = (whyContrastTick + 1) % 4; // every 4th frame
-    if (whyContrastTick !== 0) return;
-    const sample = sampleBackdrop(whyLabel);
-    let target = 0;
-    if (sample.luma > 0.55) target = 1;
-    else if (sample.luma > 0.38) target = (sample.luma - 0.38) / (0.55 - 0.38);
-    whyInvertSmooth += (target - whyInvertSmooth) * 0.045;
-    if (Math.abs(target - whyInvertSmooth) < 0.002) whyInvertSmooth = target;
-    whyUs.style.setProperty("--why-invert", whyInvertSmooth.toFixed(4));
-
-    /* Glass tint follows colors passing behind (non-floating fallback) */
-    whyGlass.r += (sample.r - whyGlass.r) * 0.055;
-    whyGlass.g += (sample.g - whyGlass.g) * 0.055;
-    whyGlass.b += (sample.b - whyGlass.b) * 0.055;
-    whyUs.style.setProperty(
-      "--why-glass",
-      `${Math.round(whyGlass.r)}, ${Math.round(whyGlass.g)}, ${Math.round(whyGlass.b)}`
-    );
-  }
   const MAX_LOOK = 0.32;
   const DIVE_END = 0.48;
 
@@ -727,8 +402,6 @@
     }
 
     updateEyeDock();
-    updateWhyPin();
-    updateWhyContrast();
 
     if (eye && ball) {
       const rect = eye.getBoundingClientRect();
@@ -1566,77 +1239,6 @@
   closeBtn?.addEventListener("click", closeMenu);
   overlay?.querySelectorAll("a").forEach((link) => link.addEventListener("click", closeMenu));
 
-  /* ── Ambient field: scroll + soft pointer reactivity ── */
-  (() => {
-    const field = document.getElementById("ambient-field");
-    if (!field) return;
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduce) return;
-
-    let targetScroll = 0;
-    let curScroll = 0;
-    let targetMx = 0.5;
-    let targetMy = 0.5;
-    let curMx = 0.5;
-    let curMy = 0.5;
-    let raf = 0;
-    let running = true;
-
-    const maxScroll = () => Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
-
-    const readScroll = () => {
-      targetScroll = window.scrollY / maxScroll();
-    };
-
-    const tick = () => {
-      if (!running || document.hidden) {
-        raf = 0;
-        return;
-      }
-      curScroll += (targetScroll - curScroll) * 0.06;
-      curMx += (targetMx - curMx) * 0.05;
-      curMy += (targetMy - curMy) * 0.05;
-      field.style.setProperty("--amb-scroll", curScroll.toFixed(4));
-      field.style.setProperty("--amb-mx", curMx.toFixed(4));
-      field.style.setProperty("--amb-my", curMy.toFixed(4));
-      raf = requestAnimationFrame(tick);
-    };
-
-    const start = () => {
-      if (raf || document.hidden) return;
-      running = true;
-      raf = requestAnimationFrame(tick);
-    };
-
-    readScroll();
-    start();
-    window.addEventListener("scroll", readScroll, { passive: true });
-    window.addEventListener("resize", readScroll, { passive: true });
-    document.addEventListener("visibilitychange", () => {
-      if (document.hidden) {
-        running = false;
-        if (raf) cancelAnimationFrame(raf);
-        raf = 0;
-        document.documentElement.classList.add("is-bg-paused");
-      } else {
-        document.documentElement.classList.remove("is-bg-paused");
-        start();
-      }
-    });
-
-    const fine = window.matchMedia("(pointer: fine)").matches;
-    if (fine) {
-      window.addEventListener(
-        "pointermove",
-        (e) => {
-          targetMx = e.clientX / Math.max(1, window.innerWidth);
-          targetMy = e.clientY / Math.max(1, window.innerHeight);
-        },
-        { passive: true }
-      );
-    }
-  })();
-
   /* ── Back to top ── */
   const backTop = document.getElementById("back-top");
   window.addEventListener("scroll", () => {
@@ -1653,9 +1255,7 @@
           if (entry.isIntersecting) {
             entry.target.style.transition = "0.55s ease";
             entry.target.style.opacity = "1";
-            if (!entry.target.classList.contains("blog-card")) {
-              entry.target.style.transform = "none";
-            }
+            entry.target.style.transform = "none";
             io.unobserve(entry.target);
           }
         });
@@ -1664,7 +1264,7 @@
     );
     revealEls.forEach((el) => {
       el.style.opacity = "0";
-      if (!el.classList.contains("blog-card")) el.style.transform = "translateY(18px)";
+      el.style.transform = "translateY(18px)";
       io.observe(el);
     });
   }
