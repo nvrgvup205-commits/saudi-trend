@@ -616,25 +616,28 @@
     card.classList.toggle("is-flipped");
   });
 
-  /* ── Services: light coverflow + full-size sheet ── */
+  /* ── Services: all cards visible in a grid + full-size sheet ── */
   (() => {
     const film = document.getElementById("services-film");
     const track = document.getElementById("services-track");
     if (!film || !track) return;
 
-    /* Don't download every service image up front — hydrate when visible */
-    track.querySelectorAll(".flip-card__img[src]").forEach((img) => {
-      if (img.dataset.src) return;
-      img.dataset.src = img.getAttribute("src") || "";
-      img.removeAttribute("src");
+    film.classList.add("is-grid", "is-paused");
+
+    const cards = [...track.querySelectorAll(".service-flip")];
+    if (!cards.length) return;
+
+    /* Ensure every service image is loaded — all cards are visible */
+    track.querySelectorAll(".flip-card__img").forEach((img) => {
+      const src = img.getAttribute("src") || img.dataset.src || "";
+      if (src) {
+        img.dataset.src = src;
+        if (!img.getAttribute("src")) img.src = src;
+      }
       img.setAttribute("loading", "lazy");
       img.setAttribute("decoding", "async");
+      img.setAttribute("draggable", "false");
     });
-
-    const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
-    const cards = [...track.querySelectorAll(".service-flip")];
-    const n = cards.length;
-    if (!n) return;
 
     const sheet = document.getElementById("svc-sheet");
     const sheetPanel = document.getElementById("svc-sheet-panel");
@@ -681,309 +684,21 @@
       if (e.key === "Escape") closeSheet();
     });
 
-    let index = 0;
-    let offset = 0;
-    let vel = 0;
-    let dragging = false;
-    let pending = false;
-    let axis = null;
-    let dragMoved = false;
-    let hovering = false;
-    let lastX = 0;
-    let startX = 0;
-    let startY = 0;
-    let lastT = 0;
-    let raf = 0;
-    let auto = false;
-    let holdTimer = 0;
-    let autoAcc = 0;
-    const AXIS_SLOP = 10;
-
-    const wrapIndex = (i) => ((i % n) + n) % n;
-
-    const shortest = (from, to) => {
-      let d = to - from;
-      while (d > n / 2) d -= n;
-      while (d < -n / 2) d += n;
-      return d;
-    };
-
-    const metrics = () => {
-      const w = window.innerWidth;
-      /* Lighter resting coverflow — less 3D math on phones */
-      if (w < 640) return { spacing: 118, depth: 0, rot: 0, lift: 0, scaleStep: 0.08, lite: true };
-      if (w < 980) return { spacing: 148, depth: 80, rot: 18, lift: 2, scaleStep: 0.055, lite: false };
-      return { spacing: 178, depth: 110, rot: 22, lift: 4, scaleStep: 0.05, lite: false };
-    };
-
-    const syncPausedClass = () => {
-      film.classList.add("is-paused");
-    };
-
-    const paint = () => {
-      const m = metrics();
-      const center = index + offset;
-      const visLimit = m.lite ? 1.55 : 2.35;
-
-      cards.forEach((card, i) => {
-        const raw = shortest(center, i);
-        const abs = Math.abs(raw);
-        const x = raw * m.spacing;
-        const visible = abs < visLimit;
-        const scale = Math.max(0.72, 1 - abs * m.scaleStep);
-
-        if (m.lite) {
-          /* Flat 2D carousel — same look, far less GPU */
-          card.style.transform = `translate(-50%, -50%) translate3d(${x}px, 0, 0) scale(${scale})`;
-        } else {
-          const z = 28 - abs * m.depth;
-          const ry = raw * -m.rot;
-          const y = abs * m.lift;
-          card.style.transform = `translate(-50%, -50%) translate3d(${x}px, ${y}px, ${z}px) rotateY(${ry}deg) scale(${scale})`;
-        }
-
-        card.style.zIndex = String(Math.round(40 - abs * 8));
-        card.style.opacity = visible ? String(Math.max(0.45, 1 - abs * 0.22)) : "0";
-        card.style.visibility = visible ? "visible" : "hidden";
-        card.classList.toggle("is-active", abs < 0.45);
-        card.classList.toggle("is-near", abs >= 0.45 && abs < 1.45);
-        card.classList.toggle("is-popped", abs < 0.45);
-        card.classList.remove("is-flipped");
-        card.tabIndex = abs < 0.45 ? 0 : -1;
-        card.setAttribute("aria-hidden", abs < 0.45 ? "false" : "true");
-
-        if (visible) {
-          const img = card.querySelector(".flip-card__img[data-src]");
-          if (img && !img.getAttribute("src")) img.src = img.dataset.src;
-        }
-      });
-    };
-
-    const resumeAutoSoon = () => {
-      auto = false;
-      clearTimeout(holdTimer);
-      syncPausedClass();
-    };
-
-    const snap = () => {
-      index = wrapIndex(Math.round(index + offset));
-      offset = 0;
-      vel = 0;
-      paint();
-    };
-
-    const stepBy = (dir) => {
-      closeSheet();
-      cards.forEach((c) => c.classList.remove("is-flipped"));
-      index = wrapIndex(index + dir);
-      offset = 0;
-      vel = 0;
-      autoAcc = 0;
-      paint();
-      resumeAutoSoon();
-    };
-
-    const needsAnim = () =>
-      dragging || Math.abs(vel) > 0.001 || Math.abs(offset) > 0.001 || auto;
-
-    const tick = (ts) => {
-      if (!lastT) lastT = ts;
-      const dtMs = Math.min(32, ts - lastT);
-      const dt = dtMs / 16.67;
-      lastT = ts;
-
-      if (!dragging) {
-        if (Math.abs(vel) > 0.001) {
-          offset += vel * dt;
-          vel *= Math.pow(0.9, dt);
-          if (Math.abs(offset) >= 1) {
-            index = wrapIndex(index + Math.round(offset));
-            offset -= Math.round(offset);
-          }
-          if (Math.abs(vel) < 0.002) snap();
-        } else if (Math.abs(offset) > 0.001) {
-          offset *= Math.pow(0.82, dt);
-          if (Math.abs(offset) < 0.02) snap();
-        }
-      }
-
-      syncPausedClass();
-      paint();
-      if (needsAnim()) raf = requestAnimationFrame(tick);
-      else {
-        raf = 0;
-        lastT = 0;
-      }
-    };
-
-    const kick = () => {
-      if (!raf) {
-        lastT = 0;
-        raf = requestAnimationFrame(tick);
-      }
-    };
-
-    const onDown = (e) => {
-      if (e.target.closest(".film-stage__nav")) return;
-      if (e.target.closest("a")) return;
-      pending = true;
-      dragging = false;
-      axis = null;
-      dragMoved = false;
-      startX = e.clientX ?? e.touches?.[0]?.clientX ?? 0;
-      startY = e.clientY ?? e.touches?.[0]?.clientY ?? 0;
-      lastX = startX;
-      vel = 0;
-    };
-
-    const onMove = (e) => {
-      if (!pending && !dragging) return;
-      const x = e.clientX ?? e.touches?.[0]?.clientX;
-      const y = e.clientY ?? e.touches?.[0]?.clientY;
-      if (x == null) return;
-
-      if (axis === null && pending) {
-        const dx0 = x - startX;
-        const dy0 = (y ?? startY) - startY;
-        if (Math.hypot(dx0, dy0) < AXIS_SLOP) return;
-        if (Math.abs(dy0) > Math.abs(dx0) * 1.05) {
-          axis = "y";
-          pending = false;
-          return;
-        }
-        axis = "x";
-        pending = false;
-        dragging = true;
-        auto = false;
-        closeSheet();
-        film.classList.add("is-dragging");
-        syncPausedClass();
-        kick();
-        try {
-          film.setPointerCapture?.(e.pointerId);
-        } catch (_) {}
-      }
-
-      if (axis !== "x" || !dragging) return;
-
-      const dx = x - lastX;
-      lastX = x;
-      if (Math.abs(dx) > 2) dragMoved = true;
-      const step = dx / Math.max(90, metrics().spacing * 0.92);
-      offset -= step;
-      while (offset > 0.5) {
-        offset -= 1;
-        index = wrapIndex(index + 1);
-      }
-      while (offset < -0.5) {
-        offset += 1;
-        index = wrapIndex(index - 1);
-      }
-      vel = -step * 0.55;
-      paint();
-    };
-
-    const onUp = (e) => {
-      if (!pending && !dragging) return;
-      const wasDragging = dragging && axis === "x";
-      pending = false;
-      dragging = false;
-      axis = null;
-      film.classList.remove("is-dragging");
-      try {
-        film.releasePointerCapture?.(e.pointerId);
-      } catch (_) {}
-      if (!wasDragging) return;
-      if (dragMoved) {
-        const block = (ev) => {
-          ev.preventDefault();
-          ev.stopPropagation();
-          film.removeEventListener("click", block, true);
-        };
-        film.addEventListener("click", block, true);
-      }
-      snap();
-      kick();
-      resumeAutoSoon();
-    };
-
-    if (finePointer) {
-      film.addEventListener("pointerenter", () => {
-        hovering = true;
-        syncPausedClass();
-      });
-      film.addEventListener("pointerleave", () => {
-        hovering = false;
-        syncPausedClass();
-      });
-    }
-
-    film.addEventListener("pointerdown", onDown);
-    window.addEventListener("pointermove", onMove);
-    window.addEventListener("pointerup", onUp);
-    window.addEventListener("pointercancel", onUp);
-
-    film.querySelectorAll(".film-stage__nav").forEach((btn) => {
-      btn.addEventListener("pointerdown", (e) => e.stopPropagation());
-      btn.addEventListener("click", (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        stepBy(Number(btn.getAttribute("data-dir") || 1));
-      });
-    });
-
     cards.forEach((card) => {
+      card.classList.add("is-active");
+      card.classList.remove("is-flipped", "is-near", "is-popped");
+      card.style.transform = "";
+      card.style.opacity = "1";
+      card.style.visibility = "visible";
+      card.style.zIndex = "";
+      card.tabIndex = 0;
+      card.setAttribute("aria-hidden", "false");
       card.addEventListener("click", (e) => {
         if (e.target.closest("a")) return;
-        if (dragMoved) {
-          e.preventDefault();
-          e.stopPropagation();
-          return;
-        }
-        if (!card.classList.contains("is-active")) {
-          e.preventDefault();
-          e.stopPropagation();
-          closeSheet();
-          index = cards.indexOf(card);
-          offset = 0;
-          autoAcc = 0;
-          paint();
-          resumeAutoSoon();
-          return;
-        }
         e.preventDefault();
-        e.stopPropagation();
         openSheet(card);
       });
     });
-
-    window.addEventListener("resize", () => {
-      closeSheet();
-      paint();
-    });
-    paint();
-    syncPausedClass();
-    requestAnimationFrame(() => {
-      paint();
-      syncPausedClass();
-    });
-
-    const io = new IntersectionObserver(
-      (entries) => {
-        const visible = entries.some((e) => e.isIntersecting);
-        if (visible) paint();
-        else {
-          closeSheet();
-          if (raf) {
-            cancelAnimationFrame(raf);
-            raf = 0;
-            lastT = 0;
-          }
-        }
-      },
-      { threshold: 0.1 }
-    );
-    io.observe(film);
   })();
 
   /* ── Partners: 3D standing pages, infinite ring ── */
@@ -1123,13 +838,20 @@
       kick();
     };
 
+    /* Kill native image-drag ghost that steals the carousel gesture */
+    stage.addEventListener("dragstart", (e) => e.preventDefault());
+    pages.forEach((page) => {
+      page.setAttribute("draggable", "false");
+      page.querySelectorAll("img").forEach((img) => {
+        img.setAttribute("draggable", "false");
+        img.draggable = false;
+      });
+    });
+
     const onDown = (e) => {
       if (e.target.closest(".partner-stage__nav")) return;
-      /* Allow simple clicks on front page to open without starting a drag fight */
-      if (e.target.closest(".partner-page.is-front") && e.pointerType !== "touch") {
-        pauseAuto();
-        return;
-      }
+      /* Always own the gesture so the browser never starts an image drag */
+      if (e.pointerType !== "touch") e.preventDefault();
       dragging = true;
       dragMoved = false;
       targetRot = null;
@@ -1138,7 +860,9 @@
       vel = 0;
       pauseAuto();
       kick();
-      if (e.pointerType !== "touch") stage.setPointerCapture?.(e.pointerId);
+      try {
+        stage.setPointerCapture?.(e.pointerId);
+      } catch (_) {}
     };
 
     const onMove = (e) => {
@@ -1193,10 +917,12 @@
       page.addEventListener("click", (e) => {
         if (dragMoved) {
           e.preventDefault();
+          e.stopPropagation();
           return;
         }
         if (!page.classList.contains("is-front")) {
           e.preventDefault();
+          e.stopPropagation();
           const i = pages.indexOf(page);
           targetRot = -i * stepDeg;
           vel = 0;
@@ -1204,8 +930,12 @@
           kick();
           return;
         }
-        /* front page: let the browser open the link (new tab) */
+        /* Front page: open the partner site reliably */
+        e.preventDefault();
+        e.stopPropagation();
         pauseAuto();
+        const href = page.getAttribute("href");
+        if (href) window.open(href, "_blank", "noopener,noreferrer");
       });
     });
 
