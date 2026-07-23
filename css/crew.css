@@ -62,6 +62,9 @@ body.has-brand-cursor .service-flip,
 body.has-brand-cursor .partner-page,
 body.has-brand-cursor .film-stage__nav,
 body.has-brand-cursor .partner-stage__nav,
+body.has-brand-cursor .reels-stage__nav,
+body.has-brand-cursor .reel-card__hit,
+body.has-brand-cursor .reel-card__mute,
 body.has-brand-cursor .lang-switch,
 body.has-brand-cursor .btn--solutions,
 body.has-brand-cursor .nav-toggle {
@@ -95,6 +98,7 @@ main {
 /* Skip offscreen layout work for heavy sections */
 .featured,
 .services,
+.reels,
 .portfolio,
 .cta-band,
 .site-close,
@@ -1707,6 +1711,11 @@ body.eye-docked .eye {
 .sticker--teal {
   background: linear-gradient(135deg, var(--teal-soft), var(--brand-green));
   color: var(--white);
+}
+
+.sticker--gold {
+  background: linear-gradient(135deg, #ffd45a, var(--brand-yellow));
+  color: #1a2a12;
 }
 
 .sticker::after {
@@ -4174,5 +4183,265 @@ body.svc-sheet-open {
 
   .featured__photo {
     min-height: 0;
+  }
+}
+
+/* ── Video works / reels showcase ── */
+.reels {
+  padding: 4.5rem 0 3.2rem;
+  background:
+    radial-gradient(ellipse 70% 50% at 80% 20%, rgba(246, 186, 12, 0.08), transparent 55%),
+    radial-gradient(ellipse 60% 45% at 10% 80%, rgba(64, 162, 51, 0.12), transparent 50%),
+    rgba(5, 10, 10, 0.35);
+  overflow: hidden;
+}
+
+.reels__head {
+  text-align: center;
+  max-width: 42rem;
+  margin: 0 auto 1.8rem;
+}
+
+.reels__title {
+  margin: 0.85rem 0 0.55rem;
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(1.65rem, 3.4vw, 2.35rem);
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+}
+
+.reels__hint {
+  margin: 1.35rem 0 0;
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.reels-stage {
+  position: relative;
+  width: 100%;
+  max-width: 100vw;
+}
+
+.reels-stage__track {
+  display: flex;
+  gap: 1.15rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  padding: 0.5rem max(1.25rem, calc((100vw - 1120px) / 2 + 1rem)) 1.25rem;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  outline: none;
+}
+
+.reels-stage__track::-webkit-scrollbar {
+  display: none;
+}
+
+.reel-card {
+  flex: 0 0 auto;
+  width: min(220px, 58vw);
+  scroll-snap-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  transition: transform 0.35s ease, opacity 0.35s ease;
+}
+
+.reel-card--wide {
+  width: min(320px, 78vw);
+}
+
+.reel-card__phone {
+  position: relative;
+  display: block;
+  aspect-ratio: 9 / 16;
+  border-radius: 1.35rem;
+  overflow: hidden;
+  background: #06120a;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow:
+    0 18px 40px rgba(0, 0, 0, 0.45),
+    inset 0 0 0 1px rgba(64, 162, 51, 0.18);
+}
+
+.reel-card__phone--wide {
+  aspect-ratio: 16 / 10;
+  border-radius: 1rem;
+}
+
+.reel-card__video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  background: #0a140c;
+}
+
+.reel-card__hit {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.reel-card__play {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(180deg, transparent 40%, rgba(5, 10, 10, 0.55));
+  color: #fff;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  pointer-events: none;
+}
+
+.reel-card__play svg {
+  width: 3rem;
+  height: 3rem;
+  padding: 0.7rem;
+  border-radius: 999px;
+  background: rgba(64, 162, 51, 0.92);
+  color: #06120a;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+.reel-card__mute {
+  position: absolute;
+  z-index: 2;
+  left: 0.7rem;
+  bottom: 0.7rem;
+  width: 2.35rem;
+  height: 2.35rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  background: rgba(6, 18, 10, 0.78);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  backdrop-filter: blur(8px);
+  padding: 0;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.reel-card__mute:hover {
+  border-color: rgba(246, 186, 12, 0.65);
+  color: var(--brand-yellow);
+}
+
+.reel-card__mute-icon {
+  display: none;
+}
+
+.reel-card__mute.is-muted .reel-card__mute-icon--on {
+  display: block;
+}
+
+.reel-card__mute:not(.is-muted) .reel-card__mute-icon--off {
+  display: block;
+}
+
+.reel-card.is-playing .reel-card__play {
+  opacity: 0;
+}
+
+.reel-card.is-playing .reel-card__phone {
+  border-color: rgba(246, 186, 12, 0.55);
+  box-shadow:
+    0 22px 48px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(246, 186, 12, 0.35);
+}
+
+.reel-card__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0 0.15rem;
+}
+
+.reel-card__meta strong {
+  font-size: 1.02rem;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.reel-card__meta span {
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+.reels-stage__nav {
+  position: absolute;
+  top: 42%;
+  transform: translateY(-50%);
+  z-index: 3;
+  width: 2.6rem;
+  height: 2.6rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(8, 20, 12, 0.82);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  backdrop-filter: blur(8px);
+}
+
+.reels-stage__nav--prev {
+  right: max(0.6rem, calc((100vw - 1120px) / 2));
+}
+
+.reels-stage__nav--next {
+  left: max(0.6rem, calc((100vw - 1120px) / 2));
+}
+
+.reels-stage__nav:hover {
+  border-color: rgba(246, 186, 12, 0.55);
+  color: var(--brand-yellow);
+}
+
+html[dir="ltr"] .reels-stage__nav--prev {
+  right: auto;
+  left: max(0.6rem, calc((100vw - 1120px) / 2));
+}
+
+html[dir="ltr"] .reels-stage__nav--next {
+  left: auto;
+  right: max(0.6rem, calc((100vw - 1120px) / 2));
+}
+
+@media (max-width: 720px) {
+  .reels {
+    padding: 3.4rem 0 2.4rem;
+  }
+
+  .reels-stage__nav {
+    display: none;
+  }
+
+  .reel-card {
+    width: min(200px, 62vw);
+  }
+
+  .reel-card--wide {
+    width: min(280px, 82vw);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reels-stage__track {
+    scroll-behavior: auto;
+  }
+
+  .reel-card {
+    transition: none;
   }
 }
