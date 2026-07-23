@@ -1292,6 +1292,36 @@
     const cards = [...reelsTrack.querySelectorAll(".reel-card")];
     const reduceReelsMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     let activeReel = null;
+    let preferSound = false;
+
+    const i18nAria = (key, fallback) => {
+      const dict = window.ST_I18N;
+      if (dict && typeof dict.t === "function" && typeof dict.getLang === "function") {
+        const v = dict.t(dict.getLang(), key);
+        if (v && v !== key) return v;
+      }
+      return fallback;
+    };
+
+    const syncMuteUi = (card, muted) => {
+      const btn = card?.querySelector(".reel-card__mute");
+      if (!btn) return;
+      btn.classList.toggle("is-muted", muted);
+      btn.setAttribute(
+        "aria-label",
+        muted ? i18nAria("reels.unmute", "تشغيل الصوت") : i18nAria("reels.mute", "كتم الصوت")
+      );
+      btn.title = muted ? i18nAria("reels.unmute", "تشغيل الصوت") : i18nAria("reels.mute", "كتم الصوت");
+    };
+
+    const applyMute = (card, muted) => {
+      const video = card?.querySelector("video");
+      if (!video) return;
+      video.muted = muted;
+      if (muted) video.setAttribute("muted", "");
+      else video.removeAttribute("muted");
+      syncMuteUi(card, muted);
+    };
 
     const pauseCard = (card) => {
       const video = card?.querySelector("video");
@@ -1307,22 +1337,55 @@
       cards.forEach((other) => {
         if (other !== card) pauseCard(other);
       });
+      const startMuted = !preferSound;
+      applyMute(card, startMuted);
       try {
-        video.muted = true;
         await video.play();
         card.classList.add("is-playing");
         activeReel = card;
       } catch {
+        /* If unmuted play is blocked, fall back to muted */
+        if (!startMuted) {
+          applyMute(card, true);
+          preferSound = false;
+          try {
+            await video.play();
+            card.classList.add("is-playing");
+            activeReel = card;
+            return;
+          } catch {
+            /* ignore */
+          }
+        }
         pauseCard(card);
       }
     };
 
     cards.forEach((card) => {
       const hit = card.querySelector(".reel-card__hit");
+      const muteBtn = card.querySelector(".reel-card__mute");
       const video = card.querySelector("video");
+      syncMuteUi(card, true);
       hit?.addEventListener("click", () => {
         if (card.classList.contains("is-playing")) pauseCard(card);
         else playCard(card);
+      });
+      muteBtn?.addEventListener("click", async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const nextMuted = !video.muted;
+        preferSound = !nextMuted;
+        applyMute(card, nextMuted);
+        if (!nextMuted && video.paused) {
+          await playCard(card);
+        } else if (!nextMuted && !video.paused) {
+          try {
+            await video.play();
+          } catch {
+            applyMute(card, true);
+            preferSound = false;
+          }
+        }
       });
       video?.addEventListener("ended", () => pauseCard(card));
     });
@@ -1364,7 +1427,13 @@
     let moved = false;
 
     const onPointerDown = (e) => {
-      if (e.target.closest(".reels-stage__nav") || e.target.closest(".reel-card__hit")) return;
+      if (
+        e.target.closest(".reels-stage__nav") ||
+        e.target.closest(".reel-card__hit") ||
+        e.target.closest(".reel-card__mute")
+      ) {
+        return;
+      }
       dragging = true;
       moved = false;
       startX = e.clientX;
@@ -1384,13 +1453,17 @@
     reelsTrack.addEventListener("pointerdown", onPointerDown);
     window.addEventListener("pointermove", onPointerMove);
     window.addEventListener("pointerup", onPointerUp);
-    reelsTrack.addEventListener("click", (e) => {
-      if (moved && e.target.closest(".reel-card__hit")) {
-        e.preventDefault();
-        e.stopPropagation();
-      }
-      moved = false;
-    }, true);
+    reelsTrack.addEventListener(
+      "click",
+      (e) => {
+        if (moved && (e.target.closest(".reel-card__hit") || e.target.closest(".reel-card__mute"))) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+        moved = false;
+      },
+      true
+    );
   }
 
   /* ── Back to top ── */

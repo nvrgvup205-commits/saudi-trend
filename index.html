@@ -485,22 +485,26 @@
       <div class="reels-stage" id="reels-stage">
         <div class="reels-stage__track" id="reels-track" tabindex="0" aria-label="معرض أعمال الفيديو">
           <article class="reel-card" data-reel="aesthetic">
-            <button type="button" class="reel-card__hit" aria-label="تشغيل فيديو عيادات التجميل">
-              <span class="reel-card__phone">
-                <video
-                  class="reel-card__video"
-                  poster="assets/reels/reel-aesthetic.webp"
-                  preload="none"
-                  playsinline
-                  muted
-                  loop
-                  src="assets/reels/reel-aesthetic.mp4"
-                ></video>
+            <div class="reel-card__phone">
+              <video
+                class="reel-card__video"
+                poster="assets/reels/reel-aesthetic.webp"
+                preload="none"
+                playsinline
+                muted
+                loop
+                src="assets/reels/reel-aesthetic.mp4"
+              ></video>
+              <button type="button" class="reel-card__hit" aria-label="تشغيل فيديو عيادات التجميل">
                 <span class="reel-card__play" aria-hidden="true">
                   <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
                 </span>
-              </span>
-            </button>
+              </button>
+              <button type="button" class="reel-card__mute is-muted" aria-label="تشغيل الصوت" data-i18n-aria="reels.unmute" title="الصوت">
+                  <svg class="reel-card__mute-icon reel-card__mute-icon--off" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H3v6h3l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18 6a8 8 0 0 1 0 12"/></svg>
+                  <svg class="reel-card__mute-icon reel-card__mute-icon--on" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H3v6h3l5 4V5z"/><path d="M16 9l5 6"/><path d="M21 9l-5 6"/></svg>
+              </button>
+            </div>
             <div class="reel-card__meta">
               <strong data-i18n="reel.aesthetic.title">عيادات التجميل</strong>
               <span data-i18n="reel.aesthetic.tag">ريلز طبي · محتوى بصري</span>
@@ -508,22 +512,26 @@
           </article>
 
           <article class="reel-card" data-reel="sana">
-            <button type="button" class="reel-card__hit" aria-label="تشغيل فيديو مطعم سنا">
-              <span class="reel-card__phone">
-                <video
-                  class="reel-card__video"
-                  poster="assets/reels/reel-sana.webp"
-                  preload="none"
-                  playsinline
-                  muted
-                  loop
-                  src="assets/reels/reel-sana.mp4"
-                ></video>
+            <div class="reel-card__phone">
+              <video
+                class="reel-card__video"
+                poster="assets/reels/reel-sana.webp"
+                preload="none"
+                playsinline
+                muted
+                loop
+                src="assets/reels/reel-sana.mp4"
+              ></video>
+              <button type="button" class="reel-card__hit" aria-label="تشغيل فيديو مطعم سنا">
                 <span class="reel-card__play" aria-hidden="true">
                   <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
                 </span>
-              </span>
-            </button>
+              </button>
+              <button type="button" class="reel-card__mute is-muted" aria-label="تشغيل الصوت" data-i18n-aria="reels.unmute" title="الصوت">
+                  <svg class="reel-card__mute-icon reel-card__mute-icon--off" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H3v6h3l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18 6a8 8 0 0 1 0 12"/></svg>
+                  <svg class="reel-card__mute-icon reel-card__mute-icon--on" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H3v6h3l5 4V5z"/><path d="M16 9l5 6"/><path d="M21 9l-5 6"/></svg>
+              </button>
+            </div>
             <div class="reel-card__meta">
               <strong data-i18n="reel.sana.title">مطعم سنا</strong>
               <span data-i18n="reel.sana.tag">ريلز طعام · أكلات شامية</span>
@@ -531,22 +539,26 @@
           </article>
 
           <article class="reel-card" data-reel="avatar">
-            <button type="button" class="reel-card__hit" aria-label="تشغيل فيديو الأفاتار الذكي">
-              <span class="reel-card__phone">
-                <video
-                  class="reel-card__video"
-                  poster="assets/reels/reel-avatar.webp"
-                  preload="none"
-                  playsinline
-                  muted
-                  loop
-                  src="assets/reels/reel-avatar.mp4"
-                ></video>
+            <div class="reel-card__phone">
+              <video
+                class="reel-card__video"
+                poster="assets/reels/reel-avatar.webp"
+                preload="none"
+                playsinline
+                muted
+                loop
+                src="assets/reels/reel-avatar.mp4"
+              ></video>
+              <button type="button" class="reel-card__hit" aria-label="تشغيل فيديو الأفاتار الذكي">
                 <span class="reel-card__play" aria-hidden="true">
                   <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
                 </span>
-              </span>
-            </button>
+              </button>
+              <button type="button" class="reel-card__mute is-muted" aria-label="تشغيل الصوت" data-i18n-aria="reels.unmute" title="الصوت">
+                  <svg class="reel-card__mute-icon reel-card__mute-icon--off" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H3v6h3l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18 6a8 8 0 0 1 0 12"/></svg>
+                  <svg class="reel-card__mute-icon reel-card__mute-icon--on" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H3v6h3l5 4V5z"/><path d="M16 9l5 6"/><path d="M21 9l-5 6"/></svg>
+              </button>
+            </div>
             <div class="reel-card__meta">
               <strong data-i18n="reel.avatar.title">أفاتار ذكي</strong>
               <span data-i18n="reel.avatar.tag">فيديو AI · مقدم ثلاثي الأبعاد</span>
@@ -554,22 +566,26 @@
           </article>
 
           <article class="reel-card" data-reel="etw">
-            <button type="button" class="reel-card__hit" aria-label="تشغيل فيديو اكتشف العالم">
-              <span class="reel-card__phone">
-                <video
-                  class="reel-card__video"
-                  poster="assets/reels/reel-etw.webp"
-                  preload="none"
-                  playsinline
-                  muted
-                  loop
-                  src="assets/reels/reel-etw.mp4"
-                ></video>
+            <div class="reel-card__phone">
+              <video
+                class="reel-card__video"
+                poster="assets/reels/reel-etw.webp"
+                preload="none"
+                playsinline
+                muted
+                loop
+                src="assets/reels/reel-etw.mp4"
+              ></video>
+              <button type="button" class="reel-card__hit" aria-label="تشغيل فيديو اكتشف العالم">
                 <span class="reel-card__play" aria-hidden="true">
                   <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
                 </span>
-              </span>
-            </button>
+              </button>
+              <button type="button" class="reel-card__mute is-muted" aria-label="تشغيل الصوت" data-i18n-aria="reels.unmute" title="الصوت">
+                  <svg class="reel-card__mute-icon reel-card__mute-icon--off" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H3v6h3l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18 6a8 8 0 0 1 0 12"/></svg>
+                  <svg class="reel-card__mute-icon reel-card__mute-icon--on" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H3v6h3l5 4V5z"/><path d="M16 9l5 6"/><path d="M21 9l-5 6"/></svg>
+              </button>
+            </div>
             <div class="reel-card__meta">
               <strong data-i18n="reel.etw.title">اكتشف العالم</strong>
               <span data-i18n="reel.etw.tag">إعلانات سياحة · وجهات فاخرة</span>
@@ -577,22 +593,26 @@
           </article>
 
           <article class="reel-card" data-reel="mezan-app">
-            <button type="button" class="reel-card__hit" aria-label="تشغيل فيديو تطبيق ميزان">
-              <span class="reel-card__phone">
-                <video
-                  class="reel-card__video"
-                  poster="assets/reels/reel-mezan-app.webp"
-                  preload="none"
-                  playsinline
-                  muted
-                  loop
-                  src="assets/reels/reel-mezan-app.mp4"
-                ></video>
+            <div class="reel-card__phone">
+              <video
+                class="reel-card__video"
+                poster="assets/reels/reel-mezan-app.webp"
+                preload="none"
+                playsinline
+                muted
+                loop
+                src="assets/reels/reel-mezan-app.mp4"
+              ></video>
+              <button type="button" class="reel-card__hit" aria-label="تشغيل فيديو تطبيق ميزان">
                 <span class="reel-card__play" aria-hidden="true">
                   <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
                 </span>
-              </span>
-            </button>
+              </button>
+              <button type="button" class="reel-card__mute is-muted" aria-label="تشغيل الصوت" data-i18n-aria="reels.unmute" title="الصوت">
+                  <svg class="reel-card__mute-icon reel-card__mute-icon--off" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H3v6h3l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18 6a8 8 0 0 1 0 12"/></svg>
+                  <svg class="reel-card__mute-icon reel-card__mute-icon--on" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H3v6h3l5 4V5z"/><path d="M16 9l5 6"/><path d="M21 9l-5 6"/></svg>
+              </button>
+            </div>
             <div class="reel-card__meta">
               <strong data-i18n="reel.mezanApp.title">ميزان</strong>
               <span data-i18n="reel.mezanApp.tag">عرض تطبيق · استشارات قانونية</span>
@@ -600,22 +620,26 @@
           </article>
 
           <article class="reel-card reel-card--wide" data-reel="mezan-talk">
-            <button type="button" class="reel-card__hit" aria-label="تشغيل فيديو تعريفي ميزان">
-              <span class="reel-card__phone reel-card__phone--wide">
-                <video
-                  class="reel-card__video"
-                  poster="assets/reels/reel-mezan-talk.webp"
-                  preload="none"
-                  playsinline
-                  muted
-                  loop
-                  src="assets/reels/reel-mezan-talk.mp4"
-                ></video>
+            <div class="reel-card__phone reel-card__phone--wide">
+              <video
+                class="reel-card__video"
+                poster="assets/reels/reel-mezan-talk.webp"
+                preload="none"
+                playsinline
+                muted
+                loop
+                src="assets/reels/reel-mezan-talk.mp4"
+              ></video>
+              <button type="button" class="reel-card__hit" aria-label="تشغيل فيديو تعريفي ميزان">
                 <span class="reel-card__play" aria-hidden="true">
                   <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
                 </span>
-              </span>
-            </button>
+              </button>
+              <button type="button" class="reel-card__mute is-muted" aria-label="تشغيل الصوت" data-i18n-aria="reels.unmute" title="الصوت">
+                  <svg class="reel-card__mute-icon reel-card__mute-icon--off" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H3v6h3l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18 6a8 8 0 0 1 0 12"/></svg>
+                  <svg class="reel-card__mute-icon reel-card__mute-icon--on" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H3v6h3l5 4V5z"/><path d="M16 9l5 6"/><path d="M21 9l-5 6"/></svg>
+              </button>
+            </div>
             <div class="reel-card__meta">
               <strong data-i18n="reel.mezanTalk.title">ميزان — تعريفي</strong>
               <span data-i18n="reel.mezanTalk.tag">فيديو مؤسسي · ثقة وأمان</span>
@@ -632,7 +656,7 @@
       </div>
 
       <div class="container">
-        <p class="reels__hint" data-i18n="reels.hint">اسحب أفقياً · اضغط أي ريل للتشغيل / الإيقاف</p>
+        <p class="reels__hint" data-i18n="reels.hint">اسحب أفقياً · اضغط للتشغيل · زر الصوت يشغّل أو يكتم</p>
       </div>
     </section>
 
@@ -759,6 +783,22 @@
                 <span class="work-shot__meta">
                   <strong data-i18n="work.fasatin.title">فساتين روزيتا</strong>
                   <span data-i18n="work.fasatin.tag">متجر فساتين سهرة</span>
+                </span>
+              </a>
+              <a class="partner-page work-shot" href="https://noc-uae.com/" target="_blank" rel="noopener noreferrer" data-category="web" aria-label="NOC — National Oasis Contracting">
+                <span class="partner-page__shade" aria-hidden="true"></span>
+                <span class="work-shot__frame">
+                  <span class="work-shot__chrome" aria-hidden="true">
+                    <span></span><span></span><span></span>
+                    <em>noc-uae.com/</em>
+                  </span>
+                  <span class="work-shot__viewport">
+                    <img src="assets/work/noc.webp" alt="لقطة فعلية من موقع NOC — National Oasis Contracting" loading="lazy" decoding="async" width="720" height="450">
+                  </span>
+                </span>
+                <span class="work-shot__meta">
+                  <strong data-i18n="work.noc.title">NOC — National Oasis</strong>
+                  <span data-i18n="work.noc.tag">مقاولات · الإمارات</span>
                 </span>
               </a>
             </div>

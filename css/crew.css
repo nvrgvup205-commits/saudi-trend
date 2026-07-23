@@ -64,6 +64,7 @@ body.has-brand-cursor .film-stage__nav,
 body.has-brand-cursor .partner-stage__nav,
 body.has-brand-cursor .reels-stage__nav,
 body.has-brand-cursor .reel-card__hit,
+body.has-brand-cursor .reel-card__mute,
 body.has-brand-cursor .lang-switch,
 body.has-brand-cursor .btn--solutions,
 body.has-brand-cursor .nav-toggle {
@@ -4253,17 +4254,6 @@ body.svc-sheet-open {
   width: min(320px, 78vw);
 }
 
-.reel-card__hit {
-  display: block;
-  width: 100%;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: inherit;
-  text-align: inherit;
-  cursor: pointer;
-}
-
 .reel-card__phone {
   position: relative;
   display: block;
@@ -4290,6 +4280,19 @@ body.svc-sheet-open {
   background: #0a140c;
 }
 
+.reel-card__hit {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
 .reel-card__play {
   position: absolute;
   inset: 0;
@@ -4298,6 +4301,7 @@ body.svc-sheet-open {
   background: linear-gradient(180deg, transparent 40%, rgba(5, 10, 10, 0.55));
   color: #fff;
   transition: opacity 0.25s ease, transform 0.25s ease;
+  pointer-events: none;
 }
 
 .reel-card__play svg {
@@ -4310,9 +4314,44 @@ body.svc-sheet-open {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
 }
 
+.reel-card__mute {
+  position: absolute;
+  z-index: 2;
+  left: 0.7rem;
+  bottom: 0.7rem;
+  width: 2.35rem;
+  height: 2.35rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  background: rgba(6, 18, 10, 0.78);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  backdrop-filter: blur(8px);
+  padding: 0;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.reel-card__mute:hover {
+  border-color: rgba(246, 186, 12, 0.65);
+  color: var(--brand-yellow);
+}
+
+.reel-card__mute-icon {
+  display: none;
+}
+
+.reel-card__mute.is-muted .reel-card__mute-icon--on {
+  display: block;
+}
+
+.reel-card__mute:not(.is-muted) .reel-card__mute-icon--off {
+  display: block;
+}
+
 .reel-card.is-playing .reel-card__play {
   opacity: 0;
-  pointer-events: none;
 }
 
 .reel-card.is-playing .reel-card__phone {
