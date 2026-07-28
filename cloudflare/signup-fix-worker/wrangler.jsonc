@@ -1,0 +1,12 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "signup-text-blur-fix",
+  "main": "src/index.js",
+  "compatibility_date": "2026-07-28",
+  "routes": [
+    {
+      "pattern": "apps.sauditrend.sa/signup*",
+      "zone_name": "sauditrend.sa"
+    }
+  ]
+}
