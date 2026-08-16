@@ -1,0 +1,110 @@
+{
+  "ar": {
+    "metaTitle": "عن الشركة | سعودي ترند",
+    "metaDescription": "تعرف على سعودي ترند — وكالة تسويق وحلول رقمية سعودية: هوية، مواقع، إعلانات، أنظمة وأتمتة.",
+    "eyebrow": "عن الشركة",
+    "title": "نبني حضور علامتك من الفكرة إلى التنفيذ",
+    "lead": "سعودي ترند وكالة تسويق وحلول رقمية سعودية، نعمل مع الشركات والمؤسسات التي تريد نموًا حقيقيًا — ليس وعودًا بالهواء. من الهوية والمحتوى إلى المواقع والأنظمة والحملات المدفوعة، نقدّم شريكًا واحدًا ينسّق كل القنوات بخطة واضحة ونتائج قابلة للقياس.",
+    "vision": {
+      "title": "رؤيتنا",
+      "text": "أن نكون الشريك الأول للعلامات السعودية الطموحة في التسويق الرقمي والتحول التقني — بجودة تنفيذ تليق بالسوق المحلي ومعايير عالمية."
+    },
+    "mission": {
+      "title": "مهمتنا",
+      "text": "تحويل أهداف العميل إلى خطط تسويقية وتقنية قابلة للتنفيذ: هوية متماسكة، حضور رقمي قوي، وأنظمة تسهّل التشغيل وتزيد المبيعات."
+    },
+    "values": [
+      {
+        "title": "الشفافية",
+        "text": "عقود واضحة، مراحل محددة، وتقارير أداء — بلا مفاجآت بعد التوقيع."
+      },
+      {
+        "title": "الجودة",
+        "text": "ضمانات ذهبية على التنفيذ: نلتزم بما اتفقنا عليه ونصلّح أي خلل منّا."
+      },
+      {
+        "title": "الشراكة",
+        "text": "نشتغل على مشروعك كأنه مشروعنا — متابعة بعد التسليم ودعم مستمر."
+      },
+      {
+        "title": "الابتكار",
+        "text": "أفكار غير تقليدية مدعومة بأدوات حديثة: أتمتة، تحليلات، وتجارب رقمية مميزة."
+      }
+    ],
+    "pillars": [
+      {
+        "title": "التسويق الرقمي",
+        "text": "حملات إعلانية، سوشيال ميديا، SEO، ومحتوى يحوّل الاهتمام إلى عملاء."
+      },
+      {
+        "title": "الهوية والإبداع",
+        "text": "شعارات، أدلة هوية، تصميم، فيديو وموشن جرافيك يخدم البيع."
+      },
+      {
+        "title": "التقنية والأنظمة",
+        "text": "مواقع ومتاجر إلكترونية، أنظمة مخصصة، وأتمتة تربط أدواتك في مكان واحد."
+      }
+    ],
+    "stats": [
+      { "value": "+50", "label": "مشروع منفّذ" },
+      { "value": "8+", "label": "قطاعات نخدمها" },
+      { "value": "24/7", "label": "دعم بعد التسليم" }
+    ],
+    "coverage": "نخدم عملاءنا في الرياض وجميع مناطق المملكة العربية السعودية، مع فرق تنفيذ متخصصة في كل محور.",
+    "cr": "السجل التجاري: 1010659649"
+  },
+  "en": {
+    "metaTitle": "About Us | Saudi Trend",
+    "metaDescription": "Meet Saudi Trend — a Saudi marketing & digital solutions agency: branding, websites, ads, systems & automation.",
+    "eyebrow": "About us",
+    "title": "We build your brand presence from idea to execution",
+    "lead": "Saudi Trend is a Saudi marketing and digital solutions agency. We partner with businesses that want real growth — not empty promises. From identity and content to websites, systems, and paid campaigns, we offer one coordinated team with clear plans and measurable results.",
+    "vision": {
+      "title": "Our vision",
+      "text": "To be the go-to partner for ambitious Saudi brands in digital marketing and tech transformation — with execution quality that matches local market needs and global standards."
+    },
+    "mission": {
+      "title": "Our mission",
+      "text": "Turn client goals into actionable marketing and tech plans: cohesive identity, strong digital presence, and systems that streamline operations and grow sales."
+    },
+    "values": [
+      {
+        "title": "Transparency",
+        "text": "Clear contracts, defined milestones, and performance reports — no surprises after signing."
+      },
+      {
+        "title": "Quality",
+        "text": "Gold-standard delivery: we commit to what we agree on and fix any issues on our side."
+      },
+      {
+        "title": "Partnership",
+        "text": "We treat your project as our own — follow-up after delivery and ongoing support."
+      },
+      {
+        "title": "Innovation",
+        "text": "Fresh ideas backed by modern tools: automation, analytics, and standout digital experiences."
+      }
+    ],
+    "pillars": [
+      {
+        "title": "Digital marketing",
+        "text": "Ad campaigns, social media, SEO, and content that turns interest into customers."
+      },
+      {
+        "title": "Identity & creativity",
+        "text": "Logos, brand guides, design, video and motion graphics built to sell."
+      },
+      {
+        "title": "Technology & systems",
+        "text": "Websites and e-stores, custom systems, and automation that connects your tools."
+      }
+    ],
+    "stats": [
+      { "value": "50+", "label": "Projects delivered" },
+      { "value": "8+", "label": "Industries served" },
+      { "value": "24/7", "label": "Post-delivery support" }
+    ],
+    "coverage": "We serve clients in Riyadh and across Saudi Arabia, with specialized execution teams for each pillar.",
+    "cr": "Commercial registration: 1010659649"
+  }
+}

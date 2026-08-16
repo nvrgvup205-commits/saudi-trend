@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 220" fill="none" aria-hidden="true">
+  <defs>
+    <clipPath id="scleraClip">
+      <path d="M20 110C70 30 140 10 210 10C280 10 350 30 400 110C350 190 280 210 210 210C140 210 70 190 20 110Z"/>
+    </clipPath>
+  </defs>
+</svg>
