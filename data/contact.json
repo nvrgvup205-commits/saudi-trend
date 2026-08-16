@@ -1,0 +1,45 @@
+{
+  "phones": [
+    { "display": "0536542044", "href": "tel:+966536542044" },
+    { "display": "0554319281", "href": "tel:+966554319281" }
+  ],
+  "email": "sauditrendsa1@gmail.com",
+  "whatsapp": "https://wa.me/966536542044",
+  "website": "https://sauditrend.sa/",
+  "address": {
+    "ar": "حي اليرموك، شارع النجاح، الرياض، المملكة العربية السعودية",
+    "en": "Al-Yarmouk, Al-Najah St, Riyadh, Saudi Arabia"
+  },
+  "hours": {
+    "ar": "الأحد – الخميس · 10 ص – 6 م",
+    "en": "Sun–Thu · 10 AM – 6 PM"
+  },
+  "cr": "1010659649",
+  "social": [
+    {
+      "name": "Instagram",
+      "label": "IG",
+      "url": "https://www.instagram.com/sauditrend.ksa/"
+    },
+    {
+      "name": "X",
+      "label": "X",
+      "url": "https://x.com/sauditrend_ksa"
+    },
+    {
+      "name": "TikTok",
+      "label": "TT",
+      "url": "https://www.tiktok.com/@sauditrend.ksa"
+    },
+    {
+      "name": "Snapchat",
+      "label": "SN",
+      "url": "https://www.snapchat.com/add/sauditrend.ksa"
+    },
+    {
+      "name": "Facebook",
+      "label": "FB",
+      "url": "https://www.facebook.com/sauditrend.ksa"
+    }
+  ]
+}

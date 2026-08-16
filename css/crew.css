@@ -3001,6 +3001,55 @@ body.svc-sheet-open {
   font-weight: 900;
 }
 
+.contact-channels {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem 0.75rem;
+  margin-top: 0.25rem;
+  font-size: 0.95rem;
+}
+
+.contact-channels a {
+  color: #06210c;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(6, 33, 12, 0.35);
+  font-weight: 600;
+}
+
+.contact-channels a:hover {
+  border-bottom-color: #06210c;
+}
+
+.contact-channels span {
+  color: rgba(6, 33, 12, 0.45);
+}
+
+.contact-socials {
+  margin-top: 0.75rem;
+  justify-content: center;
+  width: 100%;
+}
+
+.contact-socials a {
+  background: rgba(6, 33, 12, 0.12);
+  border-color: rgba(6, 33, 12, 0.25);
+  color: #06210c;
+}
+
+.contact-socials a:hover {
+  background: #06210c;
+  color: var(--brand-yellow);
+  border-color: #06210c;
+}
+
+.cta-band__inner:has(.contact-socials) {
+  flex-wrap: wrap;
+  justify-content: center;
+  text-align: center;
+}
+
 /* Footer — above ambient field */
 .site-footer {
   position: relative;
