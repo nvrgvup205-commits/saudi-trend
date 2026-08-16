@@ -53,6 +53,7 @@
   };
 
   playPageWater();
+  document.documentElement.style.setProperty("--water-reveal", "0.62");
 
   /* ── Why Us: one sentence rises bottom → top (same on all screens) ── */
   const whyTicker = document.getElementById("why-ticker");

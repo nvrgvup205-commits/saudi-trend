@@ -1,7 +1,38 @@
 /* Hero glass letters + lightweight 3D-style vortex bg + partner spacing */
 
 html {
-  --water-reveal: 0.28;
+  --water-reveal: 0.62;
+}
+
+/* Transparent header — background shows through */
+.site-header {
+  background: linear-gradient(
+    180deg,
+    rgba(7, 26, 12, 0.38) 0%,
+    rgba(7, 26, 12, 0.12) 55%,
+    rgba(7, 26, 12, 0) 100%
+  ) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  border-bottom: none !important;
+}
+
+.site-header.is-eye-docked {
+  background: rgba(7, 26, 12, 0.55) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+}
+
+/* Hero: no blocking layers — show water + vortex */
+.hero {
+  background: transparent !important;
+}
+
+.hero__grid,
+.hero__arcs,
+.hero__line,
+.hero__circuit,
+.hero__scribble {
+  display: none !important;
 }
 
 /* Lightweight green vortex — CSS only, no WebGL */
@@ -29,7 +60,7 @@ html {
   content: "";
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse 90% 70% at 50% 50%, transparent 35%, rgba(5, 10, 10, 0.55) 100%);
+  background: radial-gradient(ellipse 90% 70% at 50% 50%, transparent 55%, rgba(5, 10, 10, 0.22) 100%);
   pointer-events: none;
 }
 
@@ -40,7 +71,64 @@ html {
 }
 
 .page-water-bg {
-  opacity: calc(0.5 + var(--wr) * 0.42);
+  opacity: calc(0.62 + var(--wr) * 0.36);
+}
+
+.page-water-bg__video {
+  filter: saturate(1.22) contrast(1.06) brightness(0.9) hue-rotate(-8deg) !important;
+}
+
+.page-water-bg__veil {
+  opacity: 0.42 !important;
+  background:
+    radial-gradient(
+      ellipse 55% 48% at var(--water-x) var(--water-y),
+      rgba(8, 28, 22, 0.04) 0%,
+      rgba(5, 12, 10, 0.18) 55%,
+      rgba(5, 10, 10, 0.45) 100%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(5, 10, 10, 0.25) 0%,
+      transparent 35%,
+      transparent 62%,
+      rgba(5, 10, 10, 0.35) 100%
+    ) !important;
+}
+
+/* Social icons */
+.socials a,
+.socials__link {
+  min-width: 42px;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+}
+
+.socials a svg,
+.socials__link svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
+.contact-socials a {
+  background: rgba(6, 33, 12, 0.14);
+  border-color: rgba(6, 33, 12, 0.22);
+  color: #06210c;
+}
+
+/* Real map iframe */
+.site-close__map-frame iframe {
+  display: block;
+  width: 100%;
+  min-height: 260px;
+  height: clamp(220px, 38vw, 300px);
+  border: 0;
+  background: #0b140e;
 }
 
 /* Glass SAUDI TREND letters */
