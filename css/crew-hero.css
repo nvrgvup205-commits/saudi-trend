@@ -1,0 +1,207 @@
+/* Hero glass letters + lightweight 3D-style vortex bg + partner spacing */
+
+html {
+  --water-reveal: 0.28;
+}
+
+/* Lightweight green vortex — CSS only, no WebGL */
+.page-bg::before {
+  content: "";
+  position: absolute;
+  inset: -35%;
+  background:
+    conic-gradient(
+      from 0deg at 50% 48%,
+      rgba(8, 22, 16, 0) 0deg,
+      rgba(64, 162, 51, 0.22) 55deg,
+      rgba(20, 80, 55, 0.14) 120deg,
+      rgba(8, 22, 16, 0) 180deg,
+      rgba(54, 138, 43, 0.18) 240deg,
+      rgba(8, 22, 16, 0) 360deg
+    ),
+    radial-gradient(ellipse 55% 45% at 38% 42%, rgba(64, 162, 51, 0.32), transparent 62%),
+    radial-gradient(ellipse 48% 38% at 72% 58%, rgba(25, 95, 75, 0.24), transparent 58%);
+  animation: page-vortex-spin 28s linear infinite;
+  will-change: transform;
+}
+
+.page-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 90% 70% at 50% 50%, transparent 35%, rgba(5, 10, 10, 0.55) 100%);
+  pointer-events: none;
+}
+
+@keyframes page-vortex-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.page-water-bg {
+  opacity: calc(0.5 + var(--wr) * 0.42);
+}
+
+/* Glass SAUDI TREND letters */
+.hero__title {
+  --glass-white: rgba(255, 255, 255, 0.94);
+  --glass-mint: rgba(215, 249, 224, 0.72);
+  --glass-teal: rgba(178, 217, 187, 0.55);
+  --glass-gold: rgba(212, 175, 55, 0.55);
+  --glass-gold-bright: rgba(246, 144, 12, 0.38);
+  --glass-green-glow: rgba(64, 162, 51, 0.42);
+  --glass-gold-glow: rgba(212, 175, 55, 0.38);
+}
+
+.hero__title-char {
+  cursor: default;
+  backface-visibility: hidden;
+  background-image: linear-gradient(
+    158deg,
+    var(--glass-white) 0%,
+    rgba(255, 255, 255, 0.78) 22%,
+    var(--glass-mint) 42%,
+    var(--glass-gold) 58%,
+    var(--glass-teal) 76%,
+    rgba(255, 255, 255, 0.88) 100%
+  ) !important;
+  background-size: 220% 220% !important;
+  background-position: 28% 18% !important;
+  filter:
+    drop-shadow(0 0 12px rgba(255, 255, 255, 0.2))
+    drop-shadow(0 0 22px rgba(64, 162, 51, 0.26));
+}
+
+.hero__title-char.is-settled {
+  pointer-events: auto;
+  transition:
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.45s ease,
+    text-shadow 0.45s ease;
+}
+
+.hero__title-char.is-settled:hover {
+  filter:
+    drop-shadow(0 0 12px rgba(255, 255, 255, 0.4))
+    drop-shadow(0 0 26px rgba(64, 162, 51, 0.4))
+    drop-shadow(0 0 38px rgba(212, 175, 55, 0.32));
+  text-shadow:
+    0 0 8px rgba(255, 255, 255, 0.5),
+    0 0 22px var(--glass-green-glow),
+    0 0 40px var(--glass-gold-glow),
+    0 12px 28px rgba(4, 20, 12, 0.32) !important;
+}
+
+.hero__title-char.is-spinning {
+  animation: st-glass-refract 0.72s cubic-bezier(0.22, 0.7, 0.3, 1) !important;
+  background-image: linear-gradient(
+    118deg,
+    rgba(255, 255, 255, 0.98) 0%,
+    var(--glass-gold-bright) 18%,
+    var(--glass-mint) 36%,
+    rgba(255, 255, 255, 0.9) 52%,
+    var(--glass-gold) 68%,
+    var(--glass-teal) 84%,
+    rgba(255, 255, 255, 0.95) 100%
+  ) !important;
+  background-size: 320% 320% !important;
+  text-shadow:
+    0 0 10px rgba(255, 255, 255, 0.65),
+    0 0 24px rgba(212, 175, 55, 0.55),
+    0 0 42px rgba(64, 162, 51, 0.4),
+    0 10px 24px rgba(4, 20, 12, 0.28) !important;
+  filter:
+    drop-shadow(0 0 14px rgba(255, 255, 255, 0.55))
+    drop-shadow(0 0 28px rgba(212, 175, 55, 0.5))
+    drop-shadow(0 0 44px rgba(64, 162, 51, 0.38))
+    brightness(1.18)
+    saturate(1.15);
+}
+
+@keyframes st-glass-refract {
+  0% {
+    background-position: 8% 40%;
+  }
+  35% {
+    background-position: 55% 20%;
+  }
+  65% {
+    background-position: 88% 70%;
+  }
+  100% {
+    background-position: 30% 50%;
+  }
+}
+
+/* Partners — wider ring, less overlap */
+.partner-stage {
+  --partner-radius: 480px;
+  --partner-page-w: min(265px, 66vw);
+  max-width: 1180px;
+}
+
+.partner-stage__scene {
+  height: clamp(400px, 54vw, 540px);
+  perspective: 1300px;
+  perspective-origin: 50% 58%;
+}
+
+.partner-page {
+  opacity: calc(0.1 + 0.9 * max(0, var(--facing))) !important;
+}
+
+.partner-page.is-front {
+  opacity: 1 !important;
+}
+
+.partner-page.is-near {
+  opacity: calc(0.5 + 0.38 * max(0, var(--facing))) !important;
+}
+
+/* Lighter water filter on mobile — skip SVG displacement */
+@media (max-width: 720px) {
+  .page-water-bg__video {
+    filter: saturate(1.2) contrast(1.05) brightness(0.82) hue-rotate(-8deg) !important;
+  }
+
+  .page-water-svg animate {
+    display: none;
+  }
+
+  .page-bg::before {
+    animation-duration: 36s;
+  }
+
+  .partner-stage {
+    --partner-radius: 340px;
+    --partner-page-w: min(200px, 58vw);
+  }
+
+  .partner-stage__scene {
+    height: clamp(340px, 72vw, 440px);
+    perspective: 1100px;
+  }
+}
+
+@media (max-width: 979px) {
+  .partner-stage {
+    --partner-radius: 400px;
+    --partner-page-w: min(230px, 62vw);
+  }
+
+  .partner-stage__scene {
+    height: clamp(360px, 58vw, 480px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-bg::before {
+    animation: none;
+  }
+
+  .hero__title-char.is-spinning {
+    transform: none !important;
+    animation: none !important;
+  }
+}

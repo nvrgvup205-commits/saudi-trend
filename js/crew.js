@@ -653,6 +653,30 @@
     }
 
     requestAnimationFrame(step);
+
+    /* Glass flip on hover — same as 3d-websites pages.dev */
+    const SPIN_MS = 720;
+    const spinLetter = (el) => {
+      if (!el || el.classList.contains("is-spinning")) return;
+      if (!el.classList.contains("is-settled")) return;
+      el.classList.add("is-spinning");
+      const base = "translate3d(0, 0, 0) scaleX(1.08)";
+      const dir = Math.random() > 0.5 ? 1 : -1;
+      el.style.transform = `${base} perspective(640px) rotateY(${dir * 360}deg)`;
+      window.setTimeout(() => {
+        el.style.transform = base;
+        el.classList.remove("is-spinning");
+      }, SPIN_MS);
+    };
+
+    title.addEventListener(
+      "pointerenter",
+      (e) => {
+        const ch = e.target.closest(".hero__title-char");
+        if (ch && title.contains(ch)) spinLetter(ch);
+      },
+      true
+    );
   })();
 
   /* ── Flip cards (blog/work only — services use full sheet) ── */
@@ -1020,10 +1044,9 @@
 
     const radiusFor = () => {
       const w = window.innerWidth;
-      /* Tighter ring so several partner pages stay visible at rest */
-      if (w < 640) return 200;
-      if (w < 980) return 250;
-      return 310;
+      if (w < 640) return 320;
+      if (w < 980) return 400;
+      return 480;
     };
 
     const paint = () => {
@@ -1044,7 +1067,7 @@
         page.style.setProperty("--facing", facing.toFixed(3));
         page.style.setProperty("--bend", `${(bend * Math.max(0.2, Math.abs(facing))).toFixed(2)}deg`);
         page.classList.toggle("is-front", false);
-        page.classList.toggle("is-near", Math.abs(a) < stepDeg * 0.9 && facing > 0.15);
+        page.classList.toggle("is-near", Math.abs(a) < stepDeg * 0.65 && facing > 0.2);
         page.tabIndex = -1;
         if (facing > bestFacing) {
           bestFacing = facing;
