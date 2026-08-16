@@ -3435,9 +3435,20 @@ body.svc-sheet-open {
 
 .footer-bottom__cr {
   margin: 0;
-  color: rgba(246, 186, 12, 0.88);
-  font-size: 0.86rem;
-  font-weight: 700;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.5rem;
+  justify-content: center;
+  align-items: center;
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 0.92rem;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.footer-bottom__cr-num {
+  color: var(--brand-yellow);
+  font-weight: 800;
   letter-spacing: 0.02em;
   font-variant-numeric: tabular-nums;
 }
